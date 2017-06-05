@@ -7,9 +7,38 @@
 //
 
 #include <iostream>
+#include "account.hpp"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+
+    int iters, count, exp;
+    
+    // Announcement
+    std::cout << "MicroSim\n";
+    std::cout << "Number of iterations? ";
+    std::cin >> iters;
+    std::cout << "Number of workers/consumers? ";
+    std::cin >> count;
+    std::cout << "Government expenditure per period: ";
+    std::cin >> exp;
+    std::cout << "\n";
+    
+    Pool::setCount(count);
+    
+    // Seed the random number generator
+    std::srand(42);
+    
+    Pool *pool = Pool::Instance();
+    
+    Government *gov = Government::Instance();
+    gov->setExpenditure(exp);
+    
+    for (int period = 1; period <= iters; period++)
+    {
+        std::cout << period << ". ";
+        gov->trigger(period);
+    }
+
+    delete pool;
     return 0;
 }
