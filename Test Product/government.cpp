@@ -32,7 +32,10 @@ void Government::trigger(int period)
 
     // TO DO
     // We need to create something for the government to spend money on.
-    // ...
+    // For now we'll simply send it to the business arm of the government,
+    // which in effect stands for nationalised industries.
+    //
+    transferTo(&gov, exp);
 }
 
 void Government::setExpenditure(int amount)
@@ -49,4 +52,13 @@ void Government::transferTo(Account *recipient, int amount)
     balance -= amount;
     
     std::cout << "Government balance is now " << balance << "\n";
+}
+
+Government::~Government()
+{
+    while (!firms.empty())
+    {
+        delete firms.back();
+        firms.pop_back();
+    }
 }

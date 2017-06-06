@@ -15,9 +15,9 @@ int main(int argc, const char * argv[]) {
     
     // Announcement
     std::cout << "MicroSim\n";
-    std::cout << "Number of iterations? ";
+    std::cout << "Number of iterations: ";
     std::cin >> iters;
-    std::cout << "Number of workers/consumers? ";
+    std::cout << "Size of population: ";
     std::cin >> count;
     std::cout << "Government expenditure per period: ";
     std::cin >> exp;
@@ -39,6 +39,7 @@ int main(int argc, const char * argv[]) {
         gov->trigger(period);
     }
 
+    std::cout << "Done -- clearing memory\n\n";
     delete pool;
     return 0;
 }

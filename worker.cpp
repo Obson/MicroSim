@@ -24,7 +24,23 @@ bool Worker::isEmployed()
     return (employer != NULL);
 }
 
+
 Firm *Worker::getEmployer()
 {
     return employer;
+}
+
+void Worker::trigger(int period)
+{
+    
+}
+
+void Worker::setEmployer(Firm *emp)
+{
+    employer = emp;
+}
+
+void Worker::setWage(int wage)
+{
+    this->wage = wage;
 }
