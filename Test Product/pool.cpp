@@ -34,9 +34,6 @@ void Pool::setCount(int count)
 
 Pool::~Pool()
 {
-    // Free memory. Because we delete all available here there is no
-    // need for it to be done elsewhere
-    
     while (!available.empty())
     {
         delete available.back();
@@ -54,15 +51,12 @@ Worker *Pool::hire(int wage, Firm *emp)
     
     Worker *w;
     
-    // IMPORTANT NOTE
-    //
     // Workers in the available list have already established wage
-    // levels, so we cannot just assume they will be suitable as
-    // employees for the current request. However, for the time
-    // being we will assume they are in fact interchangeable and
-    // simply adjust their wage level to match the offer. This
-    // needs to be made much more sophisticated to reflact
-    // probable real-world behabiour.
+    // levels, so they may or may not match the current request.
+    // However, for the time being we will assume they are in fact
+    // interchangeable and simply adjust their wage levels to match
+    // the offer. This needs to be made much more sophisticated in
+    // order to reflect probable real-world behabiour.
     
     if (!available.empty())
     {

@@ -33,9 +33,21 @@ int main(int argc, const char * argv[]) {
     Government *gov = Government::Instance();
     gov->setExpenditure(exp);
     
+    
+    /**
+     Important!
+     ----------
+     Do we need to keep a separate list of accounts so they can be triggered
+     independently of their owners? This would cause some complications as
+     we need to ensure that they are triggered in the order: Government, 
+     Firms, Workers, Pool.available, so maybe Government and Pool are the
+     only ones that need to be triggered externally and the others could be
+     cascaded.
+    **/
+    
     for (int period = 1; period <= iters; period++)
     {
-        std::cout << period << ". ";
+        std::cout << "Period " << period << "\n";
         gov->trigger(period);
     }
 

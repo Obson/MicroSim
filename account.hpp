@@ -23,18 +23,14 @@ public:
 
     Account();
     int getBalance();
-    void credit(int amount);
+    
+    // This function is declared as virtual to allow derived class
+    // to add functionality, e.g. diagnostics
+    virtual void credit(int amount);
     
     // Every derived class must provide a trigger function,
     // which will be called once per period.
-    //
-    // TO DO
-    // For some reason this causes linker errors in derived classes.
-    // As I only included it for the sake of tidiness and it's not
-    // strictly necessary I'm commenting it out for the time being.
-    // Sort out (or remove) later.
-    //
-    // virtual void trigger(int period) = 0;
+    virtual void trigger(int period) = 0;
 
 protected:
     
@@ -80,23 +76,66 @@ public:
     void trigger(int period);
 };
 
+
 // A Firm instance is associated with a set of Workers, referred
 // to as 'employees'. The Firm is their 'employer'. A Firm has
 // a responsibility to pay each of its employees that employee's
 // agreed wage on each period. Employees are hired by making a
 // request to the Pool and fired by returning them to the Pool.
+
 class Firm: public Account
 {
 private:
     
     std::vector<Worker *> employees;
     
+    int std_wage;
+    
+protected:
+    
 public:
     
-    Firm();
+    // RATIONALE
+    // ---------
+    // We consider a year to be made up of 50 periods and a
+    // typical yearly wage to be 25000 -- i.e. 500 per period.
+    // Initially we will assume everyone is paid the same
+    // amount, but we will need to allow different schemes,
+    // such as random with even distribution, random with
+    // normal distribution, and random with lognormal
+    // distribution. The latter seems to give a fairly
+    // convincing 'long-tail' distribution.
+    //
+    // A distribution based on recorded peercentile
+    // figures for the UK in 2015 approximates to the
+    // polynomial:
+    //
+    // 0.00001229(x^6) + 0.0033(x^5) + 0.3373(x^4) + 16.066(x^3) + 359
+    //
+    // where 0 < x < 100 is the percentile. It should be possible
+    // to work out a distribution function that would produce
+    // this result. The table itself can be found at
+    //
+    // https://www.gov.uk/government/statistics/percentile-points-from-1-to-99-for-total-income-before-and-after-tax
+    //
+    // and it might be more straightforward to base wages on
+    // that. An alternative approach would be to start off with
+    // equal (or evenly distributed) wages and see what
+    // develops over time.
+    
+    Firm(int standard_wage = 500);
     
     void trigger(int period);
+    
+    // Overrides base mmethod to give additional functionality
+    void credit(int amount);
 };
+
+
+// Government is a singleton class as we are currently assuming
+// a closed economy wth a single currency. Foreign trade would
+// require firms that were registered to a different Government.
+// This should be added later.
 
 class Government: public Account
 {
@@ -139,17 +178,17 @@ public:
     ~Government();
 };
 
-class Trader: public Account
-{
-    
-};
 
 class Bank: public Account
 {
     
 };
 
-// Singleton factory class containing all workers
+
+// Pool is a singleton class acting as a factory for workers.
+// It also 'recycles' them when they are fired, but details
+// have yet to be thought out.
+
 class Pool
 {
 private:

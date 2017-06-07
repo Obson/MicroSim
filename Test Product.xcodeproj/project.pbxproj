@@ -241,6 +241,7 @@
 		E2D9BF4B1EE22B1B008AE7B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				DEVELOPMENT_TEAM = RY8QK375D9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -249,6 +250,7 @@
 		E2D9BF4C1EE22B1B008AE7B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				DEVELOPMENT_TEAM = RY8QK375D9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

@@ -28,7 +28,7 @@ void Government::trigger(int period)
 {
     std::cout << "Government triggered\n";
     
-    std::cout << "Spending " << exp << " units\n";
+    std::cout << "Government spending " << exp << " units\n";
 
     // TO DO
     // We need to create something for the government to spend money on.
@@ -36,6 +36,8 @@ void Government::trigger(int period)
     // which in effect stands for nationalised industries.
     //
     transferTo(&gov, exp);
+    
+    gov.trigger(period);
 }
 
 void Government::setExpenditure(int amount)
