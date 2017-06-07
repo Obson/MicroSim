@@ -143,17 +143,21 @@ private:
     
     static Government *_instance;
     
-    Firm gov;
-
     // Firms in a capitalist economy are legal entities and
-    // must be registered with the government.
+    // must be registered with the government. The zeroth
+    // element of this vector (firms[0]) represents the
+    // 'business arm' of the government (in other words the
+    // nationalised industries) and is treated as a special
+    // case
     std::vector<Firm*> firms;
+    
+    Firm *gov;  // (see constructor for assignment to firms)
     
     // Probably a temporary measure, this is the amount the
     // government spends per period. It may be better to make
     // it a variable (exogenous) parameter of the system or
     // to determine it algorithmically in some way.
-    int exp;
+    static int exp, std_wage;
     
 protected:
     
@@ -170,11 +174,14 @@ public:
     
     static Government *Instance();
     
-    // Sets the level of government expenditure
-    void setExpenditure(int exp);
+    // Sets government expenditure and standard wage
+    static void setExpenditure(int exp);
+    static void setStandardWage(int wage);
     
     void trigger(int period);
 
+    Firm *getRandomFirm();
+    
     ~Government();
 };
 

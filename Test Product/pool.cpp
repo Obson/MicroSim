@@ -8,12 +8,12 @@
 
 #include "account.hpp"
 
-Pool *Pool::_instance = 0;
+Pool *Pool::_instance = nullptr;
 int Pool::_count = -1;
 
 Pool *Pool::Instance()
 {
-    if (_instance == 0)
+    if (_instance == nullptr)
     {
         _instance = new Pool();
     }

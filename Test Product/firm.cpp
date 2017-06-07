@@ -7,6 +7,7 @@
 //
 
 #include "account.hpp"
+#include <cassert>
 
 Firm::Firm(int standard_wage)
 {
@@ -15,24 +16,38 @@ Firm::Firm(int standard_wage)
 
 void Firm::trigger(int period)
 {
-    std::cout << "Firm triggered\n";
+    std::cout << "Firm triggered with balance " << balance << "\n";
     
     // Firm must pay all its employees, hiring and firing as
     // necessary, and then trigger each employee in the resulting
     // list.
     
-    // Pay wexisting employees and calculate the total
-    int total = 0;
+    // Pay wexisting employees and calculate the total committed wage bill
+    int committed = 0;
     for (auto it : employees) {
         int wage = it->getWage();
-        transferTo(it, wage);
-        total += wage;
+        std::cout << "Firm transferring " << wage << " to employee\n";
+        if (!transferTo(it, wage)) {
+            std::cout << "Firm: insufficient funds to pay employee\n";
+        }
+        std::cout << "Firm new balance is " << balance << "\n";
+        committed += wage;
+    }
+
+    // Trigger all the employees (note that we pay them all before
+    // we trigger any of them.
+    for (auto it : employees) {
         it->trigger(period);
     }
-    
-    if (balance > std_wage) {
-        // We can afford to take on more employees
-        // ...
+
+    if (balance - committed >= std_wage) {
+        assert(std_wage>0);
+        int num_hires = ((balance - committed) / std_wage);
+        std::cout << "Firm: hiring " << num_hires << " new employees" << "\n";
+        Pool *pool = Pool::Instance();
+        for (int i = 0; i < num_hires; i++) {
+            employees.push_back(pool->hire(std_wage, this));
+        }
     }
 }
 

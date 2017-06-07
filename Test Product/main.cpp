@@ -11,7 +11,7 @@
 
 int main(int argc, const char * argv[]) {
 
-    int iters, count, exp;
+    int iters, count, exp, std_wage;
     
     // Announcement
     std::cout << "MicroSim\n";
@@ -21,7 +21,8 @@ int main(int argc, const char * argv[]) {
     std::cin >> count;
     std::cout << "Government expenditure per period: ";
     std::cin >> exp;
-    std::cout << "\n";
+    std::cout << "Standard wage: ";
+    std::cin >> std_wage;
     
     Pool::setCount(count);
     
@@ -29,10 +30,11 @@ int main(int argc, const char * argv[]) {
     std::srand(42);
     
     Pool *pool = Pool::Instance();
+
+    Government::setExpenditure(exp);
+    Government::setStandardWage(std_wage);
     
     Government *gov = Government::Instance();
-    gov->setExpenditure(exp);
-    
     
     /**
      Important!
@@ -47,7 +49,7 @@ int main(int argc, const char * argv[]) {
     
     for (int period = 1; period <= iters; period++)
     {
-        std::cout << "Period " << period << "\n";
+        std::cout << "\nPeriod " << period << "\n";
         gov->trigger(period);
     }
 

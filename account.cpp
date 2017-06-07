@@ -21,6 +21,7 @@ int Account::getBalance()
 bool Account::transferTo(Account *recipient, int amount)
 {
     if (amount > balance) {
+        std::cout << "Account: insufficient funds\n";
         return false;
     } else {
         recipient->credit(amount);
