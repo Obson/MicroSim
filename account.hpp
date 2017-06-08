@@ -14,6 +14,8 @@
 #include <iostream>
 #include <vector>
 
+#include "settings.hpp"
+
 // Account is the base class for every active entity in the system
 // and provides the basic overrideable functionality.
 
@@ -34,8 +36,11 @@ public:
 
 protected:
     
-    bool transferTo(Account *recipient, int amount);
+    Settings *settings;
     int balance;
+
+    bool transferTo(Account *recipient, int amount);
+    
 };
 
 
@@ -51,15 +56,15 @@ class Firm;
 // Workers (who are also consumers -- the terms are effectively
 // interchangeble( are managed by the singleton Pool instance.
 
-class Worker : public Account
+class Worker: public Account
 {
     friend class Pool;
     
 private:
-    
+
     int wage;
     Firm *employer;
-    
+
 protected:
     
     void setEmployer(Firm*);

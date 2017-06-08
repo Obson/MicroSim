@@ -75,6 +75,6 @@ Worker *Pool::hire(int wage, Firm *emp)
 
 void Pool::fire(Worker *w)
 {
-    w->setEmployer(NULL);
+    w->setEmployer(nullptr);
     available.push_back(w);
 }

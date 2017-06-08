@@ -11,7 +11,9 @@
 
 int main(int argc, const char * argv[]) {
 
-    int iters, count, exp, std_wage;
+    int iters, count, exp, std_wage, prop_con;
+    
+    Settings *settings = Settings::Instance();
     
     // Announcement
     std::cout << "MicroSim\n";
@@ -23,6 +25,10 @@ int main(int argc, const char * argv[]) {
     std::cin >> exp;
     std::cout << "Standard wage: ";
     std::cin >> std_wage;
+    std::cout << "Propensity to consume (percent): ";
+    std::cin >> prop_con;
+    
+    settings->prop_con = prop_con;
     
     Pool::setCount(count);
     

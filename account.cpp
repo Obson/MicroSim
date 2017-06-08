@@ -10,6 +10,7 @@
 
 Account::Account()
 {
+    settings = Settings::Instance();
     balance = 0;
 }
 
@@ -21,7 +22,7 @@ int Account::getBalance()
 bool Account::transferTo(Account *recipient, int amount)
 {
     if (amount > balance) {
-        std::cout << "Account: insufficient funds\n";
+        std::cout << "Account: insufficient funds (" << balance << " available, " << amount << " to pay)\n";
         return false;
     } else {
         recipient->credit(amount);

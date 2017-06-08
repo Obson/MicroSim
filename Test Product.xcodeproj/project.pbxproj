@@ -13,6 +13,7 @@
 		E2D9BF561EE5ADDC008AE7B8 /* pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2D9BF551EE5ADDC008AE7B8 /* pool.cpp */; };
 		E2D9BF581EE5F101008AE7B8 /* government.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2D9BF571EE5F101008AE7B8 /* government.cpp */; };
 		E2D9BF5A1EE6AD35008AE7B8 /* firm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2D9BF591EE6AD35008AE7B8 /* firm.cpp */; };
+		E2D9BF601EE95600008AE7B8 /* settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2D9BF5E1EE95600008AE7B8 /* settings.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,6 +37,8 @@
 		E2D9BF551EE5ADDC008AE7B8 /* pool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pool.cpp; sourceTree = "<group>"; };
 		E2D9BF571EE5F101008AE7B8 /* government.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = government.cpp; sourceTree = "<group>"; };
 		E2D9BF591EE6AD35008AE7B8 /* firm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = firm.cpp; sourceTree = "<group>"; };
+		E2D9BF5E1EE95600008AE7B8 /* settings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = settings.cpp; sourceTree = "<group>"; };
+		E2D9BF5F1EE95600008AE7B8 /* settings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = settings.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +73,8 @@
 			children = (
 				E2D9BF461EE22B1B008AE7B8 /* main.cpp */,
 				E2D9BF501EE578B8008AE7B8 /* account.cpp */,
+				E2D9BF5E1EE95600008AE7B8 /* settings.cpp */,
+				E2D9BF5F1EE95600008AE7B8 /* settings.hpp */,
 				E2D9BF511EE578B8008AE7B8 /* account.hpp */,
 				E2D9BF591EE6AD35008AE7B8 /* firm.cpp */,
 				E2D9BF571EE5F101008AE7B8 /* government.cpp */,
@@ -142,6 +147,7 @@
 				E2D9BF541EE58DF0008AE7B8 /* worker.cpp in Sources */,
 				E2D9BF581EE5F101008AE7B8 /* government.cpp in Sources */,
 				E2D9BF561EE5ADDC008AE7B8 /* pool.cpp in Sources */,
+				E2D9BF601EE95600008AE7B8 /* settings.cpp in Sources */,
 				E2D9BF5A1EE6AD35008AE7B8 /* firm.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

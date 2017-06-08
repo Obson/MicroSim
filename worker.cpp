@@ -21,9 +21,8 @@ int Worker::getWage()
 
 bool Worker::isEmployed()
 {
-    return (employer != NULL);
+    return (employer != nullptr);
 }
-
 
 Firm *Worker::getEmployer()
 {
@@ -42,7 +41,7 @@ void Worker::trigger(int period)
     // random selection of firms.
     
     Government *government = Government::Instance();
-    transferTo(government->getRandomFirm(), balance);
+    transferTo(government->getRandomFirm(), (balance * settings->prop_con) / 100);
 }
 
 void Worker::setEmployer(Firm *emp)
