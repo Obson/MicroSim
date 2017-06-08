@@ -56,10 +56,13 @@ void Firm::trigger(int period)
     // If we have funds left over, hire some more employees
     if (balance - committed >= std_wage) {
         assert(std_wage>0);
-        int num_hires = ((balance - committed) / std_wage);
-        std::cout << "Firm: hiring " << num_hires << " new employees" << "\n";
-        for (int i = 0; i < num_hires; i++) {
-            employees.push_back(pool->hire(std_wage, this));
+        //int num_hires = ((balance - committed) * settings->prop_con) / (std_wage * 100);
+        int num_hires = (((balance * settings->prop_con) / 100) - committed) / std_wage;
+        if (num_hires > 0) {
+            std::cout << "Firm: hiring " << num_hires << " new employees" << "\n";
+            for (int i = 0; i < num_hires; i++) {
+                employees.push_back(pool->hire(std_wage, this));
+            }
         }
     }
 }
