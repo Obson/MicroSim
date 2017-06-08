@@ -60,6 +60,7 @@ Worker *Pool::hire(int wage, Firm *emp)
     
     if (!available.empty())
     {
+        std::cout << "Pool: re-hiring fired worker\n";
         w = available.back();
         w->setWage(wage);
         w->setEmployer(emp);
@@ -67,6 +68,7 @@ Worker *Pool::hire(int wage, Firm *emp)
     }
     else
     {
+        std::cout << "Pool: hiring new worker\n";
         w = new Worker(wage, emp);
     }
     
@@ -77,4 +79,9 @@ void Pool::fire(Worker *w)
 {
     w->setEmployer(nullptr);
     available.push_back(w);
+}
+
+void Pool::trigger(int period)
+{
+    
 }

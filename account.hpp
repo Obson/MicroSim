@@ -82,6 +82,39 @@ public:
 };
 
 
+// Pool is a singleton class acting as a factory for workers.
+// It also 'recycles' them when they are fired, but details
+// have yet to be thought out.
+
+class Pool
+{
+private:
+    
+    std::vector<Worker*> available;
+    
+    static Pool *_instance;
+    
+    static int _count;
+    
+protected:
+    
+    Pool();
+    
+public:
+    
+    static Pool *Instance();
+    static void setCount(int count);
+    
+    ~Pool();
+    
+    void trigger(int period);
+    
+    Worker *hire(int wage, Firm *emp);
+    void fire(Worker*);
+    
+};
+
+
 // A Firm instance is associated with a set of Workers, referred
 // to as 'employees'. The Firm is their 'employer'. A Firm has
 // a responsibility to pay each of its employees that employee's
@@ -93,6 +126,8 @@ class Firm: public Account
 private:
     
     std::vector<Worker *> employees;
+    
+    Pool *pool = Pool::Instance();
     
     int std_wage;
     
@@ -129,6 +164,8 @@ public:
     // develops over time.
     
     Firm(int standard_wage = 500);
+    
+    ~Firm();    // free space taken up by employees list in vector
     
     void trigger(int period);
     
@@ -197,34 +234,5 @@ class Bank: public Account
 };
 
 
-// Pool is a singleton class acting as a factory for workers.
-// It also 'recycles' them when they are fired, but details
-// have yet to be thought out.
-
-class Pool
-{
-private:
-    
-    std::vector<Worker*> available;
-    
-    static Pool *_instance;
-
-    static int _count;
-    
-protected:
-    
-    Pool();
-    
-public:
-    
-    static Pool *Instance();
-    static void setCount(int count);
-    
-    ~Pool();
-    
-    Worker *hire(int wage, Firm *emp);
-    void fire(Worker*);
-    
-};
 
 #endif /* account_hpp */
