@@ -48,7 +48,7 @@ protected:
 // need a forward declaration here.
 
 class Firm;
-
+class Government;
 
 // A Worker instance represents an economically active individual.
 // 'Economically active' means (a) having an employer (which may
@@ -64,6 +64,7 @@ private:
 
     int wage;
     Firm *employer;
+    Government *gov;
 
 protected:
     
@@ -128,6 +129,7 @@ private:
     std::vector<Worker *> employees;
     
     Pool *pool = Pool::Instance();
+    Government *gov;
     
     int std_wage;
     

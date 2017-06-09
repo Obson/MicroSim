@@ -13,8 +13,7 @@ int Pool::_count = -1;
 
 Pool *Pool::Instance()
 {
-    if (_instance == nullptr)
-    {
+    if (_instance == nullptr) {
         _instance = new Pool();
     }
     return _instance;
@@ -83,5 +82,8 @@ void Pool::fire(Worker *w)
 
 void Pool::trigger(int period)
 {
-    
+    for (auto it : available)
+    {
+        it->trigger(period);
+    }
 }

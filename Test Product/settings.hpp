@@ -21,7 +21,10 @@ public:
     
     static Settings *Instance();
     
+    // Percentages
     int prop_con;
+    int inc_tax;
+    int sales_tax;
     
 };
 

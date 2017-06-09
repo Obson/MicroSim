@@ -47,7 +47,7 @@ void Government::trigger(int period)
     // but as we don't want it to be a single-industry economy we won't spend
     // any more on it after the zeroth period. This will change eventually.
     //
-    if (period < 2) {
+    if (true /*period < 2*/) {
         std::cout << "Government spending " << exp << " units\n";
         transferTo(gov, exp);
     }

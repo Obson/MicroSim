@@ -10,6 +10,7 @@
 
 Worker::Worker(int wage, Firm *emp)
 {
+    gov = Government::Instance();
     this->wage = wage;
     employer = emp;
 }
@@ -33,15 +34,15 @@ void Worker::trigger(int period)
 {
     std::cout << "Worker: triggered with balance " << balance << "\n";
     
-    // For initial testing (only) we will assume all workers spend all
-    // their income. For the sake of simplicity we will also assume that
-    // in any give period any given worker spends his/her funds through
-    // a single randomly selected firm. As long as there are a lot of
-    // workers this should be equivalent to each worker choosing a
-    // random selection of firms.
+    // For initial testing (only) we will assume all workers spend the
+    // same proportion of their income (Settings::prop_con %). For the
+    // sake of simplicity we will also assume that in any give period
+    // any given worker spends his/her funds through a single randomly
+    // selected firm. As long as there are a lot of workers this
+    // should be equivalent to each worker choosing a random selection
+    // of firms.
     
-    Government *government = Government::Instance();
-    transferTo(government->getRandomFirm(), (balance * settings->prop_con) / 100);
+    transferTo(gov->getRandomFirm(), (balance * settings->prop_con) / 100);
 }
 
 void Worker::setEmployer(Firm *emp)

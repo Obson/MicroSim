@@ -29,11 +29,16 @@ void Firm::trigger(int period)
         if (it->isEmployed())   // check that we haven't fired this employee
         {
             int wage = it->getWage();
-            std::cout << "Firm transferring " << wage << " to employee\n";
+            int tax = (wage * settings->inc_tax) / 100;
+            std::cout << "Firm transferring wage " << wage << " to employee and tax " << tax << " to government\n";
             if (transferTo(it, wage))
             {
                 std::cout << "Firm new balance is " << balance << "\n";
-                committed += wage;
+                committed += wage + tax;
+                if (!transferTo(Government::Instance(), tax))
+                {
+                    std::cout << "Firm has insufficient funds to pay income tax on employee PAYG\n";
+                }
             }
             else
             {
@@ -54,15 +59,17 @@ void Firm::trigger(int period)
     }
 
     // If we have funds left over, hire some more employees
-    if (balance - committed >= std_wage) {
-        assert(std_wage>0);
-        //int num_hires = ((balance - committed) * settings->prop_con) / (std_wage * 100);
-        int num_hires = (((balance * settings->prop_con) / 100) - committed) / std_wage;
-        if (num_hires > 0) {
-            std::cout << "Firm: hiring " << num_hires << " new employees" << "\n";
-            for (int i = 0; i < num_hires; i++) {
-                employees.push_back(pool->hire(std_wage, this));
-            }
+    
+    assert(std_wage>0);
+
+    //int num_hires = ((balance - committed) * settings->prop_con) / (std_wage * 100);
+    
+    int num_hires = (((balance * settings->prop_con * (100 - settings->inc_tax)) / 10000) - committed) / std_wage;
+    if (num_hires > 0)
+    {
+        std::cout << "Firm: hiring " << num_hires << " new employees" << "\n";
+        for (int i = 0; i < num_hires; i++) {
+            employees.push_back(pool->hire(std_wage, this));
         }
     }
 }

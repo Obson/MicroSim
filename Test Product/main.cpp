@@ -11,7 +11,7 @@
 
 int main(int argc, const char * argv[]) {
 
-    int iters, count, exp, std_wage, prop_con;
+    int iters, count, exp, std_wage, prop_con, inc_tax_rate, sales_tax_rate;
     
     Settings *settings = Settings::Instance();
     
@@ -23,18 +23,24 @@ int main(int argc, const char * argv[]) {
     std::cin >> count;
     std::cout << "Government expenditure per period: ";
     std::cin >> exp;
-    std::cout << "Standard wage: ";
+    std::cout << "Standard wage (after tax): ";
     std::cin >> std_wage;
     std::cout << "Propensity to consume (percent): ";
     std::cin >> prop_con;
+    std::cout << "Income tax rate (percent): ";
+    std::cin >> inc_tax_rate;
+    std::cout << "Sales tax rate (percent): ";
+    std::cin >> sales_tax_rate;
     
+    // Set global parameters
     settings->prop_con = prop_con;
-    
-    Pool::setCount(count);
+    settings->inc_tax = inc_tax_rate;
+    settings->sales_tax = sales_tax_rate;
     
     // Seed the random number generator
     std::srand(42);
     
+    Pool::setCount(count);
     Pool *pool = Pool::Instance();
 
     Government::setExpenditure(exp);
