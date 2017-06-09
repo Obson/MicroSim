@@ -11,22 +11,24 @@
 
 int main(int argc, const char * argv[]) {
 
-    int iters, count, exp, std_wage, prop_con, inc_tax_rate, sales_tax_rate;
+    int iters, count, exp, std_wage, prop_con, dedns, inc_tax_rate, sales_tax_rate;
     
     Settings *settings = Settings::Instance();
     
     // Announcement
-    std::cout << "MicroSim\n";
+    std::cout << "MicroSim\n\n";
     std::cout << "Number of iterations: ";
     std::cin >> iters;
     std::cout << "Size of population: ";
     std::cin >> count;
     std::cout << "Government expenditure per period: ";
     std::cin >> exp;
-    std::cout << "Standard wage (after tax): ";
+    std::cout << "Standard wage (before tax): ";
     std::cin >> std_wage;
     std::cout << "Propensity to consume (percent): ";
     std::cin >> prop_con;
+    std::cout << "Deductions (percent): ";
+    std::cin >> dedns;
     std::cout << "Income tax rate (percent): ";
     std::cin >> inc_tax_rate;
     std::cout << "Sales tax rate (percent): ";
@@ -36,6 +38,7 @@ int main(int argc, const char * argv[]) {
     settings->prop_con = prop_con;
     settings->inc_tax = inc_tax_rate;
     settings->sales_tax = sales_tax_rate;
+    settings->dedns = dedns;
     
     // Seed the random number generator
     std::srand(42);
@@ -64,6 +67,8 @@ int main(int argc, const char * argv[]) {
         std::cout << "\nPeriod " << period << "\n";
         gov->trigger(period);
     }
+    
+    std::cout << "Triggering Pool\n";
 
     std::cout << "Done -- clearing memory\n\n";
     delete pool;

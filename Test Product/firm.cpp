@@ -16,7 +16,9 @@ Firm::Firm(int standard_wage)
 
 void Firm::trigger(int period)
 {
-    std::cout << "Firm triggered with balance " << balance << "\n";
+    std::cout   << "Firm: triggered with balance "
+                << balance
+                << "\n";
     
     // Firm must pay all its employees, hiring and firing as
     // necessary, and then trigger each employee in the resulting
@@ -29,16 +31,18 @@ void Firm::trigger(int period)
         if (it->isEmployed())   // check that we haven't fired this employee
         {
             int wage = it->getWage();
-            int tax = (wage * settings->inc_tax) / 100;
-            std::cout << "Firm transferring wage " << wage << " to employee and tax " << tax << " to government\n";
-            if (transferTo(it, wage))
+            int dedns = (wage * settings->dedns) / 100;
+            std::cout   << "Firm: transferring wage "
+                        << (wage - dedns)
+                        << " to employee and dedns "
+                        << dedns
+                        << " to government\n";
+            if (wage <= balance)
             {
-                std::cout << "Firm new balance is " << balance << "\n";
-                committed += wage + tax;
-                if (!transferTo(Government::Instance(), tax))
-                {
-                    std::cout << "Firm has insufficient funds to pay income tax on employee PAYG\n";
-                }
+                transferTo(it, wage - dedns);
+                transferTo(Government::Instance(), dedns);
+                committed += wage;
+                std::cout << "Firm: new balance is " << balance << "\n";
             }
             else
             {
@@ -49,10 +53,10 @@ void Firm::trigger(int period)
     }
 
     // Trigger all the employees (note that we pay them all before
-    // we trigger any of them. We only trigger them if we still employ them,
-    // otherwise it's the Pool's responsibility.
-    // TO DO: add trigger to Pool.
-    for (auto it : employees) {
+    // we trigger any of them, and we only trigger them if we still
+    // employ them -- otherwise it's the Pool's responsibility.
+    for (auto it : employees)
+    {
         if (it->isEmployed()) {
             it->trigger(period);
         }
@@ -62,12 +66,13 @@ void Firm::trigger(int period)
     
     assert(std_wage>0);
 
-    //int num_hires = ((balance - committed) * settings->prop_con) / (std_wage * 100);
-    
-    int num_hires = (((balance * settings->prop_con * (100 - settings->inc_tax)) / 10000) - committed) / std_wage;
+    int num_hires = (((balance * settings->prop_con) / 100) - committed) / std_wage;
     if (num_hires > 0)
     {
-        std::cout << "Firm: hiring " << num_hires << " new employees" << "\n";
+        std::cout   << "Firm: hiring "
+                    << num_hires
+                    << " new employees\n";
+        
         for (int i = 0; i < num_hires; i++) {
             employees.push_back(pool->hire(std_wage, this));
         }
@@ -77,7 +82,9 @@ void Firm::trigger(int period)
 void Firm::credit(int amount)
 {
     Account::credit(amount);
-    std::cout << "Firm credited, balance: " << balance << "\n";
+    std::cout   << "Firm credited, balance: "
+                << balance
+                << "\n";
 }
 
 Firm::~Firm()
@@ -85,6 +92,9 @@ Firm::~Firm()
     // We should free the space taken up by any Workers in the employees
     // vector. Where they have been fired we do not free the space as this
     // will be done by Pool when tidying up its 'available' vector (check this!)
-    // ...
+    for (auto it : employees) {
+        delete it;
+        employees.pop_back();
+    }
 }
 

@@ -25,7 +25,8 @@ public:
     int prop_con;
     int inc_tax;
     int sales_tax;
-    
+    int dedns;
+   
 };
 
 #endif /* settings_hpp */

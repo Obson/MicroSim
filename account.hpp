@@ -78,7 +78,9 @@ public:
     int getWage();
     Firm *getEmployer();
     bool isEmployed();
-    
+
+    // Overrides
+    void credit(int amount);
     void trigger(int period);
 };
 

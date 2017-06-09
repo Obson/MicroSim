@@ -17,6 +17,7 @@ Settings *Settings::Instance()
         _instance->prop_con = 0;
         _instance->inc_tax = 0;
         _instance->sales_tax = 0;
+        _instance->dedns = 0;
     }
     return _instance;
 }

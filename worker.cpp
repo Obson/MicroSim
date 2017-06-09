@@ -45,6 +45,15 @@ void Worker::trigger(int period)
     transferTo(gov->getRandomFirm(), (balance * settings->prop_con) / 100);
 }
 
+// Note that we assume the only payments to Workers are wages, so we always
+// pay income tax. It might be a good idea to make this optional by adding
+// an extra parameter (bool taxable = true, for example).
+void Worker::credit(int amount)
+{
+    Account::credit(amount);
+    transferTo(gov, (amount * settings->inc_tax) / 100);
+}
+
 void Worker::setEmployer(Firm *emp)
 {
     employer = emp;
