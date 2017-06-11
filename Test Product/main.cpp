@@ -21,13 +21,13 @@ int main(int argc, const char * argv[]) {
 
     // Get parameters from console input. Eventually this will probably
     // be replaced by a config file.
-    std::cout << "Number of iterations: ";
+    std::cout << "Number of weeks: ";
     std::cin >> iters;
     std::cout << "Size of population: ";
     std::cin >> count;
-    std::cout << "Government expenditure per period: ";
+    std::cout << "Government expenditure per week: ";
     std::cin >> exp;
-    std::cout << "Standard wage (before tax): ";
+    std::cout << "Standard weekly wage (before tax): ";
     std::cin >> std_wage;
     prop_con = 0;
     while (prop_con < 1 || prop_con > 100) {
@@ -78,7 +78,7 @@ int main(int argc, const char * argv[]) {
     // externally. The others can be cascaded.
     for (int period = 1; period <= iters; period++)
     {
-        std::cout << "\nPeriod " << period << "\n";
+        //std::cout << "\nPeriod " << period << "\n";
         gov->trigger(period);
         pool->trigger(period);
         stats->next(period);
@@ -86,7 +86,7 @@ int main(int argc, const char * argv[]) {
     
     stats->report();
 
-    std::cout << "\nDone -- clearing memory\n\n";
+    //std::cout << "\nDone -- clearing memory\n\n";
     delete pool;
     return 0;
 }

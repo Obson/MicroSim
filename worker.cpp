@@ -49,16 +49,18 @@ void Worker::trigger(int period)
 // Note that we assume the only payments to Workers are wages, so we always
 // pay income tax. It might be a good idea to make this optional by adding
 // an extra parameter (bool taxable = true, for example).
-void Worker::credit(int amount)
+void Worker::credit(int amount, bool taxable)
 {
     stats->current->start_bal += balance; // this will go wrong if a worker is employed by more than one firm
     
-    Account::credit(amount);
-    int tax = (amount * settings->inc_tax) / 100;
-    transferTo(gov, tax);
+    Account::credit(amount, taxable);
+    if (taxable) {
+        int tax = (amount * settings->inc_tax) / 100;
+        transferTo(gov, tax);
+        stats->current->inc_tax_paid += tax;
+    }
     
     stats->current->wages_recd += amount;
-    stats->current->inc_tax_paid += tax;
 }
 
 void Worker::setEmployer(Firm *emp)

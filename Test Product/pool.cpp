@@ -67,7 +67,7 @@ Worker *Pool::hire(int wage, Firm *emp)
     }
     else
     {
-        std::cout << "Pool: hiring new worker\n";
+        //std::cout << "Pool: hiring new worker\n";
         w = new Worker(wage, emp);
     }
     

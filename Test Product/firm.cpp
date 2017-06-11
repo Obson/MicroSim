@@ -20,7 +20,9 @@ void Firm::trigger(int period)
     // necessary, and then trigger each employee in the resulting
     // list.
     
-    // Pay wexisting employees and calculate the total committed wage bill
+    stats->current->f_start_bal += balance;
+    
+    // Pay existing employees and calculate the total committed wage bill
     int committed = 0;
     for (auto it : employees)
     {
@@ -35,7 +37,7 @@ void Firm::trigger(int period)
                 transferTo(it, wage - dedns);
                 transferTo(Government::Instance(), dedns);
                 committed += wage;
-                stats->current->wages_paid += wage - dedns;
+                stats->current->wages_paid += (wage - dedns);
                 stats->current->dedns_paid += dedns;
             }
             else
@@ -80,10 +82,17 @@ void Firm::trigger(int period)
     }
 }
 
-void Firm::credit(int amount)
+void Firm::credit(int amount, bool taxable)
 {
-    Account::credit(amount);
-    stats->current->tot_sales += amount;
+    Account::credit(amount, taxable);
+    
+    if (taxable) {
+        int tax = (amount * settings->sales_tax) / 100;
+        transferTo(Government::Instance(), tax);
+        stats->current->sales_tax_paid += tax;
+    }
+    
+    stats->current->tot_sales += amount;    // gross (incl sales tax)
 }
 
 Firm::~Firm()

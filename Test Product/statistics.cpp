@@ -6,6 +6,7 @@
 //  Copyright © 2017 David Brown. All rights reserved.
 //
 
+#include <iomanip>
 #include "statistics.hpp"
 
 Statistics *Statistics::_instance = nullptr;
@@ -47,34 +48,38 @@ void Statistics::report()
         std::cout   << "\nFirms\n"
                     << "\n\tNumber of employees = " << it->num_employed
                     << "\n\tNumber hired = " << it->num_hired
-                    << "\n\tNumber fired = " << it->num_fired
-                    << "\n\tWages (after dedns) = " << it->wages_paid
-                    << "\n\tDeductions = " << it->dedns_paid
-                    << "\n\tSales = " << it->tot_sales
-                    << "\n\tSector balance = " << it->prod_bal
+                    << "\n\tNumber fired = " << it->num_fired << "\n"
+                    << "\n\t" << std::setw(20) << "Starting balance: " << std::setw(9) << it->f_start_bal
+                    << "\n\t" << std::setw(20) << "Wages paid: " << std::setw(9) << it->wages_paid
+                    << "\n\t" << std::setw(20) << "Dedns paid: " << std::setw(9) << it->dedns_paid
+                    << "\n\t" << std::setw(20) << "Sales: " << std::setw(9) << it->tot_sales
+                    << "\n\t" << std::setw(20) << "Sales tax paid: " << std::setw(9) << it->sales_tax_paid
+                    << "\n\t" << std::setw(20) << "Closing balance: " << std::setw(9) << it->prod_bal
                     << "\n";
         std::cout   << "\nEmployed Workers\n"
-                    << "\n\tStarting balance = " << it->start_bal
-                    << "\n\tWages recd = " << it->wages_recd
-                    << "\n\tIncome tax paid = " << it->inc_tax_paid
-                    << "\n\tPurchases = " << it->tot_purchases
-                    << "\n\tSector balance = " << it->house_bal
+                    << "\n\t" << std::setw(20) << "Starting balance: " << std::setw(9) << it->start_bal
+                    << "\n\t" << std::setw(20) << "Wages recd: " << std::setw(9) << it->wages_recd
+                    << "\n\t" << std::setw(20) << "Income tax paid: " << std::setw(9) << it->inc_tax_paid
+                    << "\n\t" << std::setw(20) << "Purchases: " << std::setw(9)  << it->tot_purchases
+                    << "\n\t" << std::setw(20) << "Closing balance: " << std::setw(9)  << it->house_bal
+                    << "\n\t" << std::setw(20) << " " << std::setw(9)  << "---------"
+                    << "\n\t" << std::setw(20) << " " << std::setw(9)  << (it->start_bal + it->wages_recd - it->inc_tax_paid - it->tot_purchases - it->house_bal)
                     << "\n";
         std::cout   << "\nUnemployed Workers\n"
                     << "\n";
         
         int recon = it->gov_bal + it->prod_bal + it->house_bal;
         
-        std::cout   << "Reconciliation\n--------------\n"
-                    << it->gov_bal << " + "
-                    << it->prod_bal << " + "
-                    << it->house_bal << " = "
-                    << recon
+        std::cout   << "Sectors\n"
+                    << "\n\tG: " << std::setw(9) << it->gov_bal
+                    << "\n\tP: " << std::setw(9) << it->prod_bal
+                    << "\n\tH: " << std::setw(9) << it->house_bal
+                    << "\n\t   ========="
+                    << "\n\t   " << std::setw(9) << recon
+                    << "\n\t   ---------"
                     << "\n";
         
-        if (recon == 0) {
-            std::cout << "Reconciles OK\n";
-        } else {
+        if (recon != 0) {
             std::cout << "*** Reconciliation fails ***\n";
         }
     }

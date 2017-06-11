@@ -29,7 +29,7 @@ public:
     
     // This function is declared as virtual to allow derived class
     // to add functionality, e.g. diagnostics
-    virtual void credit(int amount);
+    virtual void credit(int amount, bool taxable = true);
     
     // Every derived class must provide a trigger function,
     // which will be called once per period.
@@ -83,7 +83,7 @@ public:
     bool isEmployed();
 
     // Overrides
-    void credit(int amount);
+    void credit(int amount, bool taxable = true);
     void trigger(int period);
 };
 
@@ -134,7 +134,6 @@ private:
     std::vector<Worker *> employees;
     
     Pool *pool = Pool::Instance();
-    Government *gov;
     
     int std_wage;
     
@@ -177,7 +176,7 @@ public:
     void trigger(int period);
     
     // Overrides base mmethod to give additional functionality
-    void credit(int amount);
+    void credit(int amount, bool taxable = true);
 };
 
 
@@ -223,7 +222,7 @@ protected:
     
     // We override the base method here just so we can extract
     // the balance for statistics.
-    void credit(int amount);
+    void credit(int amount, bool taxable = true);
     
 public:
     

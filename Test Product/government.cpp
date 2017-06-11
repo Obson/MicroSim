@@ -67,7 +67,15 @@ void Government::setStandardWage(int amount)
 //
 void Government::transferTo(Account *recipient, int amount)
 {
-    recipient->credit(amount);
+    // We adopt the convention that receipts from the government are not
+    // taxable. This is probably a rather murky area, given that the
+    // mechanisms by which government injects money into the economy are
+    // unclear and seem to involve financing banks to make more loans.
+    // In the case of the NHS, nationalised industries, the civil service
+    // and the 'armed forces' the mechanism is probably more direct.
+    // Anyway, to go into this would be a distraction so we'll simply
+    // treat it as untaxable payment for services.
+    recipient->credit(amount, false);
     balance -= amount;
     stats->current->gov_exp += amount;
     stats->current->gov_bal = balance;
@@ -77,7 +85,8 @@ void Government::transferTo(Account *recipient, int amount)
 // means that while they offset the deficit we need to keep a separate
 // record as well. However we don't distinguish between income tax, sales
 // tax, and 'pre-tax deductions'. These are all accounted for elsewhere.
-void Government::credit(int amount)
+// Obviously, the government doesn't pay tax.
+void Government::credit(int amount, bool taxable)
 {
     Account::credit(amount);
     stats->current->gov_bal = balance;

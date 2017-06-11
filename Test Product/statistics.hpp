@@ -30,6 +30,7 @@ private:
 
         int tax_recd = 0;               // recd by government
 
+        int f_start_bal = 0;            // firms
         int start_bal = 0;              // workers only
         int dedns_paid = 0;             // paid by firms
         int wages_paid = 0;
