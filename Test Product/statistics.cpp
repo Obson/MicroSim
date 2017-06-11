@@ -39,27 +39,43 @@ void Statistics::report()
     for (auto it : stats) {
         std::cout   << "\nPeriod " << ++period << "\n---------\n";
         std::cout   << "\nGovernment\n"
-                    << "\tExpenditure = " << it->gov_exp
-                    << "\tTax/dedns recd = " << it->tax_recd
-                    << "\tDeficit = " << (it->gov_exp - it->tax_recd)
-                    << "\tSector balance = " << it->gov_bal
+                    << "\n\tExpenditure = " << it->gov_exp
+                    << "\n\tTax/dedns recd = " << it->tax_recd
+                    << "\n\tDeficit = " << (it->gov_exp - it->tax_recd)
+                    << "\n\tSector balance = " << it->gov_bal
                     << "\n";
         std::cout   << "\nFirms\n"
-                    << "\tNumber of employees = " << it->num_employed
-                    << "\tNumber hired = " << it->num_hired
-                    << "\tNumber fired = " << it->num_fired
-                    << "\tWages (after dedns) = " << it->wages_paid
-                    << "\tDeductions = " << it->dedns_paid
-                    << "\tSales = " << it->tot_sales
-                    << "\tSector balance = " << it->prod_bal
+                    << "\n\tNumber of employees = " << it->num_employed
+                    << "\n\tNumber hired = " << it->num_hired
+                    << "\n\tNumber fired = " << it->num_fired
+                    << "\n\tWages (after dedns) = " << it->wages_paid
+                    << "\n\tDeductions = " << it->dedns_paid
+                    << "\n\tSales = " << it->tot_sales
+                    << "\n\tSector balance = " << it->prod_bal
                     << "\n";
         std::cout   << "\nEmployed Workers\n"
-                    << "\tWages recd = " << it->wages_recd
-                    << "\tIncome tax paid = " << it->inc_tax_paid
-                    << "\tPurchases = " << it->tot_purchases
-                    << "\tSector balance = " << it->house_bal
+                    << "\n\tStarting balance = " << it->start_bal
+                    << "\n\tWages recd = " << it->wages_recd
+                    << "\n\tIncome tax paid = " << it->inc_tax_paid
+                    << "\n\tPurchases = " << it->tot_purchases
+                    << "\n\tSector balance = " << it->house_bal
                     << "\n";
         std::cout   << "\nUnemployed Workers\n"
                     << "\n";
+        
+        int recon = it->gov_bal + it->prod_bal + it->house_bal;
+        
+        std::cout   << "Reconciliation\n--------------\n"
+                    << it->gov_bal << " + "
+                    << it->prod_bal << " + "
+                    << it->house_bal << " = "
+                    << recon
+                    << "\n";
+        
+        if (recon == 0) {
+            std::cout << "Reconciles OK\n";
+        } else {
+            std::cout << "*** Reconciliation fails ***\n";
+        }
     }
 }

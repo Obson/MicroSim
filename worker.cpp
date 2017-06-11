@@ -32,8 +32,6 @@ Firm *Worker::getEmployer()
 
 void Worker::trigger(int period)
 {
-    std::cout << "Worker: triggered with balance " << balance << "\n";
-    
     // For initial testing (only) we will assume all workers spend the
     // same proportion of their income (Settings::prop_con %). For the
     // sake of simplicity we will also assume that in any give period
@@ -53,6 +51,8 @@ void Worker::trigger(int period)
 // an extra parameter (bool taxable = true, for example).
 void Worker::credit(int amount)
 {
+    stats->current->start_bal += balance; // this will go wrong if a worker is employed by more than one firm
+    
     Account::credit(amount);
     int tax = (amount * settings->inc_tax) / 100;
     transferTo(gov, tax);

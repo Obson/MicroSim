@@ -30,6 +30,7 @@ private:
 
         int tax_recd = 0;               // recd by government
 
+        int start_bal = 0;              // workers only
         int dedns_paid = 0;             // paid by firms
         int wages_paid = 0;
         
@@ -43,9 +44,7 @@ private:
         
         int gov_bal = 0;
         int gov_exp = 0;
-        
         int prod_bal = 0;
-        
         int house_bal = 0;
     };
     
