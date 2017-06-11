@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "settings.hpp"
+#include "statistics.hpp"
 
 // Account is the base class for every active entity in the system
 // and provides the basic overrideable functionality.

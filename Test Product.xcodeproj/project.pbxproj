@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E286E9141EEBF388008AB44F /* statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E286E9121EEBF388008AB44F /* statistics.cpp */; };
 		E2D9BF4D1EE2AB5B008AE7B8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2D9BF461EE22B1B008AE7B8 /* main.cpp */; };
 		E2D9BF521EE578B8008AE7B8 /* account.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2D9BF501EE578B8008AE7B8 /* account.cpp */; };
 		E2D9BF541EE58DF0008AE7B8 /* worker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2D9BF531EE58DF0008AE7B8 /* worker.cpp */; };
@@ -29,6 +30,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E286E9121EEBF388008AB44F /* statistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = statistics.cpp; sourceTree = "<group>"; };
+		E286E9131EEBF388008AB44F /* statistics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = statistics.hpp; sourceTree = "<group>"; };
 		E2D9BF431EE22B1B008AE7B8 /* Test Product */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Test Product"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2D9BF461EE22B1B008AE7B8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		E2D9BF501EE578B8008AE7B8 /* account.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = account.cpp; path = ../account.cpp; sourceTree = "<group>"; };
@@ -78,6 +81,8 @@
 				E2D9BF511EE578B8008AE7B8 /* account.hpp */,
 				E2D9BF591EE6AD35008AE7B8 /* firm.cpp */,
 				E2D9BF571EE5F101008AE7B8 /* government.cpp */,
+				E286E9121EEBF388008AB44F /* statistics.cpp */,
+				E286E9131EEBF388008AB44F /* statistics.hpp */,
 				E2D9BF551EE5ADDC008AE7B8 /* pool.cpp */,
 				E2D9BF531EE58DF0008AE7B8 /* worker.cpp */,
 			);
@@ -144,6 +149,7 @@
 			files = (
 				E2D9BF4D1EE2AB5B008AE7B8 /* main.cpp in Sources */,
 				E2D9BF521EE578B8008AE7B8 /* account.cpp in Sources */,
+				E286E9141EEBF388008AB44F /* statistics.cpp in Sources */,
 				E2D9BF541EE58DF0008AE7B8 /* worker.cpp in Sources */,
 				E2D9BF581EE5F101008AE7B8 /* government.cpp in Sources */,
 				E2D9BF561EE5ADDC008AE7B8 /* pool.cpp in Sources */,
@@ -281,6 +287,7 @@
 				E2D9BF4C1EE22B1B008AE7B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
