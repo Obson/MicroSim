@@ -16,10 +16,6 @@ Firm::Firm(int standard_wage)
 
 void Firm::trigger(int period)
 {
-    std::cout   << "Firm: triggered with balance "
-                << balance
-                << "\n";
-    
     // Firm must pay all its employees, hiring and firing as
     // necessary, and then trigger each employee in the resulting
     // list.
@@ -30,23 +26,22 @@ void Firm::trigger(int period)
     {
         if (it->isEmployed())   // check that we haven't fired this employee
         {
+            stats->current->num_employed += 1;
+            
             int wage = it->getWage();
             int dedns = (wage * settings->dedns) / 100;
-            std::cout   << "Firm: transferring wage "
-                        << (wage - dedns)
-                        << " to employee and dedns "
-                        << dedns
-                        << " to government\n";
             if (wage <= balance)
             {
                 transferTo(it, wage - dedns);
                 transferTo(Government::Instance(), dedns);
                 committed += wage;
-                std::cout << "Firm: new balance is " << balance << "\n";
+                stats->current->wages_paid += wage - dedns;
+                stats->current->dedns_paid += dedns;
             }
             else
             {
-                std::cout << "Firm: insufficient funds to pay employee -- firing\n";
+                // std::cout << "Firm: insufficient funds to pay employee -- firing\n";
+                stats->current->num_fired += 1;
                 pool->fire(it);
             }
         }
@@ -62,29 +57,33 @@ void Firm::trigger(int period)
         }
     }
 
+    // IMPORTANT
+    // This has to be recorded after employees are triggered in
+    // order to include the effect of sales. This doesn't allow for
+    // sales to unemployed workers as they are triggered by the Pool.
+    // To get around that problem we treat unemployed workers as a
+    // separate sector. We should perhaps trigger it first so that
+    // sales can be properly accounted for.
+    
+    stats->current->prod_bal += balance;
+    
     // If we have funds left over, hire some more employees
     
     assert(std_wage>0);
 
     int num_hires = (((balance * settings->prop_con) / 100) - committed) / std_wage;
-    if (num_hires > 0)
-    {
-        std::cout   << "Firm: hiring "
-                    << num_hires
-                    << " new employees\n";
-        
+    if (num_hires > 0) {
         for (int i = 0; i < num_hires; i++) {
             employees.push_back(pool->hire(std_wage, this));
         }
+        stats->current->num_hired += num_hires;
     }
 }
 
 void Firm::credit(int amount)
 {
     Account::credit(amount);
-    std::cout   << "Firm credited, balance: "
-                << balance
-                << "\n";
+    stats->current->tot_sales += amount;
 }
 
 Firm::~Firm()

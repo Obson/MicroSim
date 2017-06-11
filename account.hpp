@@ -34,10 +34,12 @@ public:
     // Every derived class must provide a trigger function,
     // which will be called once per period.
     virtual void trigger(int period) = 0;
-
+    
 protected:
     
     Settings *settings;
+    Statistics *stats;
+
     int balance;
 
     bool transferTo(Account *recipient, int amount);
@@ -206,6 +208,8 @@ private:
     // to determine it algorithmically in some way.
     static int exp, std_wage;
     
+    // Statistics *stats; // transferred to base class
+    
 protected:
     
     Government();
@@ -216,6 +220,10 @@ protected:
     // the government, which creates money precisely by
     // creating transfers that leave a negative balance.
     void transferTo(Account *recipient, int amount);
+    
+    // We override the base method here just so we can extract
+    // the balance for statistics.
+    void credit(int amount);
     
 public:
     

@@ -41,8 +41,11 @@ void Worker::trigger(int period)
     // selected firm. As long as there are a lot of workers this
     // should be equivalent to each worker choosing a random selection
     // of firms.
+    int purch = (balance * settings->prop_con) / 100;
+    transferTo(gov->getRandomFirm(), purch);
+    stats->current->tot_purchases += purch;
     
-    transferTo(gov->getRandomFirm(), (balance * settings->prop_con) / 100);
+    stats->current->house_bal += balance;
 }
 
 // Note that we assume the only payments to Workers are wages, so we always
@@ -51,7 +54,11 @@ void Worker::trigger(int period)
 void Worker::credit(int amount)
 {
     Account::credit(amount);
-    transferTo(gov, (amount * settings->inc_tax) / 100);
+    int tax = (amount * settings->inc_tax) / 100;
+    transferTo(gov, tax);
+    
+    stats->current->wages_recd += amount;
+    stats->current->inc_tax_paid += tax;
 }
 
 void Worker::setEmployer(Firm *emp)

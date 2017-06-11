@@ -28,20 +28,28 @@ private:
         int num_rehired = 0;
         int num_unemployed = 0;
 
-        int tot_dedns = 0;
-        int tot_inc_tax = 0;
-        int tot_sales_tax = 0;
+        int tax_recd = 0;               // recd by government
+
+        int dedns_paid = 0;             // paid by firms
+        int wages_paid = 0;
+        
+        int inc_tax_paid = 0;
+        int sales_tax_paid = 0;
+        
+        int wages_recd = 0;
         
         int tot_sales = 0;
+        int tot_purchases = 0;
         
         int gov_bal = 0;
+        int gov_exp = 0;
+        
         int prod_bal = 0;
+        
         int house_bal = 0;
     };
     
     std::vector<fields*> stats;
-    
-    struct fields *current;
     
 protected:
     
@@ -50,6 +58,7 @@ protected:
 public:
     
     static Statistics *Instance();
+    struct fields *current;
     void next(int period);
     void report();
 };

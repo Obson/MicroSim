@@ -10,6 +10,7 @@
 
 Account::Account()
 {
+    stats = Statistics::Instance();
     settings = Settings::Instance();
     balance = 0;
 }

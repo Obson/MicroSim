@@ -33,22 +33,18 @@ Government::Government()
 
 void Government::trigger(int period)
 {
-    std::cout << "Government triggered\n";
-    
     // TO DO
     // We need to create something for the government to spend money on.
     // For now we'll simply send it to the business arm of the government,
     // which in effect stands for nationalised industries.
-    //
+
+    
     // IMPORTANT
-    // At present the only firm in existence is the government-owned firm
-    // (gov). If we keep on spending money into this firm it will keep
-    // expanding. This will provide us with a means of expanding the economy,
-    // but as we don't want it to be a single-industry economy we won't spend
-    // any more on it after the zeroth period. This will change eventually.
+    // At present this is unconditional, but we need to allow for either
+    // automatic (rule-based) or manual changes throughout a run as
+    // government expenditure needs to be exogenous.
     //
     if (true /*period < 2*/) {
-        std::cout << "Government spending " << exp << " units\n";
         transferTo(gov, exp);
     }
     
@@ -73,8 +69,19 @@ void Government::transferTo(Account *recipient, int amount)
 {
     recipient->credit(amount);
     balance -= amount;
-    
-    std::cout << "Government balance is now " << balance << "\n";
+    stats->current->gov_exp += amount;
+    stats->current->gov_bal = balance;
+}
+
+// All credits to the Government are (at present) regarded as tax. This
+// means that while they offset the deficit we need to keep a separate
+// record as well. However we don't distinguish between income tax, sales
+// tax, and 'pre-tax deductions'. These are all accounted for elsewhere.
+void Government::credit(int amount)
+{
+    Account::credit(amount);
+    stats->current->gov_bal = balance;
+    stats->current->tax_recd += amount;
 }
 
 Government::~Government()
