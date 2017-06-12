@@ -136,6 +136,7 @@ private:
     Pool *pool = Pool::Instance();
     
     int std_wage;
+    int amount_granted = 0;
     
 protected:
     
@@ -177,6 +178,8 @@ public:
     
     // Overrides base mmethod to give additional functionality
     void credit(int amount, bool taxable = true);
+    
+    void grant(int amount);
 };
 
 

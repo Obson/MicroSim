@@ -43,9 +43,15 @@ void Government::trigger(int period)
     // At present this is unconditional, but we need to allow for either
     // automatic (rule-based) or manual changes throughout a run as
     // government expenditure needs to be exogenous.
+    //   Note also that we use a special 'grant' method to transfer
+    // government funds, to avoid disrupting the standard payment
+    // mechanism. This also ensures that no tax will be paid by recipients
     //
     if (true /*period < 2*/) {
-        transferTo(gov, exp);
+        gov->grant(exp);
+        balance -= exp;
+        stats->current->gov_exp += exp;
+        stats->current->gov_bal = balance;
     }
     
     gov->trigger(period);

@@ -40,16 +40,18 @@ void Statistics::report()
     for (auto it : stats) {
         std::cout   << "\nPeriod " << ++period << "\n---------\n";
         std::cout   << "\nGovernment\n"
-                    << "\n\tExpenditure = " << it->gov_exp
-                    << "\n\tTax/dedns recd = " << it->tax_recd
-                    << "\n\tDeficit = " << (it->gov_exp - it->tax_recd)
-                    << "\n\tSector balance = " << it->gov_bal
+                    << "\n\t" << std::setw(20) << "Expenditure: " << std::setw(9) << it->gov_exp
+                    << "\n\t" << std::setw(20) << "Tax/dedns recd: " << std::setw(9) << it->tax_recd
+                    << "\n\t" << std::setw(20) << " " << std::setw(9)  << "---------"
+                    << "\n\t" << std::setw(20) << "Deficit: " << std::setw(9) << (it->gov_exp - it->tax_recd) << "\n"
+                    << "\n\t" << std::setw(20) << "Sector balance: " << std::setw(9) << it->gov_bal
                     << "\n";
         std::cout   << "\nFirms\n"
-                    << "\n\tNumber of employees = " << it->num_employed
-                    << "\n\tNumber hired = " << it->num_hired
-                    << "\n\tNumber fired = " << it->num_fired << "\n"
+                    << "\n\t" << std::setw(20) << "Employees: " << std::setw(9) << it->num_employed
+                    << "\n\t" << std::setw(20) << "Hired this week: " << std::setw(9) << it->num_hired
+                    << "\n\t" << std::setw(20) << "Fired this week: " << std::setw(9) << it->num_fired << "\n"
                     << "\n\t" << std::setw(20) << "Starting balance: " << std::setw(9) << it->f_start_bal
+                    << "\n\t" << std::setw(20) << "Governmnt grant: " << std::setw(9) << it->gov_grant
                     << "\n\t" << std::setw(20) << "Wages paid: " << std::setw(9) << it->wages_paid
                     << "\n\t" << std::setw(20) << "Dedns paid: " << std::setw(9) << it->dedns_paid
                     << "\n\t" << std::setw(20) << "Sales: " << std::setw(9) << it->tot_sales
@@ -71,12 +73,12 @@ void Statistics::report()
         int recon = it->gov_bal + it->prod_bal + it->house_bal;
         
         std::cout   << "Sectors\n"
-                    << "\n\tG: " << std::setw(9) << it->gov_bal
-                    << "\n\tP: " << std::setw(9) << it->prod_bal
-                    << "\n\tH: " << std::setw(9) << it->house_bal
-                    << "\n\t   ========="
-                    << "\n\t   " << std::setw(9) << recon
-                    << "\n\t   ---------"
+                    << "\n\t" << std::setw(20) << "Government: " << std::setw(9) << it->gov_bal
+                    << "\n\t" << std::setw(20) << "Producers: " << std::setw(9) << it->prod_bal
+                    << "\n\t" << std::setw(20) << "Households: " << std::setw(9) << it->house_bal
+                    << "\n\t" << std::setw(20) << "  " << std::setw(9) << "---------"
+                    << "\n\t" << std::setw(20) << "  " << std::setw(9) << recon
+                    << "\n\t" << std::setw(20) << "  " << std::setw(9) << "---------"
                     << "\n";
         
         if (recon != 0) {

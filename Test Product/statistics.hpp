@@ -38,6 +38,7 @@ private:
         int inc_tax_paid = 0;
         int sales_tax_paid = 0;
         
+        int gov_grant = 0;
         int wages_recd = 0;
         
         int tot_sales = 0;

@@ -18,9 +18,12 @@ void Firm::trigger(int period)
 {
     // Firm must pay all its employees, hiring and firing as
     // necessary, and then trigger each employee in the resulting
-    // list.
+    // list. But first, check for any waiting governmwnt grant.
     
     stats->current->f_start_bal += balance;
+    balance += amount_granted;
+    stats->current->gov_grant += amount_granted;
+    amount_granted = 0;
     
     // Pay existing employees and calculate the total committed wage bill
     int committed = 0;
@@ -93,6 +96,11 @@ void Firm::credit(int amount, bool taxable)
     }
     
     stats->current->tot_sales += amount;    // gross (incl sales tax)
+}
+
+void Firm::grant(int amount)
+{
+    amount_granted = amount;
 }
 
 Firm::~Firm()
