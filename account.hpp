@@ -41,6 +41,7 @@ protected:
     Statistics *stats;
 
     int balance;
+    int last_triggered = -1;
 
     bool transferTo(Account *recipient, int amount);
     

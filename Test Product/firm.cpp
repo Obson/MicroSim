@@ -69,13 +69,16 @@ void Firm::trigger(int period)
     // To get around that problem we treat unemployed workers as a
     // separate sector. We should perhaps trigger it first so that
     // sales can be properly accounted for.
-    
+
+
+    // Trigger any employees in the pool that have not yet been
+    // triggered as they may may some purchases even if currently
+    // unemployed. This must be done before we get the final balance.
+    pool->trigger(period);
     stats->current->prod_bal += balance;
     
     // If we have funds left over, hire some more employees
-    
     assert(std_wage>0);
-
     int num_hires = (((balance * settings->prop_con) / 100) - committed) / std_wage;
     if (num_hires > 0) {
         for (int i = 0; i < num_hires; i++) {

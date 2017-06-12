@@ -47,7 +47,7 @@ void Government::trigger(int period)
     // government funds, to avoid disrupting the standard payment
     // mechanism. This also ensures that no tax will be paid by recipients
     //
-    if (true /*period < 2*/) {
+    if (/*true*/ period < 2) {
         gov->grant(exp);
         balance -= exp;
         stats->current->gov_exp += exp;

@@ -6,6 +6,13 @@
 //  Copyright © 2017 David Brown. All rights reserved.
 //
 
+// ----------------------------------------------------------------------------
+// TODO
+// We should distinguish between employed and unemployed workers when updating
+// the statistics record.
+// ----------------------------------------------------------------------------
+
+
 #include "account.hpp"
 
 Worker::Worker(int wage, Firm *emp)
@@ -32,18 +39,23 @@ Firm *Worker::getEmployer()
 
 void Worker::trigger(int period)
 {
-    // For initial testing (only) we will assume all workers spend the
-    // same proportion of their income (Settings::prop_con %). For the
-    // sake of simplicity we will also assume that in any give period
-    // any given worker spends his/her funds through a single randomly
-    // selected firm. As long as there are a lot of workers this
-    // should be equivalent to each worker choosing a random selection
-    // of firms.
-    int purch = (balance * settings->prop_con) / 100;
-    transferTo(gov->getRandomFirm(), purch);
-    stats->current->tot_purchases += purch;
-    
-    stats->current->house_bal += balance;
+    if (period > last_triggered)
+    {
+        last_triggered = period;
+        
+        // For initial testing (only) we will assume all workers spend the
+        // same proportion of their income (Settings::prop_con %). For the
+        // sake of simplicity we will also assume that in any given period
+        // any given worker spends his/her funds through a single randomly
+        // selected firm. As long as there are a lot of workers this
+        // should be equivalent to each worker choosing a random selection
+        // of firms.
+        int purch = (balance * settings->prop_con) / 100;
+        transferTo(gov->getRandomFirm(), purch);
+        stats->current->tot_purchases += purch;
+        
+        stats->current->house_bal += balance;
+    }
 }
 
 // Note that we assume the only payments to Workers are wages, so we always

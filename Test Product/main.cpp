@@ -80,7 +80,7 @@ int main(int argc, const char * argv[]) {
     {
         //std::cout << "\nPeriod " << period << "\n";
         gov->trigger(period);
-        pool->trigger(period);
+        //pool->trigger(period);
         stats->next(period);
     }
     
