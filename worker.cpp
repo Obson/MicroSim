@@ -42,7 +42,14 @@ void Worker::trigger(int period)
     if (period > last_triggered)
     {
         last_triggered = period;
-        
+
+        if (!isEmployed()) {
+            // We need to do this here because unemployed workers are
+            // not normally credited (may change for unemployment benefit
+            // basic income, whatever...)
+            stats->current->w_start_bal_unemp += balance;
+        }
+
         // For initial testing (only) we will assume all workers spend the
         // same proportion of their income (Settings::prop_con %). For the
         // sake of simplicity we will also assume that in any given period
@@ -52,9 +59,17 @@ void Worker::trigger(int period)
         // of firms.
         int purch = (balance * settings->prop_con) / 100;
         transferTo(gov->getRandomFirm(), purch);
-        stats->current->tot_purchases += purch;
+        if (isEmployed()) {
+            stats->current->tot_purchases += purch;
+        } else {
+            stats->current->tot_purch_unemp += purch;
+        }
         
-        stats->current->house_bal += balance;
+        if (isEmployed()) {
+            stats->current->house_bal += balance;
+        } else {
+            stats->current->w_end_bal_unemp += balance;
+        }
     }
 }
 
@@ -63,15 +78,31 @@ void Worker::trigger(int period)
 // an extra parameter (bool taxable = true, for example).
 void Worker::credit(int amount, bool taxable)
 {
-    stats->current->start_bal += balance; // this will go wrong if a worker is employed by more than one firm
+    // TO DO:
+    // We assume a worker only receives one credit (i.e. wages)
+    // per period. This will break down if a worker is paid by
+    // more than one employer, so we need to check not just whether a
+    // worker is employed but whether employed by the employer that is
+    // doing the triggering. At present we can't do this because the
+    // employer is not know, so we should pass the employer's id as an
+    // argument...
+    if (isEmployed()) {
+        stats->current->start_bal += balance;
+    }
     
     Account::credit(amount, taxable);
     if (taxable) {
         int tax = (amount * settings->inc_tax) / 100;
         transferTo(gov, tax);
-        stats->current->inc_tax_paid += tax;
+        if (isEmployed()) {
+            stats->current->inc_tax_paid += tax;
+        } else {
+            // This shouldn't normally happen
+            stats->current->inc_tax_paid_unemp += tax;
+        }
     }
     
+    // TO DO: We need to flag an alternative source of income for unemployed workers
     stats->current->wages_recd += amount;
 }
 

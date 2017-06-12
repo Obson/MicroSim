@@ -31,18 +31,27 @@ private:
         int tax_recd = 0;               // recd by government
 
         int f_start_bal = 0;            // firms
+        
         int start_bal = 0;              // workers only
+        
         int dedns_paid = 0;             // paid by firms
         int wages_paid = 0;
         
+        int w_start_bal_unemp = 0;        int w_end_bal_unemp = 0;
+        
         int inc_tax_paid = 0;
         int sales_tax_paid = 0;
+        
+        int inc_tax_paid_unemp = 0;
+        int sales_tax_paid_unemp = 0;
         
         int gov_grant = 0;
         int wages_recd = 0;
         
         int tot_sales = 0;
         int tot_purchases = 0;
+        
+        int tot_purch_unemp = 0;
         
         int gov_bal = 0;
         int gov_exp = 0;

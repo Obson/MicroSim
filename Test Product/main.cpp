@@ -63,7 +63,7 @@ int main(int argc, const char * argv[]) {
     Pool::setCount(count);
     Pool *pool = Pool::Instance();
 
-    // Create the Government. Tis will automatically set up a single firm
+    // Create the Government. This will automatically set up a single firm
     // representing nationalised industries, civil service, and any other
     // government owned business. Note that the Government itself is not
     // a business and taxation is not a payment for goods or services.
@@ -71,14 +71,8 @@ int main(int argc, const char * argv[]) {
     Government::setStandardWage(std_wage);
     Government *gov = Government::Instance();
 
-    // We don't need to keep a separate list of Accounts as they can be
-    // triggered by their owners. We need to ensure that they are triggered
-    // in the order: Government, Firms, Workers, Pool.available, so
-    // Government and Pool are the only ones that need to be triggered
-    // externally. The others can be cascaded.
     for (int period = 1; period <= iters; period++)
     {
-        //std::cout << "\nPeriod " << period << "\n";
         gov->trigger(period);
         //pool->trigger(period);
         stats->next(period);
@@ -86,7 +80,6 @@ int main(int argc, const char * argv[]) {
     
     stats->report();
 
-    //std::cout << "\nDone -- clearing memory\n\n";
     delete pool;
     return 0;
 }

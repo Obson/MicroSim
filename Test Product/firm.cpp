@@ -53,28 +53,22 @@ void Firm::trigger(int period)
     }
 
     // Trigger all the employees (note that we pay them all before
-    // we trigger any of them, and we only trigger them if we still
-    // employ them -- otherwise it's the Pool's responsibility.
-    for (auto it : employees)
-    {
-        if (it->isEmployed()) {
-            it->trigger(period);
-        }
+    // we trigger any of them. Note that we trigger them even if we
+    // no longer employ them, relying on the check on period to
+    // prevent double counting
+    for (auto it : employees) {
+        it->trigger(period);
     }
 
     // IMPORTANT
     // This has to be recorded after employees are triggered in
-    // order to include the effect of sales. This doesn't allow for
-    // sales to unemployed workers as they are triggered by the Pool.
-    // To get around that problem we treat unemployed workers as a
-    // separate sector. We should perhaps trigger it first so that
-    // sales can be properly accounted for.
-
+    // order to include the effect of sales.
 
     // Trigger any employees in the pool that have not yet been
     // triggered as they may may some purchases even if currently
     // unemployed. This must be done before we get the final balance.
-    pool->trigger(period);
+    // pool->trigger(period);
+
     stats->current->prod_bal += balance;
     
     // If we have funds left over, hire some more employees
