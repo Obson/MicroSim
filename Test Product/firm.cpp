@@ -52,8 +52,8 @@ void Firm::trigger(int period)
         }
     }
 
-    // Trigger all the employees (note that we pay them all before
-    // we trigger any of them. Note that we trigger them even if we
+    // Trigger all the employees. Note that we pay them all before
+    // we trigger any of them and that we trigger them even if we
     // no longer employ them, relying on the check on period to
     // prevent double counting
     for (auto it : employees) {

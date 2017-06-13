@@ -14,8 +14,7 @@ int Government::std_wage = 500;
 
 Government *Government::Instance()
 {
-    if (_instance == nullptr)
-    {
+    if (_instance == nullptr) {
         _instance = new Government();
     }
     return _instance;
@@ -47,7 +46,7 @@ void Government::trigger(int period)
     // government funds, to avoid disrupting the standard payment
     // mechanism. This also ensures that no tax will be paid by recipients
     //
-    if (/*true*/ period < 2) {
+    if (true /*period < 2*/) {
         gov->grant(exp);
         balance -= exp;
         stats->current->gov_exp += exp;
@@ -101,8 +100,7 @@ void Government::credit(int amount, bool taxable)
 
 Government::~Government()
 {
-    while (!firms.empty())
-    {
+    while (!firms.empty()) {
         delete firms.back();
         firms.pop_back();
     }
