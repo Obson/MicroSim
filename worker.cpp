@@ -32,6 +32,11 @@ bool Worker::isEmployed()
     return (employer != nullptr);
 }
 
+bool Worker::isEmployedBy(Account *emp)
+{
+    return (emp != nullptr && emp == employer);
+}
+
 Firm *Worker::getEmployer()
 {
     return employer;
@@ -73,20 +78,17 @@ void Worker::trigger(int period)
     }
 }
 
-// Note that we assume the only payments to Workers are wages, so we always
-// pay income tax. It might be a good idea to make this optional by adding
-// an extra parameter (bool taxable = true, for example).
-void Worker::credit(int amount, bool taxable)
+void Worker::credit(int amount, bool taxable, Account *creditor)
 {
     // TO DO:
     // We assume a worker only receives one credit (i.e. wages)
     // per period. This will break down if a worker is paid by
-    // more than one employer, so we need to check not just whether a
-    // worker is employed but whether employed by the employer that is
-    // doing the triggering. At present we can't do this because the
-    // employer is not know, so we should pass the employer's id as an
-    // argument...
-    if (isEmployed()) {
+    // more than one employer (or receives benefits), so we need to
+    // check not just whether a worker is employed but whether
+    // employed by the employer that is doing the triggering. At
+    // present we can't do this because the employer is not known,
+    // so we should pass the employer's id as an argument...
+    if (isEmployedBy(creditor)) {
         stats->current->start_bal += balance;
     }
     
@@ -94,7 +96,13 @@ void Worker::credit(int amount, bool taxable)
     if (taxable) {
         int tax = (amount * settings->inc_tax) / 100;
         transferTo(gov, tax);
-        if (isEmployed()) {
+        
+        // Here we assume that if the creditor is our employer then
+        // we should pay income tax. If the creditor isn't our employer
+        // but we're receiving the payment in out capacity as Worker
+        // then it's probably 'benefits'. This needs to be sorted out
+        // properly in due course...
+        if (isEmployedBy(creditor)) {
             stats->current->inc_tax_paid += tax;
         } else {
             // This shouldn't normally happen
@@ -102,7 +110,8 @@ void Worker::credit(int amount, bool taxable)
         }
     }
     
-    // TO DO: We need to flag an alternative source of income for unemployed workers
+    // TO DO: We need to flag an alternative source of income for
+    // unemployed workers
     stats->current->wages_recd += amount;
 }
 

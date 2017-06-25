@@ -29,7 +29,7 @@ public:
     
     // This function is declared as virtual to allow derived class
     // to add functionality, e.g. diagnostics
-    virtual void credit(int amount, bool taxable = true);
+    virtual void credit(int amount, bool taxable = true, Account *creditor = nullptr);
     
     // Every derived class must provide a trigger function,
     // which will be called once per period.
@@ -82,9 +82,10 @@ public:
     int getWage();
     Firm *getEmployer();
     bool isEmployed();
+    bool isEmployedBy(Account *emp);
 
     // Overrides
-    void credit(int amount, bool taxable = true);
+    void credit(int amount, bool taxable = true, Account *creditor = nullptr);
     void trigger(int period);
 };
 
@@ -178,7 +179,7 @@ public:
     void trigger(int period);
     
     // Overrides base mmethod to give additional functionality
-    void credit(int amount, bool taxable = true);
+    void credit(int amount, bool taxable = true, Account *creditor = nullptr);
     
     void grant(int amount);
 };
@@ -226,7 +227,7 @@ protected:
     
     // We override the base method here just so we can extract
     // the balance for statistics.
-    void credit(int amount, bool taxable = true);
+    void credit(int amount, bool taxable = true, Account *creditor = nullptr);
     
 public:
     

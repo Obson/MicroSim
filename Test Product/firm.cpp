@@ -16,20 +16,19 @@ Firm::Firm(int standard_wage)
 
 void Firm::trigger(int period)
 {
-    // Firm must pay all its employees, hiring and firing as
-    // necessary, and then trigger each employee in the resulting
-    // list. But first, check for any waiting governmwnt grant.
-    
+    // Record starting balance
     stats->current->f_start_bal += balance;
     balance += amount_granted;
+
+    // Check for any waiting government grant.
     stats->current->gov_grant += amount_granted;
     amount_granted = 0;
     
-    // Pay existing employees and calculate the total committed wage bill
+    // Pay existing employees, calculating the committed wage bill
     int committed = 0;
     for (auto it : employees)
     {
-        if (it->isEmployed())   // check that we haven't fired this employee
+        if (it->isEmployedBy(this))
         {
             stats->current->num_employed += 1;
             
@@ -45,34 +44,23 @@ void Firm::trigger(int period)
             }
             else
             {
-                // std::cout << "Firm: insufficient funds to pay employee -- firing\n";
                 stats->current->num_fired += 1;
                 pool->fire(it);
             }
         }
     }
 
-    // Trigger all the employees. Note that we pay them all before
-    // we trigger any of them and that we trigger them even if we
-    // no longer employ them, relying on the check on period to
-    // prevent double counting
+    // Trigger all the employees -- even if we no longer employ them,
+    // relying on checks by the emloyee to prevent double counting
     for (auto it : employees) {
         it->trigger(period);
     }
 
-    // IMPORTANT
-    // This has to be recorded after employees are triggered in
-    // order to include the effect of sales.
-
-    // Trigger any employees in the pool that have not yet been
-    // triggered as they may may some purchases even if currently
-    // unemployed. This must be done before we get the final balance.
-    // pool->trigger(period);
-
+    // Closing balance has to be recorded after employees have been
+    // triggered in order to include the effect of sales.
     stats->current->prod_bal += balance;
     
     // If we have funds left over, hire some more employees
-    assert(std_wage>0);
     int num_hires = (((balance * settings->prop_con) / 100) - committed) / std_wage;
     if (num_hires > 0) {
         for (int i = 0; i < num_hires; i++) {
@@ -82,17 +70,23 @@ void Firm::trigger(int period)
     }
 }
 
-void Firm::credit(int amount, bool taxable)
+void Firm::credit(int amount, bool taxable, Account *creditor)
 {
+    // Base class credits account but doesn't pay tax. We
+    // assume seller, not buyer, is responsible for paying
+    // sales tax. Payments to a Firm are of course (normally,
+    // at least) for purchases and therefore subject to sales
+    // tax.
     Account::credit(amount, taxable);
-    
+
     if (taxable) {
         int tax = (amount * settings->sales_tax) / 100;
         transferTo(Government::Instance(), tax);
         stats->current->sales_tax_paid += tax;
     }
     
-    stats->current->tot_sales += amount;    // gross (incl sales tax)
+    // Gross amount is recorded in stats
+    stats->current->tot_sales += amount;
 }
 
 void Firm::grant(int amount)
@@ -103,8 +97,8 @@ void Firm::grant(int amount)
 Firm::~Firm()
 {
     // We should free the space taken up by any Workers in the employees
-    // vector. Where they have been fired we do not free the space as this
-    // will be done by Pool when tidying up its 'available' vector (check this!)
+    // vector. But where they have been fired we do not free the space
+    // we leave this to be done by Pool.
     for (auto it : employees) {
         delete it;
         employees.pop_back();

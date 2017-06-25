@@ -33,8 +33,8 @@ void Pool::setCount(int count)
 
 Pool::~Pool()
 {
-    while (!available.empty())
-    {
+    // Free up memory
+    while (!available.empty()) {
         delete available.back();
         available.pop_back();
     }
@@ -50,24 +50,25 @@ Worker *Pool::hire(int wage, Firm *emp)
     
     Worker *w;
     
-    // Workers in the available list have already established wage
+    // Workers in the available list have already-established wage
     // levels, so they may or may not match the current request.
     // However, for the time being we will assume they are in fact
     // interchangeable and simply adjust their wage levels to match
     // the offer. This needs to be made much more sophisticated in
     // order to reflect probable real-world behabiour.
     
-    if (!available.empty())
-    {
-        std::cout << "Pool: re-hiring fired worker\n";
+    // Re-hire existing worker if possible; otherwise get a new
+    // one. This is something that could be refined to take into
+    // account the population size, previous wage of existing
+    // workers, etc.
+    if (!available.empty()) {
+        // Re-hire fired worker
         w = available.back();
         w->setWage(wage);
         w->setEmployer(emp);
         available.pop_back();
-    }
-    else
-    {
-        //std::cout << "Pool: hiring new worker\n";
+    } else {
+        // Hire new worker
         w = new Worker(wage, emp);
     }
     
@@ -82,8 +83,7 @@ void Pool::fire(Worker *w)
 
 void Pool::trigger(int period)
 {
-    for (auto it : available)
-    {
+    for (auto it : available) {
         it->trigger(period);
     }
 }

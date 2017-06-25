@@ -32,7 +32,7 @@ bool Account::transferTo(Account *recipient, int amount)
     }
 }
 
-void Account::credit(int amount, bool taxable)
+void Account::credit(int amount, bool taxable, Account *creditor)
 {
     balance += amount;
 }

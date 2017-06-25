@@ -91,7 +91,7 @@ void Government::transferTo(Account *recipient, int amount)
 // record as well. However we don't distinguish between income tax, sales
 // tax, and 'pre-tax deductions'. These are all accounted for elsewhere.
 // Obviously, the government doesn't pay tax.
-void Government::credit(int amount, bool taxable)
+void Government::credit(int amount, bool taxable, Account *creditor)
 {
     Account::credit(amount);
     stats->current->gov_bal = balance;
