@@ -63,7 +63,7 @@ void Worker::trigger(int period)
         // should be equivalent to each worker choosing a random selection
         // of firms.
         int purch = (balance * settings->prop_con) / 100;
-        transferTo(gov->getRandomFirm(), purch);
+        transferTo(gov->getRandomFirm(), purch, this, true /* liable for sales tax */);
         if (isEmployed()) {
             stats->current->tot_purchases += purch;
         } else {
@@ -88,14 +88,16 @@ void Worker::credit(int amount, bool taxable, Account *creditor)
     // employed by the employer that is doing the triggering. At
     // present we can't do this because the employer is not known,
     // so we should pass the employer's id as an argument...
+    /*
     if (isEmployedBy(creditor)) {
         stats->current->start_bal += balance;
     }
+    */
     
     Account::credit(amount, taxable);
     if (taxable) {
         int tax = (amount * settings->inc_tax) / 100;
-        transferTo(gov, tax);
+        transferTo(gov, tax, this);
         
         // Here we assume that if the creditor is our employer then
         // we should pay income tax. If the creditor isn't our employer

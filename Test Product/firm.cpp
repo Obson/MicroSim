@@ -16,11 +16,11 @@ Firm::Firm(int standard_wage)
 
 void Firm::trigger(int period)
 {
-    // Record starting balance
+    // Accoumulate firms' starting balance
     stats->current->f_start_bal += balance;
-    balance += amount_granted;
 
     // Check for any waiting government grant.
+    balance += amount_granted;
     stats->current->gov_grant += amount_granted;
     amount_granted = 0;
     
@@ -36,8 +36,16 @@ void Firm::trigger(int period)
             int dedns = (wage * settings->dedns) / 100;
             if (wage <= balance)
             {
-                transferTo(it, wage - dedns);
-                transferTo(Government::Instance(), dedns);
+                // transferTo() needs to pass taxable and creditor arguments
+                // so they can be picked up and used by credit(), otherwise
+                // closing balance isn't updated.
+                transferTo(it, wage - dedns, this, true);
+                
+                // This has the incidental benefit of notifying the government
+                // of who has paid (e.g.) taxes. Clearly Government isn't lable
+                // for tax, but this is handled by the default value (false),
+                // and, redundantly, by the override in the Government class.
+                transferTo(Government::Instance(), dedns, this);
                 committed += wage;
                 stats->current->wages_paid += (wage - dedns);
                 stats->current->dedns_paid += dedns;
@@ -81,7 +89,7 @@ void Firm::credit(int amount, bool taxable, Account *creditor)
 
     if (taxable) {
         int tax = (amount * settings->sales_tax) / 100;
-        transferTo(Government::Instance(), tax);
+        transferTo(Government::Instance(), tax, this);
         stats->current->sales_tax_paid += tax;
     }
     

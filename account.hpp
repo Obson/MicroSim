@@ -43,7 +43,7 @@ protected:
     int balance;
     int last_triggered = -1;
 
-    bool transferTo(Account *recipient, int amount);
+    bool transferTo(Account *recipient, int amount, Account *creditor, bool taxable = false);
     
 };
 
@@ -223,7 +223,7 @@ protected:
     // negative balance. This restriction doesn't apply to
     // the government, which creates money precisely by
     // creating transfers that leave a negative balance.
-    void transferTo(Account *recipient, int amount);
+    void transferTo(Account *recipient, int amount, Account *creditor, bool taxable = false);
     
     // We override the base method here just so we can extract
     // the balance for statistics.

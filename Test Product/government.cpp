@@ -70,7 +70,7 @@ void Government::setStandardWage(int amount)
 //
 // This function overrides Account::transferTo to allow a negative balance.
 //
-void Government::transferTo(Account *recipient, int amount)
+void Government::transferTo(Account *recipient, int amount, Account *creditor, bool taxable)
 {
     // We adopt the convention that receipts from the government are not
     // taxable. This is probably a rather murky area, given that the
