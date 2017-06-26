@@ -7,6 +7,8 @@
 //
 
 #include <iomanip>
+#include <iostream>
+#include <fstream>
 #include "statistics.hpp"
 
 Statistics *Statistics::_instance = nullptr;
@@ -32,13 +34,51 @@ void Statistics::next(int period)
     *current = {};
 }
 
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+
 void Statistics::report()
 {
+    // Kludge to get the directory containing the output file
+    char the_path[256];
+    getcwd(the_path, 255);
+    
+    std::ofstream myfile;
+    std::string fname("microsim.csv");
+    myfile.open(fname);
+    
+    if (myfile.is_open()) {
+        std::cout << "Output file is " << the_path << "/" << fname << "\n";
+        //myfile << "This is a test\n";
+        //myfile.flush();
+        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Deficit\",\"Wages\",\"Consumption\"\n";
+    } else {
+        std::cout << "Cannot open output file\n";
+    }
+
     std::cout << "\nSTATISTICS LOG\n";
 
     int period = 0;
     for (auto it : stats) {
+
+        if (myfile.is_open()) {
+            myfile  << period
+            << "," << it->gov_bal
+            << "," << it->prod_bal
+            << "," << it->start_bal + it->w_start_bal_unemp
+            << "," << it->gov_exp
+            << "," << it->inc_tax_paid + it->inc_tax_paid_unemp
+            << "," << it->sales_tax_paid + it->sales_tax_paid_unemp
+            << "," << it->dedns_paid
+            << "," << it->gov_exp - it->tax_recd
+            << "," << it->wages_recd
+            << "," << it->tot_sales
+            << "\n";
+        }
+
         std::cout   << "\nPeriod " << ++period << "\n---------\n";
+        
         std::cout   << "\nGovernment\n"
                     << "\n\t" << std::setw(20) << "Expenditure: " << std::setw(9) << it->gov_exp
                     << "\n\t" << std::setw(20) << "Tax/dedns recd: " << std::setw(9) << it->tax_recd << " -"
@@ -92,5 +132,10 @@ void Statistics::report()
         if (recon != 0) {
             std::cout << "*** Reconciliation fails ***\n";
         }
+        
+    }
+
+    if (myfile.is_open()) {
+        myfile.close();
     }
 }

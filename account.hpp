@@ -206,19 +206,17 @@ private:
     
     Firm *gov;  // (see constructor for assignment to firms)
     
-    // Probably a temporary measure, this is the amount the
+    // Probably a temporary measure, exp is the amount the
     // government spends per period. It may be better to make
     // it a variable (exogenous) parameter of the system or
     // to determine it algorithmically in some way.
     static int exp, std_wage;
     
-    // Statistics *stats; // transferred to base class
-    
 protected:
     
     Government();
     
-    // The method overrides the method in the base (Account)
+    // This method overrides the method in the base (Account)
     // class, which prohibits transfers that would leave a
     // negative balance. This restriction doesn't apply to
     // the government, which creates money precisely by

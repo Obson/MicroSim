@@ -37,7 +37,8 @@ private:
         int dedns_paid = 0;             // paid by firms
         int wages_paid = 0;
         
-        int w_start_bal_unemp = 0;        int w_end_bal_unemp = 0;
+        int w_start_bal_unemp = 0;
+        int w_end_bal_unemp = 0;
         
         int inc_tax_paid = 0;
         int sales_tax_paid = 0;

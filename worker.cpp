@@ -88,11 +88,11 @@ void Worker::credit(int amount, bool taxable, Account *creditor)
     // employed by the employer that is doing the triggering. At
     // present we can't do this because the employer is not known,
     // so we should pass the employer's id as an argument...
-    /*
+    
     if (isEmployedBy(creditor)) {
         stats->current->start_bal += balance;
     }
-    */
+    
     
     Account::credit(amount, taxable);
     if (taxable) {
