@@ -30,6 +30,26 @@ Government::Government()
     firms.push_back(gov);
 }
 
+// TO DO NEXT
+// ----------
+// This method creates and registers a new independent firm with, at present,
+// no visible means of support. To fix this we will need to provide a means
+// of accessing government funds. Conventionally this is achieved via banks,
+// so what we probably need to do is implement the Bank class and set the
+// new firm up with a 'line of credit'. I think this means that the firm can
+// keep borrowing more money as long as it keeps up the repayments on the
+// existing loan and pays the interest due. I suspect this is inherently
+// unstable and is only sustainable as long as the firm continues to grow.
+// Eventually the market becomes saturated and the firm dies -- or possibly
+// it just sucks in business from other less successful firms in the same
+// field, and they die.
+Firm *Government::createFirm()
+{
+    Firm *firm = new Firm(std_wage);
+    firms.push_back(firm);
+    return firm;
+}
+
 void Government::trigger(int period)
 {
     // TO DO

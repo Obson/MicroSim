@@ -179,7 +179,10 @@ public:
     void trigger(int period);
     
     // Overrides base mmethod to give additional functionality
-    void credit(int amount, bool taxable = true, Account *creditor = nullptr);
+    void credit(int amount,
+                bool taxable = true,
+                Account *creditor = nullptr
+                );
     
     void grant(int amount);
 };
@@ -221,11 +224,18 @@ protected:
     // negative balance. This restriction doesn't apply to
     // the government, which creates money precisely by
     // creating transfers that leave a negative balance.
-    void transferTo(Account *recipient, int amount, Account *creditor, bool taxable = false);
+    void transferTo(Account *recipient,
+                    int amount,
+                    Account *creditor,
+                    bool taxable = false
+                    );
     
     // We override the base method here just so we can extract
     // the balance for statistics.
-    void credit(int amount, bool taxable = true, Account *creditor = nullptr);
+    void credit(int amount,
+                bool taxable = true,
+                Account *creditor = nullptr
+                );
     
 public:
     
@@ -236,6 +246,8 @@ public:
     static void setStandardWage(int wage);
     
     void trigger(int period);
+    
+    Firm *createFirm();
 
     Firm *getRandomFirm();
     

@@ -74,7 +74,6 @@ int main(int argc, const char * argv[]) {
     for (int period = 1; period <= iters; period++)
     {
         gov->trigger(period);
-        //pool->trigger(period);
         stats->next(period);
     }
     

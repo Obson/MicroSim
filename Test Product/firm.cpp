@@ -6,6 +6,27 @@
 //  Copyright © 2017 David Brown. All rights reserved.
 //
 
+// The 'government-owned' firm is the only firm that is created initially and
+// serves as a target for government spending. Other firms come into existence
+// depending on economic conditions.
+//
+// Suppose a firm (or all firms taken together) produce goods and services to the
+// value of n cus (currency units). If all their stock is sold (the best case
+// scenario) they will receive payments of n cus. This is the most they can pay
+// their employees without drawing on credit and is therefore the most they can
+// pay out in wages (without drawing on credit). However, their employees will
+// have to return some of this money to the government in taxes and will not
+// therefore be able to buy all the stock. This means there will be less money
+// available to pay out in wages next time, and even less stock will be produced.
+// Eventually the company will have to get rid of its employees and go out of
+// business.
+//
+// The only way this can be avoided is by the injection of new money. Mechanisms
+// are: constantly increasing credit from the bank, payment of benefits to the
+// unemployed (so that in effect the unemployed will be subsidising the employed)
+// and direct purchases from the firms by the government (using new money).
+//
+
 #include "account.hpp"
 #include <cassert>
 
@@ -42,7 +63,7 @@ void Firm::trigger(int period)
                 transferTo(it, wage - dedns, this, true);
                 
                 // This has the incidental benefit of notifying the government
-                // of who has paid (e.g.) taxes. Clearly Government isn't lable
+                // of who has paid (e.g.) taxes. Clearly Government isn't liable
                 // for tax, but this is handled by the default value (false),
                 // and, redundantly, by the override in the Government class.
                 transferTo(Government::Instance(), dedns, this);
