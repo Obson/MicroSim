@@ -89,32 +89,27 @@ void Worker::credit(int amount, bool taxable, Account *creditor)
     // present we can't do this because the employer is not known,
     // so we should pass the employer's id as an argument...
     
-    if (isEmployedBy(creditor)) {
-        stats->current->start_bal += balance;
-    }
-    
-    
-    Account::credit(amount, taxable);
-    if (taxable) {
-        int tax = (amount * settings->inc_tax) / 100;
-        transferTo(gov, tax, this);
-        
+    if (isEmployedBy(creditor))
+    {
         // Here we assume that if the creditor is our employer then
         // we should pay income tax. If the creditor isn't our employer
         // but we're receiving the payment in out capacity as Worker
         // then it's probably 'benefits'. This needs to be sorted out
         // properly in due course...
-        if (isEmployedBy(creditor)) {
-            stats->current->inc_tax_paid += tax;
-        } else {
-            // This shouldn't normally happen
-            stats->current->inc_tax_paid_unemp += tax;
-        }
+        stats->current->start_bal += balance;
+        Account::credit(amount, taxable);
+        int tax = (amount * settings->inc_tax) / 100;
+        transferTo(gov, tax, this);
+        stats->current->wages_recd += amount;
+        stats->current->inc_tax_paid += tax;
+    }
+    else
+    {
+        // TO DO: We need to flag an alternative source of income for
+        // unemployed workers
+        // ...
     }
     
-    // TO DO: We need to flag an alternative source of income for
-    // unemployed workers
-    stats->current->wages_recd += amount;
 }
 
 void Worker::setEmployer(Firm *emp)
