@@ -29,9 +29,12 @@ Statistics::Statistics()
 
 void Statistics::next(int period)
 {
+    Government *gov = Government::Instance();
     stats.push_back(current);
     current = new fields;
     *current = {};
+    current->num_firms = gov->getNumFirms();
+    current->num_employed = gov->getNumEmployees();
 }
 
 #include <stdio.h>
@@ -50,9 +53,7 @@ void Statistics::report()
     
     if (myfile.is_open()) {
         std::cout << "Output file is " << the_path << "/" << fname << "\n";
-        //myfile << "This is a test\n";
-        //myfile.flush();
-        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Deficit\",\"Wages\",\"Consumption\"\n";
+        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Num Firms\",\"Num Empls\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Deficit\",\"Wages\",\"Consumption\"\n";
     } else {
         std::cout << "Cannot open output file\n";
     }
@@ -68,6 +69,10 @@ void Statistics::report()
             << "," << it->prod_bal
             << "," << it->start_bal + it->w_start_bal_unemp
             << "," << it->gov_exp
+            
+            << "," << it->num_firms
+            << "," << it->num_employed
+            
             << "," << it->inc_tax_paid + it->inc_tax_paid_unemp
             << "," << it->sales_tax_paid + it->sales_tax_paid_unemp
             << "," << it->dedns_paid
@@ -87,6 +92,7 @@ void Statistics::report()
                     << "\n\t" << std::setw(20) << "Sector balance: " << std::setw(9) << it->gov_bal
                     << "\n";
         std::cout   << "\nFirms\n"
+                    << "\n\t" << std::setw(20) << "Number of firms: " << std::setw(9) << it->num_firms
                     << "\n\t" << std::setw(20) << "Existing employees: " << std::setw(9) << it->num_employed
                     << "\n\t" << std::setw(20) << "Hired this week: " << std::setw(9) << it->num_hired
                     << "\n\t" << std::setw(20) << "Fired this week: " << std::setw(9) << it->num_fired << "\n"

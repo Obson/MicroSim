@@ -7,7 +7,7 @@
 //
 
 // ----------------------------------------------------------------------------
-// TODO
+// TO DO
 // We should distinguish between employed and unemployed workers when updating
 // the statistics record.
 // ----------------------------------------------------------------------------
@@ -44,7 +44,7 @@ Firm *Worker::getEmployer()
 
 void Worker::trigger(int period)
 {
-    if (period > last_triggered)
+    if (period > last_triggered)    // to prevent double counting
     {
         last_triggered = period;
 

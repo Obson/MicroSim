@@ -50,6 +50,20 @@ Firm *Government::createFirm()
     return firm;
 }
 
+size_t Government::getNumFirms()
+{
+    return firms.size();
+}
+
+size_t Government::getNumEmployees()
+{
+    size_t res = 0;
+    for (auto it : firms) {
+        res += it->getNumEmployees();
+    }
+    return res;
+}
+
 void Government::trigger(int period)
 {
     // TO DO
@@ -70,11 +84,14 @@ void Government::trigger(int period)
         gov->grant(exp);
         balance -= exp;
         stats->current->gov_exp += exp;
-        stats->current->gov_bal = balance;
+        stats->current->gov_bal = balance;  // Gov sector balance
     }
     
-    gov->trigger(period);
+    for (auto it : firms) {
+        it->trigger(period);
+    }
     
+    createFirm();   // *** just testing ***
 }
 
 void Government::setExpenditure(int amount)
@@ -128,5 +145,8 @@ Government::~Government()
 
 Firm *Government::getRandomFirm()
 {
+    // std::cout << "Random index = " << std::rand() % firms.size() << "\n";
+    // return gov;
+    
     return firms[std::rand() % firms.size()];
 }

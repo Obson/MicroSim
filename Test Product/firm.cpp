@@ -51,21 +51,11 @@ void Firm::trigger(int period)
     {
         if (it->isEmployedBy(this))
         {
-            stats->current->num_employed += 1;
-            
             int wage = it->getWage();
             int dedns = (wage * settings->dedns) / 100;
             if (wage <= balance)
             {
-                // transferTo() needs to pass taxable and creditor arguments
-                // so they can be picked up and used by credit(), otherwise
-                // closing balance isn't updated.
                 transferTo(it, wage - dedns, this);
-                
-                // This has the incidental benefit of notifying the government
-                // of who has paid (e.g.) taxes. Clearly Government isn't liable
-                // for tax, but this is handled by the default value (false),
-                // and, redundantly, by the override in the Government class.
                 transferTo(Government::Instance(), dedns, this);
                 committed += wage;
                 stats->current->wages_paid += (wage - dedns);
@@ -80,23 +70,30 @@ void Firm::trigger(int period)
     }
 
     // Trigger all the employees -- even if we no longer employ them,
-    // relying on checks by the emloyee to prevent double counting
-    for (auto it : employees) {
+    // relying on checks by the employee to prevent double counting
+    for (auto it : employees)
+    {
         it->trigger(period);
     }
 
     // Closing balance has to be recorded after employees have been
     // triggered in order to include the effect of sales.
     stats->current->prod_bal += balance;
+    int temp = stats->current->prod_bal;
     
     // If we have funds left over, hire some more employees
     int num_hires = (((balance * settings->prop_con) / 100) - committed) / std_wage;
-    if (num_hires > 0) {
-        for (int i = 0; i < num_hires; i++) {
+    if (num_hires > 0)
+    {
+        for (int i = 0; i < num_hires; i++)
+        {
             employees.push_back(pool->hire(std_wage, this));
         }
         stats->current->num_hired += num_hires;
     }
+
+    // Make sure the balance hasn't changed since recorded as closing balance.
+    assert(temp==stats->current->prod_bal);
 }
 
 void Firm::credit(int amount, Account *creditor)
@@ -105,7 +102,8 @@ void Firm::credit(int amount, Account *creditor)
 
     // Base class credits account but doesn't pay tax. We assume seller,
     // not buyer, is responsible for paying sales tax and that payments
-    // to a Firm are for purchases and therefore subject to sales tax.
+    // to a Firm are always for purchases and therefore subject to
+    // sales tax.
     int tax = (amount * settings->sales_tax) / 100;
     transferTo(Government::Instance(), tax, this);
     stats->current->sales_tax_paid += tax;
@@ -118,12 +116,15 @@ void Firm::grant(int amount)
     amount_granted = amount;
 }
 
+size_t Firm::getNumEmployees()
+{
+    return employees.size();
+}
+
 Firm::~Firm()
 {
-    // We should free the space taken up by any Workers in the employees
-    // vector. But where they have been fired we do not free the space
-    // we leave this to be done by Pool.
-    for (auto it : employees) {
+    for (auto it : employees)
+    {
         delete it;
         employees.pop_back();
     }

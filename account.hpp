@@ -20,6 +20,8 @@
 // Account is the base class for every active entity in the system
 // and provides the basic overrideable functionality.
 
+class Statistics;
+
 class Account
 {
 public:
@@ -182,6 +184,8 @@ public:
     void credit(int amount, Account *creditor = nullptr);
     
     void grant(int amount);
+    
+    size_t getNumEmployees();
 };
 
 
@@ -243,6 +247,14 @@ public:
     Firm *createFirm();
 
     Firm *getRandomFirm();
+    
+    size_t getNumFirms();
+    
+    // Note that this returns the total number of employed workers, not
+    // just those employed by the government. For that you would need
+    // to access Government::gov->getNumFirms(), but you can't at prsent
+    // because it's a private method.
+    size_t getNumEmployees();
     
     ~Government();
 };

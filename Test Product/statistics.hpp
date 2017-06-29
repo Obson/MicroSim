@@ -13,6 +13,8 @@
 #include <iostream>
 #include <vector>
 
+#include "account.hpp"
+
 class Statistics
 {
 private:
@@ -21,8 +23,8 @@ private:
 
     struct fields
     {
-        int num_firms = 0;
-        int num_employed = 0;
+        size_t num_firms = 0;
+        size_t num_employed = 0;
         int num_hired = 0;
         int num_fired = 0;
         int num_rehired = 0;
