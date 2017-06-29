@@ -21,19 +21,19 @@ int Account::getBalance()
 }
 
 // Use transferTo() in preference to credit()as credit() doesn't upate our balance 
-bool Account::transferTo(Account *recipient, int amount, Account *creditor, bool taxable)
+bool Account::transferTo(Account *recipient, int amount, Account *creditor)
 {
     if (amount > balance) {
         std::cout << "Account: insufficient funds (" << balance << " available, " << amount << " to pay)\n";
         return false;
     } else {
-        recipient->credit(amount, taxable, creditor);
+        recipient->credit(amount, creditor);
         balance -= amount;
         return true;
     }
 }
 
-void Account::credit(int amount, bool taxable, Account *creditor)
+void Account::credit(int amount, Account *creditor)
 {
     balance += amount;
 }

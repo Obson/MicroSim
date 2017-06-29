@@ -63,7 +63,7 @@ void Worker::trigger(int period)
         // should be equivalent to each worker choosing a random selection
         // of firms.
         int purch = (balance * settings->prop_con) / 100;
-        transferTo(gov->getRandomFirm(), purch, this, true /* liable for sales tax */);
+        transferTo(gov->getRandomFirm(), purch, this);
         if (isEmployed()) {
             stats->current->tot_purchases += purch;
         } else {
@@ -78,7 +78,7 @@ void Worker::trigger(int period)
     }
 }
 
-void Worker::credit(int amount, bool taxable, Account *creditor)
+void Worker::credit(int amount, Account *creditor)
 {
     // TO DO:
     // We assume a worker only receives one credit (i.e. wages)
@@ -97,7 +97,7 @@ void Worker::credit(int amount, bool taxable, Account *creditor)
         // then it's probably 'benefits'. This needs to be sorted out
         // properly in due course...
         stats->current->start_bal += balance;
-        Account::credit(amount, taxable);
+        Account::credit(amount);
         int tax = (amount * settings->inc_tax) / 100;
         transferTo(gov, tax, this);
         stats->current->wages_recd += amount;

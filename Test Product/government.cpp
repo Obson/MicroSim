@@ -90,7 +90,7 @@ void Government::setStandardWage(int amount)
 //
 // This function overrides Account::transferTo to allow a negative balance.
 //
-void Government::transferTo(Account *recipient, int amount, Account *creditor, bool taxable)
+void Government::transferTo(Account *recipient, int amount, Account *creditor)
 {
     // We adopt the convention that receipts from the government are not
     // taxable. This is probably a rather murky area, given that the
@@ -100,7 +100,7 @@ void Government::transferTo(Account *recipient, int amount, Account *creditor, b
     // and the 'armed forces' the mechanism is probably more direct.
     // Anyway, to go into this would be a distraction so we'll simply
     // treat it as untaxable payment for services.
-    recipient->credit(amount, false);
+    recipient->credit(amount, this);
     balance -= amount;
     stats->current->gov_exp += amount;
     stats->current->gov_bal = balance;
@@ -111,7 +111,7 @@ void Government::transferTo(Account *recipient, int amount, Account *creditor, b
 // record as well. However we don't distinguish between income tax, sales
 // tax, and 'pre-tax deductions'. These are all accounted for elsewhere.
 // Obviously, the government doesn't pay tax.
-void Government::credit(int amount, bool taxable, Account *creditor)
+void Government::credit(int amount, Account *creditor)
 {
     Account::credit(amount);
     stats->current->gov_bal = balance;

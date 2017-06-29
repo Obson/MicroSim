@@ -29,7 +29,7 @@ public:
     
     // This function is declared as virtual to allow derived class
     // to add functionality, e.g. diagnostics
-    virtual void credit(int amount, bool taxable = true, Account *creditor = nullptr);
+    virtual void credit(int amount, Account *creditor = nullptr);
     
     // Every derived class must provide a trigger function,
     // which will be called once per period.
@@ -43,7 +43,7 @@ protected:
     int balance;
     int last_triggered = -1;
 
-    bool transferTo(Account *recipient, int amount, Account *creditor, bool taxable = false);
+    bool transferTo(Account *recipient, int amount, Account *creditor);
     
 };
 
@@ -85,7 +85,7 @@ public:
     bool isEmployedBy(Account *emp);
 
     // Overrides
-    void credit(int amount, bool taxable = true, Account *creditor = nullptr);
+    void credit(int amount, Account *creditor = nullptr);
     void trigger(int period);
 };
 
@@ -179,10 +179,7 @@ public:
     void trigger(int period);
     
     // Overrides base mmethod to give additional functionality
-    void credit(int amount,
-                bool taxable = true,
-                Account *creditor = nullptr
-                );
+    void credit(int amount, Account *creditor = nullptr);
     
     void grant(int amount);
 };
@@ -226,16 +223,12 @@ protected:
     // creating transfers that leave a negative balance.
     void transferTo(Account *recipient,
                     int amount,
-                    Account *creditor,
-                    bool taxable = false
+                    Account *creditor
                     );
     
     // We override the base method here just so we can extract
     // the balance for statistics.
-    void credit(int amount,
-                bool taxable = true,
-                Account *creditor = nullptr
-                );
+    void credit(int amount, Account *creditor = nullptr);
     
 public:
     

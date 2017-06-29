@@ -60,7 +60,7 @@ void Firm::trigger(int period)
                 // transferTo() needs to pass taxable and creditor arguments
                 // so they can be picked up and used by credit(), otherwise
                 // closing balance isn't updated.
-                transferTo(it, wage - dedns, this, true);
+                transferTo(it, wage - dedns, this);
                 
                 // This has the incidental benefit of notifying the government
                 // of who has paid (e.g.) taxes. Clearly Government isn't liable
@@ -99,23 +99,18 @@ void Firm::trigger(int period)
     }
 }
 
-void Firm::credit(int amount, bool taxable, Account *creditor)
+void Firm::credit(int amount, Account *creditor)
 {
-    // Base class credits account but doesn't pay tax. We
-    // assume seller, not buyer, is responsible for paying
-    // sales tax. Payments to a Firm are of course (normally,
-    // at least) for purchases and therefore subject to sales
-    // tax.
-    Account::credit(amount, taxable);
+    Account::credit(amount);
 
-    if (taxable) {
-        int tax = (amount * settings->sales_tax) / 100;
-        transferTo(Government::Instance(), tax, this);
-        stats->current->sales_tax_paid += tax;
-    }
+    // Base class credits account but doesn't pay tax. We assume seller,
+    // not buyer, is responsible for paying sales tax and that payments
+    // to a Firm are for purchases and therefore subject to sales tax.
+    int tax = (amount * settings->sales_tax) / 100;
+    transferTo(Government::Instance(), tax, this);
+    stats->current->sales_tax_paid += tax;
     
-    // Gross amount is recorded in stats
-    stats->current->tot_sales += amount;
+    stats->current->tot_sales += amount;    // NB gross amount in stats
 }
 
 void Firm::grant(int amount)
