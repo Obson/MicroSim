@@ -64,6 +64,15 @@ size_t Government::getNumEmployees()
     return res;
 }
 
+int Government::getProdBalance()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getBalance();
+    }
+    return bal;
+}
+
 void Government::trigger(int period)
 {
     // TO DO
@@ -91,7 +100,7 @@ void Government::trigger(int period)
         it->trigger(period);
     }
     
-    createFirm();   // *** just testing ***
+    // createFirm();   // *** just testing ***
 }
 
 void Government::setExpenditure(int amount)

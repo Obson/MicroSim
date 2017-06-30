@@ -27,7 +27,8 @@ class Account
 public:
 
     Account();
-    int getBalance();
+    
+    virtual int getBalance();
     
     // This function is declared as virtual to allow derived class
     // to add functionality, e.g. diagnostics
@@ -255,6 +256,10 @@ public:
     // to access Government::gov->getNumFirms(), but you can't at prsent
     // because it's a private method.
     size_t getNumEmployees();
+    
+    // This function returns the total balance of all the firms that have
+    // been registered, including gov.
+    int getProdBalance();
     
     ~Government();
 };

@@ -48,13 +48,6 @@ void Worker::trigger(int period)
     {
         last_triggered = period;
 
-        if (!isEmployed()) {
-            // We need to do this here because unemployed workers are
-            // not normally credited (may change for unemployment benefit
-            // basic income, whatever...)
-            stats->current->w_start_bal_unemp += balance;
-        }
-
         // For initial testing (only) we will assume all workers spend the
         // same proportion of their income (Settings::prop_con %). For the
         // sake of simplicity we will also assume that in any given period
@@ -64,15 +57,18 @@ void Worker::trigger(int period)
         // of firms.
         int purch = (balance * settings->prop_con) / 100;
         transferTo(gov->getRandomFirm(), purch, this);
-        if (isEmployed()) {
-            stats->current->tot_purchases += purch;
-        } else {
-            stats->current->tot_purch_unemp += purch;
-        }
+        
+        // ---------------------------------------------------------------
+        // TO DO
+        // Don't keep running totals. Instead, calculate as needed using
+        // getBalance() function
+        // ---------------------------------------------------------------
         
         if (isEmployed()) {
+            stats->current->tot_purchases += purch;
             stats->current->house_bal += balance;
         } else {
+            stats->current->tot_purch_unemp += purch;
             stats->current->w_end_bal_unemp += balance;
         }
     }

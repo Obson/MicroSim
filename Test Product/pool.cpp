@@ -61,6 +61,17 @@ Worker *Pool::hire(int wage, Firm *emp)
     // one. This is something that could be refined to take into
     // account the population size, previous wage of existing
     // workers, etc.
+    //
+    // BUG: Rehiring causes reconciliations to fail for reasons I
+    // haven't yet been able to make out. I think it is because we
+    // reassign an employer and then make it available to the calling
+    // Firm. If re-hired we will now have a duplicate in the employees
+    // vector (or in the vectors held by different firms. In the end
+    // we're going to have to remove fired Workers from the employees
+    // vector, regardless of its inefficiency. It might be worth
+    // considering using a set instead of a vector.
+
+    /*
     if (!available.empty()) {
         // Re-hire fired worker
         w = available.back();
@@ -68,9 +79,12 @@ Worker *Pool::hire(int wage, Firm *emp)
         w->setEmployer(emp);
         available.pop_back();
     } else {
+    */
+    
         // Hire new worker
         w = new Worker(wage, emp);
-    }
+    
+    //}
     
     return w;
 }

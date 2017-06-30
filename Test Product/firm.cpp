@@ -38,7 +38,7 @@ Firm::Firm(int standard_wage)
 void Firm::trigger(int period)
 {
     // Accoumulate firms' starting balance
-    stats->current->f_start_bal += balance;
+    // stats->current->f_start_bal += balance;
 
     // Check for any waiting government grant.
     balance += amount_granted;
@@ -63,24 +63,26 @@ void Firm::trigger(int period)
             }
             else
             {
+                // Note that when we fire a worker we don't remove them from the
+                // list of employers as deleting from the middle of a vector is
+                // inefficient. However, Pool will mark the worker as unemployed
+                // by setting employer to nullptr.
                 stats->current->num_fired += 1;
                 pool->fire(it);
             }
         }
+        //it->trigger(period);
     }
 
+    
     // Trigger all the employees -- even if we no longer employ them,
     // relying on checks by the employee to prevent double counting
     for (auto it : employees)
     {
         it->trigger(period);
     }
-
-    // Closing balance has to be recorded after employees have been
-    // triggered in order to include the effect of sales.
-    stats->current->prod_bal += balance;
-    int temp = stats->current->prod_bal;
     
+
     // If we have funds left over, hire some more employees
     int num_hires = (((balance * settings->prop_con) / 100) - committed) / std_wage;
     if (num_hires > 0)
@@ -91,9 +93,6 @@ void Firm::trigger(int period)
         }
         stats->current->num_hired += num_hires;
     }
-
-    // Make sure the balance hasn't changed since recorded as closing balance.
-    assert(temp==stats->current->prod_bal);
 }
 
 void Firm::credit(int amount, Account *creditor)

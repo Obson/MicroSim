@@ -30,9 +30,16 @@ Statistics::Statistics()
 void Statistics::next(int period)
 {
     Government *gov = Government::Instance();
+    
+    // Close current period stats
+    current->prod_bal = gov->getProdBalance();  // closing balance for firms
+    int old_prod_bal = current->prod_bal;
     stats.push_back(current);
+
+    // Open next period stats
     current = new fields;
-    *current = {};
+    *current = {};                              // *** may not be necessary ***
+    current->f_start_bal = old_prod_bal;        // opening balance for firms (next period)
     current->num_firms = gov->getNumFirms();
     current->num_employed = gov->getNumEmployees();
 }
