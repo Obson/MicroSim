@@ -11,7 +11,7 @@
 
 int main(int argc, const char * argv[]) {
 
-    int iters, count, exp, std_wage, prop_con, dedns, inc_tax_rate, sales_tax_rate;
+    int iters, count, exp, std_wage, prop_con, dedns, inc_tax_rate, sales_tax_rate, firm_creation_prob;
     
     // Create static objects
     Settings *settings = Settings::Instance();
@@ -49,6 +49,11 @@ int main(int argc, const char * argv[]) {
         std::cout << "Sales tax rate (percent): ";
         std::cin >> sales_tax_rate;
     }
+    firm_creation_prob = -1;
+    while (firm_creation_prob < 0 || firm_creation_prob > 100) {
+        std::cout << "Firm creation probability (percent): ";
+        std::cin >> firm_creation_prob;
+    }
     
     // Add parameters to Settings so they are available globally.
     settings->prop_con = prop_con;
@@ -76,8 +81,9 @@ int main(int argc, const char * argv[]) {
         gov->trigger(period);
         pool->trigger(period);
         stats->next(period);
-        
-        gov->createFirm();   // *** just testing ***
+        if (std::rand() % 100 < firm_creation_prob) {
+            gov->createFirm();
+        }
     }
     
     stats->report();

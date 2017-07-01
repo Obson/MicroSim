@@ -59,7 +59,7 @@ void Statistics::report()
     myfile.open(fname);
     
     if (myfile.is_open()) {
-        std::cout << "Output file is " << the_path << "/" << fname << "\n";
+        std::cout << "\nOutput file is " << the_path << "/" << fname << "\n";
         myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Num Firms\",\"Num Empls\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Deficit\",\"Wages\",\"Consumption\"\n";
     } else {
         std::cout << "Cannot open output file\n";
