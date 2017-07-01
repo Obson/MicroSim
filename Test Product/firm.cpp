@@ -52,7 +52,7 @@ void Firm::trigger(int period)
         if (it->isEmployedBy(this))
         {
             int wage = it->getWage();
-            int dedns = (wage * settings->dedns) / 100;
+            int dedns = (wage * settings->getPreTaxDedns()) / 100;
             if (wage <= balance)
             {
                 transferTo(it, wage - dedns, this);
@@ -84,7 +84,7 @@ void Firm::trigger(int period)
     
 
     // If we have funds left over, hire some more employees
-    int num_hires = (((balance * settings->prop_con) / 100) - committed) / std_wage;
+    int num_hires = (((balance * settings->getPropCon()) / 100) - committed) / std_wage;
     if (num_hires > 0)
     {
         for (int i = 0; i < num_hires; i++)
@@ -103,7 +103,7 @@ void Firm::credit(int amount, Account *creditor)
     // not buyer, is responsible for paying sales tax and that payments
     // to a Firm are always for purchases and therefore subject to
     // sales tax.
-    int tax = (amount * settings->sales_tax) / 100;
+    int tax = (amount * settings->getSalesTaxRate()) / 100;
     transferTo(Government::Instance(), tax, this);
     stats->current->sales_tax_paid += tax;
     

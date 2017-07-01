@@ -21,6 +21,7 @@
 // and provides the basic overrideable functionality.
 
 class Statistics;
+class Settings;
 
 class Account
 {
@@ -238,10 +239,6 @@ protected:
 public:
     
     static Government *Instance();
-    
-    // Sets government expenditure and standard wage
-    static void setExpenditure(int exp);
-    static void setStandardWage(int wage);
     
     void trigger(int period);
     

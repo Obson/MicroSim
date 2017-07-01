@@ -9,8 +9,6 @@
 #include "account.hpp"
 
 Government *Government::_instance = nullptr;
-int Government::exp = 0;
-int Government::std_wage = 500;
 
 Government *Government::Instance()
 {
@@ -22,7 +20,7 @@ Government *Government::Instance()
 
 Government::Government()
 {
-    gov = new Firm(std_wage);
+    gov = new Firm(settings->getStdWage());
     
     // gov has to be accessible via firms[0], so this must be the first
     // access to the vector and must not be popped until the program
@@ -45,7 +43,7 @@ Government::Government()
 // field, and they die.
 Firm *Government::createFirm()
 {
-    Firm *firm = new Firm(std_wage);
+    Firm *firm = new Firm(settings->getStdWage());
     firms.push_back(firm);
     return firm;
 }
@@ -90,27 +88,20 @@ void Government::trigger(int period)
     // mechanism. This also ensures that no tax will be paid by recipients
     //
     if (true /*period < 2*/) {
+        int exp = settings->getGovExpRate();
         gov->grant(exp);
         balance -= exp;
         stats->current->gov_exp += exp;
         stats->current->gov_bal = balance;  // Gov sector balance
     }
     
+    // TO DO: Incorporate this into previous loop and test
     for (auto it : firms) {
         it->trigger(period);
     }
-    
-    // createFirm();   // *** just testing ***
-}
 
-void Government::setExpenditure(int amount)
-{
-    exp = amount;
-}
-
-void Government::setStandardWage(int amount)
-{
-    std_wage = amount;
+    // TO DO: Pay unemployment benefit
+    // ...
 }
 
 //
