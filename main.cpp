@@ -21,7 +21,11 @@ int main(int argc, const char * argv[]) {
 
     std::cin >> iters;
 
+    // IMPORTANT
+    // Settings must be created before any accounts are created so that
+    // it can input the settings before they are needed.
     Settings *settings = Settings::Instance();
+    
     Statistics *stats = Statistics::Instance();
 
     // Create the Government. This will automatically set up a single firm
@@ -31,13 +35,13 @@ int main(int argc, const char * argv[]) {
     Government *gov = Government::Instance();
 
     // Create an empty Pool
-    Pool::setCount(settings->getPopSize());
-    Pool *pool = Pool::Instance();
+    //Pool::setCount(settings->getPopSize());
+    //Pool *pool = Pool::Instance();
     
     for (int period = 1; period <= iters; period++)
     {
         gov->trigger(period);
-        pool->trigger(period);
+        //pool->trigger(period);
         stats->next(period);
         if (std::rand() % 100 < settings->getFCP()) {
             gov->createFirm();
@@ -46,6 +50,6 @@ int main(int argc, const char * argv[]) {
     
     stats->report();
 
-    delete pool;
+    delete gov;
     return 0;
 }

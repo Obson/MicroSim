@@ -68,7 +68,7 @@ void Firm::trigger(int period)
                 // inefficient. However, Pool will mark the worker as unemployed
                 // by setting employer to nullptr.
                 stats->current->num_fired += 1;
-                pool->fire(it);
+                Government::Instance()->fire(it);
             }
         }
         //it->trigger(period);
@@ -89,7 +89,7 @@ void Firm::trigger(int period)
     {
         for (int i = 0; i < num_hires; i++)
         {
-            employees.push_back(pool->hire(std_wage, this));
+            employees.push_back(Government::Instance()->hire(std_wage, this));
         }
         stats->current->num_hired += num_hires;
     }

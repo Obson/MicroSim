@@ -66,7 +66,7 @@ class Government;
 
 class Worker: public Account
 {
-    friend class Pool;
+    friend class Government;
     
 private:
 
@@ -93,40 +93,6 @@ public:
     void trigger(int period);
 };
 
-
-// Pool is a singleton class acting as a factory for workers.
-// It also 'recycles' them when they are fired, but details
-// have yet to be thought out.
-
-class Pool
-{
-private:
-    
-    std::vector<Worker*> available;
-    
-    static Pool *_instance;
-    
-    static int _count;
-    
-protected:
-    
-    Pool();
-    
-public:
-    
-    static Pool *Instance();
-    static void setCount(int count);
-    
-    ~Pool();
-    
-    void trigger(int period);
-    
-    Worker *hire(int wage, Firm *emp);
-    void fire(Worker*);
-    
-};
-
-
 // A Firm instance is associated with a set of Workers, referred
 // to as 'employees'. The Firm is their 'employer'. A Firm has
 // a responsibility to pay each of its employees that employee's
@@ -138,8 +104,6 @@ class Firm: public Account
 private:
     
     std::vector<Worker *> employees;
-    
-    Pool *pool = Pool::Instance();
     
     int std_wage;
     int amount_granted = 0;
@@ -209,14 +173,12 @@ private:
     // nationalised industries) and is treated as a special
     // case
     std::vector<Firm*> firms;
+    std::vector<Worker*> available;
     
     Firm *gov;  // (see constructor for assignment to firms)
     
-    // Probably a temporary measure, exp is the amount the
-    // government spends per period. It may be better to make
-    // it a variable (exogenous) parameter of the system or
-    // to determine it algorithmically in some way.
-    static int exp, std_wage;
+
+    
     
 protected:
     
@@ -247,6 +209,10 @@ public:
     Firm *getRandomFirm();
     
     size_t getNumFirms();
+    
+    Worker *hire(int wage, Firm *emp);
+    void fire(Worker*);
+
     
     // Note that this returns the total number of employed workers, not
     // just those employed by the government. For that you would need

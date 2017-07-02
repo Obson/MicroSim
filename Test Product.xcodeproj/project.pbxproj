@@ -12,7 +12,6 @@
 		E2E626521F0933A900948E4B /* firm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E6264A1F0933A900948E4B /* firm.cpp */; };
 		E2E626531F0933A900948E4B /* government.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E6264B1F0933A900948E4B /* government.cpp */; };
 		E2E626541F0933A900948E4B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E6264C1F0933A900948E4B /* main.cpp */; };
-		E2E626551F0933A900948E4B /* pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E6264D1F0933A900948E4B /* pool.cpp */; };
 		E2E626561F0933A900948E4B /* settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E6264E1F0933A900948E4B /* settings.cpp */; };
 		E2E626571F0933A900948E4B /* statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E626501F0933A900948E4B /* statistics.cpp */; };
 /* End PBXBuildFile section */
@@ -37,7 +36,6 @@
 		E2E6264A1F0933A900948E4B /* firm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = firm.cpp; sourceTree = SOURCE_ROOT; };
 		E2E6264B1F0933A900948E4B /* government.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = government.cpp; sourceTree = SOURCE_ROOT; };
 		E2E6264C1F0933A900948E4B /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
-		E2E6264D1F0933A900948E4B /* pool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pool.cpp; sourceTree = SOURCE_ROOT; };
 		E2E6264E1F0933A900948E4B /* settings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = settings.cpp; sourceTree = SOURCE_ROOT; };
 		E2E6264F1F0933A900948E4B /* settings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = settings.hpp; sourceTree = SOURCE_ROOT; };
 		E2E626501F0933A900948E4B /* statistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = statistics.cpp; sourceTree = SOURCE_ROOT; };
@@ -74,17 +72,16 @@
 		E2D9BF451EE22B1B008AE7B8 /* Test Product */ = {
 			isa = PBXGroup;
 			children = (
+				E2E626451F0903F400948E4B /* account.cpp */,
 				E2E6264A1F0933A900948E4B /* firm.cpp */,
 				E2E6264B1F0933A900948E4B /* government.cpp */,
 				E2E6264C1F0933A900948E4B /* main.cpp */,
-				E2E6264D1F0933A900948E4B /* pool.cpp */,
 				E2E6264E1F0933A900948E4B /* settings.cpp */,
-				E2E6264F1F0933A900948E4B /* settings.hpp */,
 				E2E626501F0933A900948E4B /* statistics.cpp */,
-				E2E626511F0933A900948E4B /* statistics.hpp */,
-				E2E626451F0903F400948E4B /* account.cpp */,
-				E2E626461F0903F400948E4B /* account.hpp */,
 				E2E626471F0903F400948E4B /* worker.cpp */,
+				E2E626461F0903F400948E4B /* account.hpp */,
+				E2E6264F1F0933A900948E4B /* settings.hpp */,
+				E2E626511F0933A900948E4B /* statistics.hpp */,
 			);
 			path = "Test Product";
 			sourceTree = "<group>";
@@ -154,7 +151,6 @@
 				E2E626541F0933A900948E4B /* main.cpp in Sources */,
 				E2E626521F0933A900948E4B /* firm.cpp in Sources */,
 				E2E626561F0933A900948E4B /* settings.cpp in Sources */,
-				E2E626551F0933A900948E4B /* pool.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -5,7 +5,7 @@
 //  Created by David Brown on 05/06/2017.
 //  Copyright © 2017 David Brown. All rights reserved.
 //
-
+/*
 #include "account.hpp"
 
 Pool *Pool::_instance = nullptr;
@@ -63,7 +63,6 @@ Worker *Pool::hire(int wage, Firm *emp)
     // vector, regardless of its inefficiency. It might be worth
     // considering using a set instead of a vector.
 
-    /*
     if (!available.empty()) {
         // Re-hire fired worker
         w = available.back();
@@ -71,7 +70,6 @@ Worker *Pool::hire(int wage, Firm *emp)
         w->setEmployer(emp);
         available.pop_back();
     } else {
-    */
     
         // Hire new worker
         w = new Worker(wage, emp);
@@ -93,3 +91,4 @@ void Pool::trigger(int period)
         it->trigger(period);
     }
 }
+*/
