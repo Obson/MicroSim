@@ -198,11 +198,16 @@ Government::~Government()
         delete firms.back();
         firms.pop_back();
     }
-    
+ 
+    // Firms will have deleted all the 'available' employees as
+    // they will still be in their 'employees' vector. So the following
+    // loop is redundant...
+    /*
     while (!available.empty()) {
         delete available.back();
         available.pop_back();
     }
+    */
 }
 
 Firm *Government::getRandomFirm()
