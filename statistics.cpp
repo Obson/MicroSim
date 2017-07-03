@@ -23,7 +23,7 @@ Statistics *Statistics::Instance()
 
 Statistics::Statistics()
 {
-    current = new fields;
+    current = new Fields;
     *current = {};
 }
 
@@ -32,16 +32,18 @@ void Statistics::next(int period)
     Government *gov = Government::Instance();
     
     // Close current period stats
-    current->prod_bal = gov->getProdBalance();  // closing balance for firms
-    int old_prod_bal = current->prod_bal;
+    current->prod_bal = gov->getProdBalance();      // closing balance for firms
+    current->w_end_bal_unemp = gov->getUnempBal();  // closing balance for unemployed
+    
     stats.push_back(current);
 
     // Open next period stats
-    current = new fields;
-    *current = {};                              // *** may not be necessary ***
-    current->f_start_bal = old_prod_bal;        // opening balance for firms (next period)
+    Fields *previous = current;
+    current = new Fields;
+    current->f_start_bal = previous->prod_bal;      // opening balance for firms (next period)
     current->num_firms = gov->getNumFirms();
     current->num_employed = gov->getNumEmployees();
+    current->w_start_bal_unemp = previous->w_end_bal_unemp;
 }
 
 #include <stdio.h>
@@ -60,7 +62,7 @@ void Statistics::report()
     
     if (myfile.is_open()) {
         std::cout << "\nOutput file is " << the_path << "/" << fname << "\n";
-        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Num Firms\",\"Num Empls\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Deficit\",\"Wages\",\"Consumption\"\n";
+        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Num Firms\",\"Num Empls\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Deficit\",\"Wages\",\"Benefits\",\"Consumption\"\n";
     } else {
         std::cout << "Cannot open output file\n";
     }
@@ -85,6 +87,7 @@ void Statistics::report()
             << "," << it->dedns_paid
             << "," << it->gov_exp - it->tax_recd
             << "," << it->wages_recd
+            << "," << it->benefits_recd
             << "," << it->tot_sales
             << "\n";
         }
@@ -126,8 +129,12 @@ void Statistics::report()
                     << "\n";
         std::cout   << "\nUnemployed Workers\n"
                     << "\n\t" << std::setw(20) << "Starting balance: " << std::setw(9) << it->w_start_bal_unemp
-                    << "\n\t" << std::setw(20) << "Purchases: " << std::setw(9)  << it->tot_purch_unemp
-                    << "\n\t" << std::setw(20) << "Ending balance: " << std::setw(9) << it->w_end_bal_unemp
+                    << "\n\t" << std::setw(20) << "Benefits: " << std::setw(9)  << it->benefits_recd << " +"
+                    << "\n\t" << std::setw(20) << "Purchases: " << std::setw(9)  << it->tot_purch_unemp << " -"
+                    << "\n\t" << std::setw(20) << "Ending balance: " << std::setw(9) << it->w_end_bal_unemp << " -"
+                    << "\n\t" << std::setw(20) << " " << std::setw(9)  << "---------"
+                    << "\n\t" << std::setw(20) << " " << std::setw(9)  << (it->w_start_bal_unemp + it->benefits_recd - it->tot_purch_unemp - it->w_end_bal_unemp)
+                    << "\n\t" << std::setw(20) << " " << std::setw(9)  << "---------"
                     << "\n";
         
         int recon = it->gov_bal + it->prod_bal + it->house_bal + it->w_end_bal_unemp;

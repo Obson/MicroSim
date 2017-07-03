@@ -152,6 +152,12 @@ public:
     void grant(int amount);
     
     size_t getNumEmployees();
+    
+    // This is a bit out of place here. Firms shouldn't have access
+    // to their employees' bank statements! However, at present the
+    // Firm::employees vector is the only place a complete list of
+    // employees is stored
+    int getTotEmpBal();
 };
 
 
@@ -176,9 +182,6 @@ private:
     std::vector<Worker*> available;
     
     Firm *gov;  // (see constructor for assignment to firms)
-    
-
-    
     
 protected:
     
@@ -220,9 +223,9 @@ public:
     // because it's a private method.
     size_t getNumEmployees();
     
-    // This function returns the total balance of all the firms that have
-    // been registered, including gov.
-    int getProdBalance();
+    int getProdBalance();   // total funds help by firms
+    int getEmpBal();        // total funds held by employed workers
+    int getUnempBal();      // total funds held by unemployed workers
     
     ~Government();
 };

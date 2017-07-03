@@ -71,6 +71,24 @@ int Government::getProdBalance()
     return bal;
 }
 
+int Government::getUnempBal()
+{
+    int bal = 0;
+    for (auto it : available) {
+        bal += it->getBalance();
+    }
+    return bal;
+}
+
+int Government::getEmpBal()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getBalance();
+    }
+    return bal;
+}
+
 void Government::trigger(int period)
 {
     // TO DO
@@ -95,7 +113,6 @@ void Government::trigger(int period)
         stats->current->gov_bal = balance;  // Gov sector balance
     }
     
-    // TO DO: Incorporate this into previous loop and test
     for (auto it : firms) {
         it->trigger(period);
     }
@@ -104,14 +121,17 @@ void Government::trigger(int period)
         it->trigger(period);
     }
 
-
-    // TO DO: Pay unemployment benefit. Note that we only pay unemployment
+    // Note that we only pay unemployment
     // benefit to unemployed workers, i.e. people who have been employed.
     // This is because initially we assume an economically inactive
     // population that is very much larger than the number that have been
     // or are employed. As the economy matures this disparity will diminish
     // and we can perhaps pay benefit to the economically inactive as well.
-    // ...
+    
+    int benefit_amount = (settings->getStdWage() * settings->getUBR()) / 100;
+    for (auto it : available) {
+        transferTo(it, benefit_amount, this);
+    }
 }
 
 //

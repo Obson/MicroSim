@@ -120,6 +120,18 @@ size_t Firm::getNumEmployees()
     return employees.size();
 }
 
+int Firm::getTotEmpBal()
+{
+    int bal = 0;
+    for (auto it : employees)
+    {
+        if (it->getEmployer() == this) {
+            bal += it->getBalance();
+        }
+    }
+    return bal;
+}
+
 Firm::~Firm()
 {
     for (auto it : employees)

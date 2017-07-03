@@ -21,7 +21,7 @@ private:
     
     static Statistics *_instance;
 
-    struct fields
+    struct Fields
     {
         size_t num_firms = 0;
         size_t num_employed = 0;
@@ -50,6 +50,7 @@ private:
         
         int gov_grant = 0;
         int wages_recd = 0;
+        int benefits_recd = 0;
         
         int tot_sales = 0;
         int tot_purchases = 0;
@@ -62,7 +63,7 @@ private:
         int house_bal = 0;
     };
     
-    std::vector<fields*> stats;
+    std::vector<Fields*> stats;
     
 protected:
     
@@ -71,7 +72,7 @@ protected:
 public:
     
     static Statistics *Instance();
-    struct fields *current;
+    struct Fields *current;
     void next(int period);
     void report();
 };
