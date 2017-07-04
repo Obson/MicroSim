@@ -20,6 +20,15 @@ Worker::Worker(int wage, Firm *emp)
     gov = Government::Instance();
     this->wage = wage;
     employer = emp;
+    init();
+}
+
+void Worker::init()
+{
+    wages = 0;
+    benefits = 0;
+    purchases = 0;
+    inc_tax = 0;
 }
 
 int Worker::getWage()
@@ -47,36 +56,18 @@ void Worker::trigger(int period)
     if (period > last_triggered)    // to prevent double counting
     {
         last_triggered = period;
-
-        // For initial testing (only) we will assume all workers spend the
-        // same proportion of their income (Settings::prop_con %). For the
-        // sake of simplicity we will also assume that in any given period
-        // any given worker spends his/her funds through a single randomly
-        // selected firm. As long as there are a lot of workers this
-        // should be equivalent to each worker choosing a random selection
-        // of firms.
-        
         int purch = (balance * settings->getPropCon()) / 100;
-        transferTo(gov->getRandomFirm(), purch, this);
-        
-        // ---------------------------------------------------------------
-        // TO DO
-        // Don't keep running totals. Instead, calculate as needed using
-        // getBalance() function
-        // ---------------------------------------------------------------
-        
-        if (isEmployed()) {
-            stats->current->tot_purchases += purch;
-            stats->current->house_bal += balance;
-        } else {
-            stats->current->tot_purch_unemp += purch;
-            stats->current->w_end_bal_unemp += balance;
+        if (transferTo(gov->getRandomFirm(), purch, this))
+        {
+            purchases += purch;
         }
     }
 }
 
 void Worker::credit(int amount, Account *creditor)
 {
+    Account::credit(amount);
+
     if (isEmployedBy(creditor))
     {
         // Here we assume that if the creditor is our employer then
@@ -84,19 +75,37 @@ void Worker::credit(int amount, Account *creditor)
         // but we're receiving the payment in out capacity as Worker
         // then it's probably 'benefits'. This needs to be sorted out
         // properly in due course...
-        stats->current->start_bal += balance;   // ???
-        Account::credit(amount);
+        // stats->current->start_bal += balance;   // ???
+        
         int tax = (amount * settings->getIncTaxRate()) / 100;
         transferTo(gov, tax, this);
-        stats->current->wages_recd += amount;
-        stats->current->inc_tax_paid += tax;
+
+        wages += amount;
+        inc_tax += tax;
     }
     else if (creditor == Government::Instance())
     {
-        Account::credit(amount);
-        stats->current->benefits_recd += amount;
+        benefits += amount;
     }
-    
+    else
+    {
+        std::cout << "*** Unknown reason for credit ***\n";
+    }
+}
+
+int Worker::getWagesReceived()
+{
+    return wages;
+}
+
+int Worker::getBenefitsReceived()
+{
+    return benefits;
+}
+
+int Worker::getPurchasesMade()
+{
+    return purchases;
 }
 
 void Worker::setEmployer(Firm *emp)
@@ -104,6 +113,12 @@ void Worker::setEmployer(Firm *emp)
     employer = emp;
 }
 
+int Worker::getIncTaxPaid()
+{
+    return inc_tax;
+}
+
+// *** I think this is now obsolescent. Check/remove. ***
 void Worker::setWage(int wage)
 {
     this->wage = wage;

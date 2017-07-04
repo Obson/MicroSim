@@ -18,6 +18,12 @@ Government *Government::Instance()
     return _instance;
 }
 
+void Government::init()
+{
+    exp = 0;
+    rec = 0;
+}
+
 Government::Government()
 {
     gov = new Firm(settings->getStdWage());
@@ -48,6 +54,16 @@ Firm *Government::createFirm()
     return firm;
 }
 
+int Government::getExpenditure()
+{
+    return exp;
+}
+
+int Government::getReceipts()
+{
+    return rec;
+}
+
 size_t Government::getNumFirms()
 {
     return firms.size();
@@ -60,6 +76,24 @@ size_t Government::getNumEmployees()
         res += it->getNumEmployees();
     }
     return res;
+}
+
+int Government::getNumHired()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getNumHired();
+    }
+    return bal;
+}
+
+int Government::getNumFired()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getNumFired();
+    }
+    return bal;
 }
 
 int Government::getProdBalance()
@@ -84,7 +118,88 @@ int Government::getEmpBal()
 {
     int bal = 0;
     for (auto it : firms) {
-        bal += it->getBalance();
+        bal += it->getTotEmpBal();
+    }
+    return bal;
+}
+
+int Government::getGrantsRecd()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getAmountGranted();
+    }
+    return bal;
+}
+
+int Government::getDednsPaid()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getDednsPaid();
+    }
+    return bal;
+}
+
+int Government::getWagesPaid()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getWagesPaid();
+    }
+    return bal;
+}
+
+int Government::getPurchases()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getSalesReceipts();
+    }
+    return bal;
+}
+
+int Government::getIncTaxPaid()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getIncTaxPaid();
+    }
+    return bal;
+}
+
+int Government::getSalesTaxPaid()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getSalesTaxPaid();
+    }
+    return bal;
+}
+
+int Government::getEmpPurch()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getEmpPurch();
+    }
+    return bal;
+}
+
+int Government::getUnempPurch()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getUnempPurch();
+    }
+    return bal;
+}
+
+int Government::getBenefitsRecd()
+{
+    int bal = 0;
+    for (auto it : firms) {
+        bal += it->getBenefitsRecd();
     }
     return bal;
 }
@@ -96,6 +211,7 @@ void Government::trigger(int period)
     // For now we'll simply send it to the business arm of the government,
     // which in effect stands for nationalised industries.
 
+    init(); // zero all the per-period accumulators
     
     // IMPORTANT
     // At present this is unconditional, but we need to allow for either
@@ -104,13 +220,14 @@ void Government::trigger(int period)
     //   Note also that we use a special 'grant' method to transfer
     // government funds, to avoid disrupting the standard payment
     // mechanism. This also ensures that no tax will be paid by recipients
-    //
+
     if (true /*period < 2*/) {
-        int exp = settings->getGovExpRate();
-        gov->grant(exp);
-        balance -= exp;
-        stats->current->gov_exp += exp;
-        stats->current->gov_bal = balance;  // Gov sector balance
+        int amt = settings->getGovExpRate();
+        gov->grant(amt);
+        balance -= amt;
+        exp += amt;
+        
+        // stats->current->gov_bal = balance;  // Gov sector balance
     }
     
     for (auto it : firms) {
@@ -149,8 +266,6 @@ void Government::transferTo(Account *recipient, int amount, Account *creditor)
     // treat it as untaxable payment for services.
     recipient->credit(amount, this);
     balance -= amount;
-    stats->current->gov_exp += amount;
-    stats->current->gov_bal = balance;
 }
 
 // All credits to the Government are (at present) regarded as tax. This
@@ -161,8 +276,7 @@ void Government::transferTo(Account *recipient, int amount, Account *creditor)
 void Government::credit(int amount, Account *creditor)
 {
     Account::credit(amount);
-    stats->current->gov_bal = balance;
-    stats->current->tax_recd += amount;
+    rec += amount;
 }
 
 Worker *Government::hire(int wage, Firm *emp)

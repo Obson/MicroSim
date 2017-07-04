@@ -67,6 +67,7 @@ class Government;
 class Worker: public Account
 {
     friend class Government;
+    friend class Firm;
     
 private:
 
@@ -74,7 +75,19 @@ private:
     Firm *employer;
     Government *gov;
 
+    // Receipts and payments for current period only. Must be
+    // set to zero on each trigger (unless re-triggered in same
+    // period) and accumulated throughout period. 'Get' methods
+    // must be used to retrieve these values at the end of each
+    // period for statistics.
+    int purchases;
+    int benefits;
+    int wages;
+    int inc_tax;
+    
 protected:
+    
+    void init();
     
     void setEmployer(Firm*);
     void setWage(int);
@@ -91,6 +104,11 @@ public:
     // Overrides
     void credit(int amount, Account *creditor = nullptr);
     void trigger(int period);
+
+    int getWagesReceived();
+    int getBenefitsReceived();
+    int getPurchasesMade();
+    int getIncTaxPaid();
 };
 
 // A Firm instance is associated with a set of Workers, referred
@@ -101,14 +119,28 @@ public:
 
 class Firm: public Account
 {
+    friend class Government;
+    
 private:
     
     std::vector<Worker *> employees;
     
     int std_wage;
     int amount_granted = 0;
+    int wages_paid = 0;
+    int sales_tax_paid = 0;
+    int sales_receipts = 0;
+    int dedns_paid = 0;
+    int num_hired = 0;
+    int num_fired = 0;
     
 protected:
+
+    // Only government can make a grant, so this should be protected
+    // and the Government class made a friend class
+    void grant(int amount);
+    
+    void init();
     
 public:
     
@@ -149,15 +181,28 @@ public:
     // Overrides base mmethod to give additional functionality
     void credit(int amount, Account *creditor = nullptr);
     
-    void grant(int amount);
+    int getAmountGranted();
+    int getWagesPaid();
+    int getSalesTaxPaid();
+    int getSalesReceipts();
+    int getDednsPaid();
     
     size_t getNumEmployees();
     
-    // This is a bit out of place here. Firms shouldn't have access
+    int getNumHired();
+    int getNumFired();
+    
+    // These is a bit out of place here. Firms shouldn't have access
     // to their employees' bank statements! However, at present the
     // Firm::employees vector is the only place a complete list of
     // employees is stored
     int getTotEmpBal();
+    int getIncTaxPaid();
+    int getEmpPurch();          // total purchases by employees this period
+    
+    int getUnempPurch();        // total purchases by unemployed workers this period
+    int getBenefitsRecd();
+
 };
 
 
@@ -183,9 +228,13 @@ private:
     
     Firm *gov;  // (see constructor for assignment to firms)
     
+    int exp, rec;
+    
 protected:
     
     Government();
+    
+    void init();
     
     // This method overrides the method in the base (Account)
     // class, which prohibits transfers that would leave a
@@ -208,24 +257,35 @@ public:
     void trigger(int period);
     
     Firm *createFirm();
-
     Firm *getRandomFirm();
-    
-    size_t getNumFirms();
     
     Worker *hire(int wage, Firm *emp);
     void fire(Worker*);
 
-    
     // Note that this returns the total number of employed workers, not
     // just those employed by the government. For that you would need
     // to access Government::gov->getNumFirms(), but you can't at prsent
     // because it's a private method.
     size_t getNumEmployees();
+    size_t getNumFirms();
+
+    int getNumHired();      // total number of workers hired this period
+    int getNumFired();      // total number of workers fired this period
     
-    int getProdBalance();   // total funds help by firms
+    int getExpenditure();   // Gov expenditure in current period
+    int getReceipts();      // Gov receipts (taxes and dedns) in current period
+    int getProdBalance();   // total funds held by firms
+    int getGrantsRecd();    // total grants received by firms this period
+    int getDednsPaid();     // total deductions paid by firms this period
+    int getWagesPaid();     // total wages paid by firms this period
+    int getPurchases();     // receipts for sales by all firms this period
     int getEmpBal();        // total funds held by employed workers
+    int getEmpPurch();      // total purchases by employees this period
     int getUnempBal();      // total funds held by unemployed workers
+    int getUnempPurch();    // total purchases by unemployed workers this period
+    int getIncTaxPaid();    // total income tax paid by employees
+    int getSalesTaxPaid();  // total sales tax paid by firms this period
+    int getBenefitsRecd();  // total benefits received by umployed workers
     
     ~Government();
 };

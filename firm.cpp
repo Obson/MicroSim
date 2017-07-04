@@ -33,17 +33,25 @@
 Firm::Firm(int standard_wage)
 {
     std_wage = standard_wage;
+    
+    init();
+}
+
+void Firm::init()
+{
+    wages_paid = 0;
+    sales_tax_paid = 0;
+    sales_receipts = 0;
+    dedns_paid = 0;
+    num_hired = 0;
+    num_fired = 0;
+
+    balance += amount_granted;
 }
 
 void Firm::trigger(int period)
 {
-    // Accoumulate firms' starting balance
-    // stats->current->f_start_bal += balance;
-
-    // Check for any waiting government grant.
-    balance += amount_granted;
-    stats->current->gov_grant += amount_granted;
-    amount_granted = 0;
+    init();
     
     // Pay existing employees, calculating the committed wage bill
     int committed = 0;
@@ -53,30 +61,35 @@ void Firm::trigger(int period)
         {
             int wage = it->getWage();
             int dedns = (wage * settings->getPreTaxDedns()) / 100;
+            
+            it->init();
+            
             if (wage <= balance)
             {
                 transferTo(it, wage - dedns, this);
                 transferTo(Government::Instance(), dedns, this);
                 committed += wage;
-                stats->current->wages_paid += (wage - dedns);
-                stats->current->dedns_paid += dedns;
+                wages_paid += wage - dedns;
+                dedns_paid += dedns;
             }
             else
             {
                 // Note that when we fire a worker we don't remove them from the
                 // list of employers as deleting from the middle of a vector is
-                // inefficient. However, Pool will mark the worker as unemployed
-                // by setting employer to nullptr.
-                stats->current->num_fired += 1;
+                // inefficient.
+                // stats->current->num_fired += 1;
+                num_fired += 1;
                 Government::Instance()->fire(it);
             }
         }
-        //it->trigger(period);
     }
 
     
     // Trigger all the employees -- even if we no longer employ them,
-    // relying on checks by the employee to prevent double counting
+    // relying on checks by the employee to prevent double counting.
+    //
+    // TO DO: This should probably be incorporated into the previous loop
+    // but check that this works first...
     for (auto it : employees)
     {
         it->trigger(period);
@@ -84,30 +97,34 @@ void Firm::trigger(int period)
     
 
     // If we have funds left over, hire some more employees
-    int num_hires = (((balance * settings->getPropCon()) / 100) - committed) / std_wage;
-    if (num_hires > 0)
+    int n = (((balance * settings->getPropCon()) / 100) - committed) / std_wage;
+    if (n > 0)
     {
-        for (int i = 0; i < num_hires; i++)
+        for (int i = 0; i < n; i++)
         {
             employees.push_back(Government::Instance()->hire(std_wage, this));
         }
-        stats->current->num_hired += num_hires;
+        num_hired = n;
     }
 }
 
 void Firm::credit(int amount, Account *creditor)
 {
     Account::credit(amount);
+    
+    sales_receipts += amount;
 
     // Base class credits account but doesn't pay tax. We assume seller,
     // not buyer, is responsible for paying sales tax and that payments
     // to a Firm are always for purchases and therefore subject to
     // sales tax.
-    int tax = (amount * settings->getSalesTaxRate()) / 100;
-    transferTo(Government::Instance(), tax, this);
-    stats->current->sales_tax_paid += tax;
-    
-    stats->current->tot_sales += amount;    // NB gross amount in stats
+    int r = settings->getSalesTaxRate();    // e.g. 25%
+    int r_eff = (100 * r) / (100 + r);      // e.g. 20%
+    int t = (amount * r_eff) / 100;
+    if (transferTo(Government::Instance(), t, this))
+    {
+        sales_tax_paid += t;
+    }
 }
 
 void Firm::grant(int amount)
@@ -115,9 +132,54 @@ void Firm::grant(int amount)
     amount_granted = amount;
 }
 
+int Firm::getAmountGranted()
+{
+    return amount_granted;
+}
+
+int Firm::getWagesPaid()
+{
+    return wages_paid;
+}
+
+int Firm::getSalesTaxPaid()
+{
+    return sales_tax_paid;
+}
+
+int Firm::getSalesReceipts()
+{
+    return sales_receipts;
+}
+
+int Firm::getDednsPaid()
+{
+    return dedns_paid;
+}
+
 size_t Firm::getNumEmployees()
 {
     return employees.size();
+}
+
+int Firm::getNumHired()
+{
+    return num_hired;
+}
+
+int Firm::getNumFired()
+{
+    return num_fired;
+}
+
+int Firm::getIncTaxPaid()
+{
+    int bal = 0;
+    for (auto it : employees)
+    {
+        bal += it->getIncTaxPaid();
+    }
+    return bal;
 }
 
 int Firm::getTotEmpBal()
@@ -127,6 +189,43 @@ int Firm::getTotEmpBal()
     {
         if (it->getEmployer() == this) {
             bal += it->getBalance();
+        }
+    }
+    return bal;
+}
+
+int Firm::getEmpPurch()
+{
+    int bal = 0;
+    for (auto it : employees)
+    {
+        if (it->getEmployer() == this) {
+            bal += it->getPurchasesMade();
+        }
+        assert(bal<1000000);
+    }
+    return bal;
+}
+
+int Firm::getUnempPurch()
+{
+    int bal = 0;
+    for (auto it : employees)
+    {
+        if (it->getEmployer() == nullptr) {
+            bal += it->getPurchasesMade();
+        }
+    }
+    return bal;
+}
+
+int Firm::getBenefitsRecd()
+{
+    int bal = 0;
+    for (auto it : employees)
+    {
+        if (it->getEmployer() == nullptr) {
+            bal += it->getBenefitsReceived();
         }
     }
     return bal;

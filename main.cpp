@@ -34,15 +34,12 @@ int main(int argc, const char * argv[]) {
     // a business and taxation is not a payment for goods or services.
     Government *gov = Government::Instance();
 
-    // Create an empty Pool
-    //Pool::setCount(settings->getPopSize());
-    //Pool *pool = Pool::Instance();
-    
     for (int period = 1; period <= iters; period++)
     {
         gov->trigger(period);
-        //pool->trigger(period);
+
         stats->next(period);
+        
         if (std::rand() % 100 < settings->getFCP()) {
             gov->createFirm();
         }

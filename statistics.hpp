@@ -23,44 +23,46 @@ private:
 
     struct Fields
     {
-        size_t num_firms = 0;
-        size_t num_employed = 0;
-        int num_hired = 0;
-        int num_fired = 0;
-        int num_rehired = 0;
-        int num_unemployed = 0;
-
-        int tax_recd = 0;               // recd by government
-
-        int f_start_bal = 0;            // firms
+        struct
+        {
+            int bfwd = 0;
+            int exp = 0;
+            int rec = 0;
+            int cfwd = 0;
+            int def = 0;
+            size_t num_firms = 0;
+            size_t num_emps = 0;
+            int hires = 0;
+            int fires = 0;
+        } gov;
         
-        int start_bal = 0;              // workers only
+        struct
+        {
+            int bfwd = 0;
+            int grant = 0;
+            int sales = 0;
+            int sales_tax = 0;
+            int dedns = 0;
+            int wages = 0;
+            int cfwd = 0;
+        } prod;
         
-        int dedns_paid = 0;             // paid by firms
-        int wages_paid = 0;
+        struct
+        {
+            int start = 0;  // NB not bfwd as may have changed status
+            int wages = 0;
+            int inc_tax = 0;
+            int purch = 0;
+            int close = 0;
+        } emp;
         
-        int w_start_bal_unemp = 0;
-        int w_end_bal_unemp = 0;
-        
-        int inc_tax_paid = 0;
-        int sales_tax_paid = 0;
-        
-        int inc_tax_paid_unemp = 0;
-        int sales_tax_paid_unemp = 0;
-        
-        int gov_grant = 0;
-        int wages_recd = 0;
-        int benefits_recd = 0;
-        
-        int tot_sales = 0;
-        int tot_purchases = 0;
-        
-        int tot_purch_unemp = 0;
-        
-        int gov_bal = 0;
-        int gov_exp = 0;
-        int prod_bal = 0;
-        int house_bal = 0;
+        struct
+        {
+            int start = 0;  // NB not bfwd as may have changed status
+            int benefits = 0;
+            int purchases = 0;
+            int close = 0;
+        } unemp;
     };
     
     std::vector<Fields*> stats;
