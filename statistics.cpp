@@ -143,26 +143,22 @@ void Statistics::report()
                     << "\n\t" << std::setw(21) << "Sales: " << std::setw(9) << it->prod.sales << " +"
                     << "\n\t" << std::setw(21) << "Sales tax paid: " << std::setw(9) << it->prod.sales_tax << " -"
                     << "\n\t" << std::setw(21) << "Closing balance: " << std::setw(9) << it->prod.cfwd << " -"
-                    << "\n\t" << std::setw(21) << " " << std::setw(9)  << "---------"
-                    << "\n\t" << std::setw(21) << " " << std::setw(9)
-                        << (it->prod.bfwd + it->prod.grant - it->prod.wages - it->prod.dedns + it->prod.sales - it->prod.sales_tax - it->prod.cfwd)
-                        << "\n";
-        std::cout   << "\nEmployed Workers\n"
+                    << "\n\t" << std::setw(21) << " " << std::setw(9) << "---------"
+                    << "\n\t" << std::setw(21) << " " << std::setw(9) << (it->prod.bfwd + it->prod.grant - it->prod.wages - it->prod.dedns + it->prod.sales - it->prod.sales_tax - it->prod.cfwd) << "\n";
+        std::cout   << "\nWorkers\n";
+        std::cout   << "\nEmployed\n"
                     << "\n\t" << std::setw(21) << "Starting balance: " << std::setw(9) << it->emp.start
                     << "\n\t" << std::setw(21) << "Wages recd: " << std::setw(9) << it->emp.wages << " +"
                     << "\n\t" << std::setw(21) << "Income tax paid: " << std::setw(9) << it->emp.inc_tax << " -"
                     << "\n\t" << std::setw(21) << "Purchases: " << std::setw(9)  << it->emp.purch << " -"
-                    << "\n\t" << std::setw(21) << "Closing balance: " << std::setw(9)  << it->emp.close << " -"
-                    << "\n\t" << std::setw(21) << " " << std::setw(9)  << "---------"
-                    << "\n\t" << std::setw(21) << " " << std::setw(9)  << (it->emp.start + it->emp.wages - it->emp.inc_tax - it->emp.purch - it->emp.close)
-                    << "\n";
-        std::cout   << "\nUnemployed Workers\n"
-                    << "\n\t" << std::setw(21) << "Starting balance: " << std::setw(9) << it->unemp.start
+                    << "\n\t" << std::setw(21) << "Closing balance: " << std::setw(9)  << it->emp.close << " -";
+        std::cout   << "\n\nUnemployed\n"
+                    << "\n\t" << std::setw(21) << "Starting balance: " << std::setw(9) << it->unemp.start << " +"
                     << "\n\t" << std::setw(21) << "Benefits: " << std::setw(9)  << it->unemp.benefits << " +"
                     << "\n\t" << std::setw(21) << "Purchases: " << std::setw(9)  << it->unemp.purchases << " -"
                     << "\n\t" << std::setw(21) << "Ending balance: " << std::setw(9) << it->unemp.close << " -"
-                    << "\n\t" << std::setw(21) << " " << std::setw(9)  << "---------"
-                    << "\n\t" << std::setw(21) << " " << std::setw(9)  << (it->unemp.start + it->unemp.benefits - it->unemp.purchases - it->unemp.close)
+                    << "\n\t" << std::setw(21) << " " << std::setw(9)  << "========="
+                    << "\n\t" << std::setw(21) << " " << std::setw(9)  << (it->unemp.start + it->unemp.benefits - it->unemp.purchases - it->unemp.close + it->emp.start + it->emp.wages - it->emp.inc_tax - it->emp.purch - it->emp.close)
                     << "\n\t" << std::setw(21) << " " << std::setw(9)  << "---------"
                     << "\n";
         

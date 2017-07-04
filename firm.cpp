@@ -47,6 +47,11 @@ void Firm::init()
     num_fired = 0;
 
     balance += amount_granted;
+    
+    for (auto it : employees)
+    {
+        it->init();
+    }
 }
 
 void Firm::trigger(int period)
@@ -62,7 +67,7 @@ void Firm::trigger(int period)
             int wage = it->getWage();
             int dedns = (wage * settings->getPreTaxDedns()) / 100;
             
-            it->init();
+            //it->init();
             
             if (wage <= balance)
             {
