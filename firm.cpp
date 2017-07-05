@@ -34,7 +34,7 @@ Firm::Firm(int standard_wage)
 {
     std_wage = standard_wage;
     
-    init();
+    //init();
 }
 
 void Firm::init()
@@ -56,60 +56,58 @@ void Firm::init()
 
 void Firm::trigger(int period)
 {
-    init();
-    
-    // Pay existing employees, calculating the committed wage bill
-    int committed = 0;
-    for (auto it : employees)
+    if (period > last_triggered)
     {
-        if (it->isEmployedBy(this))
+        last_triggered = period;
+        
+        // Pay existing employees, calculating the committed wage bill
+        int committed = 0;
+        for (auto it : employees)
         {
-            int wage = it->getWage();
-            int dedns = (wage * settings->getPreTaxDedns()) / 100;
-            
-            //it->init();
-            
-            if (wage <= balance)
+            if (it->isEmployedBy(this))
             {
-                transferTo(it, wage - dedns, this);
-                transferTo(Government::Instance(), dedns, this);
-                committed += wage;
-                wages_paid += wage - dedns;
-                dedns_paid += dedns;
-            }
-            else
-            {
-                // Note that when we fire a worker we don't remove them from the
-                // list of employers as deleting from the middle of a vector is
-                // inefficient.
-                // stats->current->num_fired += 1;
-                num_fired += 1;
-                Government::Instance()->fire(it);
+                int wage = it->getWage();
+                int dedns = (wage * settings->getPreTaxDedns()) / 100;
+                
+                if (wage <= balance)
+                {
+                    transferTo(it, wage - dedns, this);
+                    transferTo(Government::Instance(), dedns, this);
+                    committed += wage;
+                    wages_paid += wage - dedns;
+                    dedns_paid += dedns;
+                }
+                else
+                {
+                    // Note that when we fire a worker we don't remove them from the
+                    // list of employers as deleting from the middle of a vector is
+                    // inefficient.
+                    num_fired += 1;
+                    Government::Instance()->fire(it);
+                }
             }
         }
-    }
-
-    
-    // Trigger all the employees -- even if we no longer employ them,
-    // relying on checks by the employee to prevent double counting.
-    //
-    // TO DO: This should probably be incorporated into the previous loop
-    // but check that this works first...
-    for (auto it : employees)
-    {
-        it->trigger(period);
-    }
-    
-
-    // If we have funds left over, hire some more employees
-    int n = (((balance * settings->getPropCon()) / 100) - committed) / std_wage;
-    if (n > 0)
-    {
-        for (int i = 0; i < n; i++)
+        
+        
+        // Trigger all the employees -- even if we no longer employ them,
+        // relying on checks by the employee to prevent double counting.
+        for (auto it : employees)
         {
-            employees.push_back(Government::Instance()->hire(std_wage, this));
+            it->trigger(period);
         }
-        num_hired = n;
+        
+        
+        // If we have funds left over, hire some more employees. Note that these
+        // don't get triggered until the next period.
+        int n = (((balance * settings->getPropCon()) / 100) - committed) / std_wage;
+        if (n > 0)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                employees.push_back(Government::Instance()->hire(std_wage, this));
+            }
+            num_hired = n;
+        }
     }
 }
 

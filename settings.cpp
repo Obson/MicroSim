@@ -9,6 +9,10 @@
 #include "settings.hpp"
 
 Settings *Settings::_instance = nullptr;
+int Settings::id = 0;
+int Settings::getId() {
+    return ++id;
+}
 
 Settings *Settings::Instance()
 {

@@ -155,6 +155,7 @@ int Government::getPurchases()
     int bal = 0;
     for (auto it : firms) {
         bal += it->getSalesReceipts();
+        //std::cout << "Government[" << id << "]::getPurchases(): bal = " << bal << "\n";
     }
     return bal;
 }
@@ -211,6 +212,8 @@ void Government::trigger(int period)
     // For now we'll simply send it to the business arm of the government,
     // which in effect stands for nationalised industries.
 
+    //std::cout << "\nGovernment::trigger(" << period << ")\n";
+    
     init(); // zero all the per-period accumulators
     
     // IMPORTANT
@@ -226,10 +229,13 @@ void Government::trigger(int period)
         gov->grant(amt);
         balance -= amt;
         exp += amt;
-        
-        // stats->current->gov_bal = balance;  // Gov sector balance
     }
     
+    // Ensure all firms are initialised before we trigger any of them. I'm
+    // not exactly sure why this is necessary but it is.
+    for (auto it : firms) {
+        it->init();
+    }
     for (auto it : firms) {
         it->trigger(period);
     }

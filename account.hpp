@@ -39,6 +39,8 @@ public:
     // which will be called once per period.
     virtual void trigger(int period) = 0;
     
+    int id;
+    
 protected:
     
     Settings *settings;

@@ -6,13 +6,6 @@
 //  Copyright © 2017 David Brown. All rights reserved.
 //
 
-// ----------------------------------------------------------------------------
-// TO DO
-// We should distinguish between employed and unemployed workers when updating
-// the statistics record.
-// ----------------------------------------------------------------------------
-
-
 #include "account.hpp"
 
 Worker::Worker(int wage, Firm *emp)
@@ -73,13 +66,9 @@ void Worker::credit(int amount, Account *creditor)
         // Here we assume that if the creditor is our employer then
         // we should pay income tax. If the creditor isn't our employer
         // but we're receiving the payment in out capacity as Worker
-        // then it's probably 'benefits'. This needs to be sorted out
-        // properly in due course...
-        // stats->current->start_bal += balance;   // ???
-        
+        // then it's probably 'benefits'.
         int tax = (amount * settings->getIncTaxRate()) / 100;
         transferTo(gov, tax, this);
-
         wages += amount;
         inc_tax += tax;
     }

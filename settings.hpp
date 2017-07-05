@@ -18,6 +18,7 @@ class Settings
 private:
     
     static Settings *_instance;
+    static int id;
     
 protected:
 
@@ -44,6 +45,8 @@ public:
     int getPreTaxDedns();   // pre-tax deductions (%)
     int getFCP();           // firm creaton probability (%)
     int getUBR();           // unemployment benefit rate (% of std wage)
+    
+    static int getId();
 };
 
 #endif /* settings_hpp */
