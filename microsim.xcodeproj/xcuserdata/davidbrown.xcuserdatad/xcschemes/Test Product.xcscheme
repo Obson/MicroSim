@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E2D9BF421EE22B1B008AE7B8"
-               BuildableName = "Test Product"
-               BlueprintName = "Test Product"
-               ReferencedContainer = "container:Test Product.xcodeproj">
+               BuildableName = "microsim"
+               BlueprintName = "microsim"
+               ReferencedContainer = "container:microsim.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2D9BF421EE22B1B008AE7B8"
-            BuildableName = "Test Product"
-            BlueprintName = "Test Product"
-            ReferencedContainer = "container:Test Product.xcodeproj">
+            BuildableName = "microsim"
+            BlueprintName = "microsim"
+            ReferencedContainer = "container:microsim.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2D9BF421EE22B1B008AE7B8"
-            BuildableName = "Test Product"
-            BlueprintName = "Test Product"
-            ReferencedContainer = "container:Test Product.xcodeproj">
+            BuildableName = "microsim"
+            BlueprintName = "microsim"
+            ReferencedContainer = "container:microsim.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2D9BF421EE22B1B008AE7B8"
-            BuildableName = "Test Product"
-            BlueprintName = "Test Product"
-            ReferencedContainer = "container:Test Product.xcodeproj">
+            BuildableName = "microsim"
+            BlueprintName = "microsim"
+            ReferencedContainer = "container:microsim.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

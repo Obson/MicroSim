@@ -29,7 +29,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		E2D9BF431EE22B1B008AE7B8 /* Test Product */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Test Product"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2D9BF431EE22B1B008AE7B8 /* microsim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = microsim; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2E626451F0903F400948E4B /* account.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = account.cpp; sourceTree = SOURCE_ROOT; };
 		E2E626461F0903F400948E4B /* account.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = account.hpp; sourceTree = SOURCE_ROOT; };
 		E2E626471F0903F400948E4B /* worker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = worker.cpp; sourceTree = SOURCE_ROOT; };
@@ -56,7 +56,7 @@
 		E2D9BF3A1EE22B1B008AE7B8 = {
 			isa = PBXGroup;
 			children = (
-				E2D9BF451EE22B1B008AE7B8 /* Test Product */,
+				E2D9BF451EE22B1B008AE7B8 /* MicroSim */,
 				E2D9BF441EE22B1B008AE7B8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,12 +64,12 @@
 		E2D9BF441EE22B1B008AE7B8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E2D9BF431EE22B1B008AE7B8 /* Test Product */,
+				E2D9BF431EE22B1B008AE7B8 /* microsim */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E2D9BF451EE22B1B008AE7B8 /* Test Product */ = {
+		E2D9BF451EE22B1B008AE7B8 /* MicroSim */ = {
 			isa = PBXGroup;
 			children = (
 				E2E626451F0903F400948E4B /* account.cpp */,
@@ -83,15 +83,16 @@
 				E2E6264F1F0933A900948E4B /* settings.hpp */,
 				E2E626511F0933A900948E4B /* statistics.hpp */,
 			);
+			name = MicroSim;
 			path = "Test Product";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E2D9BF421EE22B1B008AE7B8 /* Test Product */ = {
+		E2D9BF421EE22B1B008AE7B8 /* microsim */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E2D9BF4A1EE22B1B008AE7B8 /* Build configuration list for PBXNativeTarget "Test Product" */;
+			buildConfigurationList = E2D9BF4A1EE22B1B008AE7B8 /* Build configuration list for PBXNativeTarget "microsim" */;
 			buildPhases = (
 				E2D9BF3F1EE22B1B008AE7B8 /* Sources */,
 				E2D9BF401EE22B1B008AE7B8 /* Frameworks */,
@@ -101,9 +102,9 @@
 			);
 			dependencies = (
 			);
-			name = "Test Product";
+			name = microsim;
 			productName = "Test Product";
-			productReference = E2D9BF431EE22B1B008AE7B8 /* Test Product */;
+			productReference = E2D9BF431EE22B1B008AE7B8 /* microsim */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -122,7 +123,7 @@
 					};
 				};
 			};
-			buildConfigurationList = E2D9BF3E1EE22B1B008AE7B8 /* Build configuration list for PBXProject "Test Product" */;
+			buildConfigurationList = E2D9BF3E1EE22B1B008AE7B8 /* Build configuration list for PBXProject "microsim" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -134,7 +135,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E2D9BF421EE22B1B008AE7B8 /* Test Product */,
+				E2D9BF421EE22B1B008AE7B8 /* microsim */,
 			);
 		};
 /* End PBXProject section */
@@ -267,7 +268,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E2D9BF3E1EE22B1B008AE7B8 /* Build configuration list for PBXProject "Test Product" */ = {
+		E2D9BF3E1EE22B1B008AE7B8 /* Build configuration list for PBXProject "microsim" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E2D9BF481EE22B1B008AE7B8 /* Debug */,
@@ -276,7 +277,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E2D9BF4A1EE22B1B008AE7B8 /* Build configuration list for PBXNativeTarget "Test Product" */ = {
+		E2D9BF4A1EE22B1B008AE7B8 /* Build configuration list for PBXNativeTarget "microsim" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E2D9BF4B1EE22B1B008AE7B8 /* Debug */,
