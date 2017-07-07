@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <set>
 
 #include "settings.hpp"
 #include "statistics.hpp"
@@ -59,12 +60,6 @@ protected:
 
 class Firm;
 class Government;
-
-// A Worker instance represents an economically active individual.
-// 'Economically active' means (a) having an employer (which may
-// be null) and (b) having a wage level (which may be zero).
-// Workers (who are also consumers -- the terms are effectively
-// interchangeble( are managed by the singleton Pool instance.
 
 class Worker: public Account
 {
@@ -113,19 +108,13 @@ public:
     int getIncTaxPaid();
 };
 
-// A Firm instance is associated with a set of Workers, referred
-// to as 'employees'. The Firm is their 'employer'. A Firm has
-// a responsibility to pay each of its employees that employee's
-// agreed wage on each period. Employees are hired by making a
-// request to the Pool and fired by returning them to the Pool.
-
 class Firm: public Account
 {
     friend class Government;
     
 private:
     
-    std::vector<Worker *> employees;
+    std::set<Worker *> employees;
     
     int std_wage;
     int amount_granted = 0;
@@ -225,8 +214,8 @@ private:
     // 'business arm' of the government (in other words the
     // nationalised industries) and is treated as a special
     // case
-    std::vector<Firm*> firms;
-    std::vector<Worker*> available;
+    std::set<Firm*> firms;
+    std::set<Worker*> available;
     
     Firm *gov;  // (see constructor for assignment to firms)
     
@@ -260,6 +249,7 @@ public:
     
     Firm *createFirm();
     Firm *getRandomFirm();
+    Worker *getAvailableWorker();
     
     Worker *hire(int wage, Firm *emp);
     void fire(Worker*);

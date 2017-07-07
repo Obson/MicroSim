@@ -79,11 +79,9 @@ void Firm::trigger(int period)
                 }
                 else
                 {
-                    // Note that when we fire a worker we don't remove them from the
-                    // list of employers as deleting from the middle of a vector is
-                    // inefficient.
                     num_fired += 1;
                     Government::Instance()->fire(it);
+                    employees.erase(it);
                 }
             }
         }
@@ -107,7 +105,8 @@ void Firm::trigger(int period)
             {
                 Worker *w = Government::Instance()->hire(std_wage, this);
                 if (w != nullptr) {
-                    employees.push_back(w);
+                    employees.insert(w);
+                    //employees.push_back(w);
                     num_hired++;
                 } else {
                     break;
@@ -245,7 +244,6 @@ Firm::~Firm()
     for (auto it : employees)
     {
         delete it;
-        employees.pop_back();
     }
 }
 

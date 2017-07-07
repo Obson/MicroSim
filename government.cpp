@@ -31,11 +31,11 @@ Government::Government()
     // gov has to be accessible via firms[0], so this must be the first
     // access to the vector and must not be popped until the program
     // terminates,
-    firms.push_back(gov);
+    firms.insert(gov);
 }
 
-// TO DO NEXT
-// ----------
+// TO DO NEXT. OR AT LEAST VERY SOON
+// ---------------------------------
 // This method creates and registers a new independent firm with, at present,
 // no visible means of support. To fix this we will need to provide a means
 // of accessing government funds. Conventionally this is achieved via banks,
@@ -47,10 +47,11 @@ Government::Government()
 // Eventually the market becomes saturated and the firm dies -- or possibly
 // it just sucks in business from other less successful firms in the same
 // field, and they die.
+
 Firm *Government::createFirm()
 {
     Firm *firm = new Firm(settings->getStdWage());
-    firms.push_back(firm);
+    firms.insert(firm);
     return firm;
 }
 
@@ -282,64 +283,46 @@ void Government::credit(int amount, Account *creditor)
 
 Worker *Government::hire(int wage, Firm *emp)
 {
-    return getNumEmployees() < settings->getPopSize()
+    if (available.empty()) {
+        return getNumEmployees() < settings->getPopSize()
         ? new Worker(wage, emp)
         : nullptr;
-    
-    // TO DO
-    //
-    // Re-hire existing worker if possible; otherwise get a new
-    // one. This is something that could be refined to take into
-    // account the population size, previous wage of existing
-    // workers, etc. May need to rethink storage -- perhaps use
-    // std::set instea of std::vector so we don't get duplicates.
-    //
-    
-/*
-    Worker *w;
-    
-    if (!available.empty()) {
-        // Re-hire fired worker
-        w = available.back();
-        w->setWage(wage);
-        w->setEmployer(emp);
-        available.pop_back();
     } else {
-        
-        // Hire new worker
-        w = new Worker(wage, emp);
-        
+        Worker *w = getAvailableWorker();
+        w->setEmployer(emp);
+        return w;
     }
-    
-    return w;
-*/
 }
 
 void Government::fire(Worker *w)
 {
     w->setEmployer(nullptr);
-    available.push_back(w);
+    available.insert(w);
 }
 
 Government::~Government()
 {
-    while (!firms.empty()) {
-        delete firms.back();
-        firms.pop_back();
+    for (auto it : firms)
+    {
+        delete it;
+        //firms.erase(it);
     }
- 
-    // Firms will have deleted all the 'available' employees as
-    // they will still be in their 'employees' vector. So the following
-    // loop is redundant...
-    /*
-    while (!available.empty()) {
-        delete available.back();
-        available.pop_back();
-    }
-    */
 }
 
 Firm *Government::getRandomFirm()
 {
-    return firms[std::rand() % firms.size()];
+    std::set<Firm *>::const_iterator it(firms.begin());
+    advance(it, std::rand() % firms.size());
+    return *it;
 }
+
+// This function returns a random available worker, which it first
+// removes from the list of available workers.
+Worker *Government::getAvailableWorker()
+{
+    std::set<Worker *>::const_iterator it(available.begin());
+    advance(it, std::rand() % available.size());
+    available.erase(it);    // remove from available
+    return *it;
+}
+
