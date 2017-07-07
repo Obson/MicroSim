@@ -43,10 +43,10 @@ void Statistics::next(int period)
     previous->gov.exp = gov->getExpenditure();
     previous->gov.rec = gov->getReceipts();
     previous->gov.num_firms = gov->getNumFirms();
-    previous->gov.num_emps = gov->getNumEmployees();
     previous->gov.hires = gov->getNumHired();
     previous->gov.fires = gov->getNumFired();
     //
+    current->gov.num_emps = gov->getNumEmployees();
     current->gov.bfwd = previous->gov.cfwd;
     
     // Prod

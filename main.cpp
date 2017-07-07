@@ -40,11 +40,17 @@ int main(int argc, const char * argv[]) {
 
         stats->next(period);
         
+        if (period == 10) {
+            gov->createFirm();
+        }
+        
+        /*
         if ((gov->getNumEmployees() < settings->getPopSize()) &&
             (std::rand() % 100 < settings->getFCP()))
         {
             gov->createFirm();
         }
+        */
     }
     
     stats->report();

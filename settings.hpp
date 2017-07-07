@@ -32,6 +32,7 @@ protected:
     int unemp_ben_rate;
     int population;
     int gov_pop;
+    int prop_inv;
     
 public:
 
@@ -47,6 +48,7 @@ public:
     int getPreTaxDedns();   // pre-tax deductions (%)
     int getFCP();           // firm creaton probability (%)
     int getUBR();           // unemployment benefit rate (% of std wage)
+    int getPropInv();       // propensity to invest
     
     static int getId();
 };
