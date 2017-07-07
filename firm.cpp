@@ -104,9 +104,14 @@ void Firm::trigger(int period)
         {
             for (int i = 0; i < n; i++)
             {
-                employees.push_back(Government::Instance()->hire(std_wage, this));
+                Worker *w = Government::Instance()->hire(std_wage, this);
+                if (w != nullptr) {
+                    employees.push_back(w);
+                    num_hired++;
+                } else {
+                    break;
+                }
             }
-            num_hired = n;
         }
     }
 }

@@ -21,15 +21,15 @@ Settings *Settings::Instance()
         _instance = new Settings();
         
         // Read settings from console (eventually use config file)
-        int count, exp, std_wage, prop_con, dedns, inc_tax_rate, sales_tax_rate,
+        int count, gov_pop, std_wage, prop_con, dedns, inc_tax_rate, sales_tax_rate,
             firm_creation_prob, unemp_ben_rate;
         
         // Get parameters from console input. Eventually this will probably
         // be replaced by a config file.
         std::cout << "Size of population: ";
         std::cin >> count;
-        std::cout << "Government expenditure per week: ";
-        std::cin >> exp;
+        std::cout << "Target size of Gove sector: ";
+        std::cin >> gov_pop;
         std::cout << "Standard weekly wage (before tax): ";
         std::cin >> std_wage;
         prop_con = 0;
@@ -64,7 +64,8 @@ Settings *Settings::Instance()
         }
         
         _instance->population = count;
-        _instance->exp = exp;
+        //_instance->exp = exp;
+        _instance->gov_pop = gov_pop;
         _instance->std_wage = std_wage;
         _instance->prop_con = prop_con;
         _instance->inc_tax = inc_tax_rate;
@@ -92,9 +93,16 @@ int Settings::getPopSize()
     return population;
 }
 
+int Settings::getGovPop()
+{
+    return gov_pop;
+}
+
 int Settings::getGovExpRate()
 {
-    return exp;
+    // We calculate this rather than holding it as a constant as
+    // we may want to apply different rules in the future.
+    return (gov_pop * std_wage * inc_tax) / 100;
 }
 
 int Settings::getStdWage()

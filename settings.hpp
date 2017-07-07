@@ -22,7 +22,7 @@ private:
     
 protected:
 
-    int exp;
+    //int exp;
     int std_wage;
     int prop_con;
     int inc_tax;
@@ -31,12 +31,14 @@ protected:
     int firm_creation_prob;
     int unemp_ben_rate;
     int population;
+    int gov_pop;
     
 public:
 
     static Settings *Instance();
     
     int getPopSize();       // population size
+    int getGovPop();        // target size of gov-owned businesses
     int getGovExpRate();    // government expenditure (currency units per period)
     int getStdWage();       // standard wage (currency units per employee per period)
     int getPropCon();       // propensity to consume (%)

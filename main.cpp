@@ -40,7 +40,9 @@ int main(int argc, const char * argv[]) {
 
         stats->next(period);
         
-        if (std::rand() % 100 < settings->getFCP()) {
+        if ((gov->getNumEmployees() < settings->getPopSize()) &&
+            (std::rand() % 100 < settings->getFCP()))
+        {
             gov->createFirm();
         }
     }

@@ -207,11 +207,6 @@ int Government::getBenefitsRecd()
 
 void Government::trigger(int period)
 {
-    // TO DO
-    // We need to create something for the government to spend money on.
-    // For now we'll simply send it to the business arm of the government,
-    // which in effect stands for nationalised industries.
-
     //std::cout << "\nGovernment::trigger(" << period << ")\n";
     
     init(); // zero all the per-period accumulators
@@ -245,8 +240,8 @@ void Government::trigger(int period)
     }
 
     // Note that we only pay unemployment
-    // benefit to unemployed workers, i.e. people who have been employed.
-    // This is because initially we assume an economically inactive
+    // benefit to unemployed workers, i.e. workers who have been employed
+    // and are no longer. Initially we assume an economically inactive
     // population that is very much larger than the number that have been
     // or are employed. As the economy matures this disparity will diminish
     // and we can perhaps pay benefit to the economically inactive as well.
@@ -287,43 +282,37 @@ void Government::credit(int amount, Account *creditor)
 
 Worker *Government::hire(int wage, Firm *emp)
 {
-    // At present we don't check the number of workers so we
-    // effectively allow an infinite number. Ideally we should check
-    // how close to count we are and possibly recruit an existing
-    // worker at a higher wage. The point at which we start doing
-    // this will be one of the main determinants of inflation.
+    return getNumEmployees() < settings->getPopSize()
+        ? new Worker(wage, emp)
+        : nullptr;
     
-    Worker *w;
-    
+    // TO DO
+    //
     // Re-hire existing worker if possible; otherwise get a new
     // one. This is something that could be refined to take into
     // account the population size, previous wage of existing
-    // workers, etc.
+    // workers, etc. May need to rethink storage -- perhaps use
+    // std::set instea of std::vector so we don't get duplicates.
     //
-    // BUG: Rehiring causes reconciliations to fail because (I think)
-    // we reassign an employer and then make it available to the calling
-    // Firm. If re-hired we will now have a duplicate in the employees
-    // vector (or in the vectors held by different firms). In the end
-    // we're going to have to remove fired Workers from the employees
-    // vector, regardless of its inefficiency. It might be worth
-    // considering using a set instead of a vector.
     
-    /*
-     if (!available.empty()) {
-     // Re-hire fired worker
-     w = available.back();
-     w->setWage(wage);
-     w->setEmployer(emp);
-     available.pop_back();
-     } else {
-     */
+/*
+    Worker *w;
     
-    // Hire new worker
-    w = new Worker(wage, emp);
-    
-    //}
+    if (!available.empty()) {
+        // Re-hire fired worker
+        w = available.back();
+        w->setWage(wage);
+        w->setEmployer(emp);
+        available.pop_back();
+    } else {
+        
+        // Hire new worker
+        w = new Worker(wage, emp);
+        
+    }
     
     return w;
+*/
 }
 
 void Government::fire(Worker *w)
