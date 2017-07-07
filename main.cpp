@@ -37,20 +37,10 @@ int main(int argc, const char * argv[]) {
     for (int period = 1; period <= iters; period++)
     {
         gov->trigger(period);
-
         stats->next(period);
-        
-        if (period == 10) {
+        if (std::rand() % 100 < settings->getFCP()) {
             gov->createFirm();
         }
-        
-        /*
-        if ((gov->getNumEmployees() < settings->getPopSize()) &&
-            (std::rand() % 100 < settings->getFCP()))
-        {
-            gov->createFirm();
-        }
-        */
     }
     
     stats->report();

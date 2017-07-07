@@ -183,17 +183,15 @@ public:
     int getNumHired();
     int getNumFired();
     
-    // These is a bit out of place here. Firms shouldn't have access
+    // These are a bit out of place here. Firms shouldn't have access
     // to their employees' bank statements! However, at present the
-    // Firm::employees vector is the only place a complete list of
-    // employees is stored
+    // Firm::employees set is the only place a complete list of employees
+    // is stored
     int getTotEmpBal();
     int getIncTaxPaid();
     int getEmpPurch();          // total purchases by employees this period
-    
     int getUnempPurch();        // total purchases by unemployed workers this period
     int getBenefitsRecd();
-
 };
 
 
@@ -209,11 +207,7 @@ private:
     static Government *_instance;
     
     // Firms in a capitalist economy are legal entities and
-    // must be registered with the government. The zeroth
-    // element of this vector (firms[0]) represents the
-    // 'business arm' of the government (in other words the
-    // nationalised industries) and is treated as a special
-    // case
+    // must be registered with the government.
     std::set<Firm*> firms;
     std::set<Worker*> available;
     
@@ -255,9 +249,7 @@ public:
     void fire(Worker*);
 
     // Note that this returns the total number of employed workers, not
-    // just those employed by the government. For that you would need
-    // to access Government::gov->getNumFirms(), but you can't at prsent
-    // because it's a private method.
+    // just those employed by the government.
     size_t getNumEmployees();
     size_t getNumFirms();
 

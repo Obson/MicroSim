@@ -95,20 +95,20 @@ void Firm::trigger(int period)
         }
         
         // If we have funds left over, hire some more employees. Note that these
-        // don't get triggered until the next period. TO DO: The use of Prop Con
-        // here doesn't really make sense. It would be better to use an explicit
-        // 'inertia' or 'responsiveness' coefficient.
+        // don't get triggered until the next period.
         int n = (((balance * settings->getPropInv()) / 100) - committed) / std_wage;
         if (n > 0)
         {
             for (int i = 0; i < n; i++)
             {
                 Worker *w = Government::Instance()->hire(std_wage, this);
-                if (w != nullptr) {
+                if (w != nullptr)
+                {
                     employees.insert(w);
-                    //employees.push_back(w);
                     num_hired++;
-                } else {
+                }
+                else
+                {
                     break;
                 }
             }

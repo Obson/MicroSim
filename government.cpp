@@ -27,10 +27,6 @@ void Government::init()
 Government::Government()
 {
     gov = new Firm(settings->getStdWage());
-    
-    // gov has to be accessible via firms[0], so this must be the first
-    // access to the vector and must not be popped until the program
-    // terminates,
     firms.insert(gov);
 }
 
@@ -212,20 +208,10 @@ void Government::trigger(int period)
     
     init(); // zero all the per-period accumulators
     
-    // IMPORTANT
-    // At present this is unconditional, but we need to allow for either
-    // automatic (rule-based) or manual changes throughout a run as
-    // government expenditure needs to be exogenous.
-    //   Note also that we use a special 'grant' method to transfer
-    // government funds, to avoid disrupting the standard payment
-    // mechanism. This also ensures that no tax will be paid by recipients
-
-    if (true /*period < 2*/) {
-        int amt = settings->getGovExpRate();
-        gov->grant(amt);
-        balance -= amt;
-        exp += amt;
-    }
+    int amt = settings->getGovExpRate();
+    gov->grant(amt);
+    balance -= amt;
+    exp += amt;
     
     // Ensure all firms are initialised before we trigger any of them. I'm
     // not exactly sure why this is necessary but it is.
@@ -240,13 +226,11 @@ void Government::trigger(int period)
         it->trigger(period);
     }
 
-    // Note that we only pay unemployment
-    // benefit to unemployed workers, i.e. workers who have been employed
-    // and are no longer. Initially we assume an economically inactive
-    // population that is very much larger than the number that have been
-    // or are employed. As the economy matures this disparity will diminish
-    // and we can perhaps pay benefit to the economically inactive as well.
-    
+    // Note that we only pay unemployment benefit to unemployed workers,
+    // i.e. workers who have been employed and are no longer. Initially
+    // we assume an economically inactive population that is very much
+    // larger than the number that have been or are employed. As the
+    // economy matures this disparity will diminish.
     int benefit_amount = (settings->getStdWage() * settings->getUBR()) / 100;
     for (auto it : available) {
         transferTo(it, benefit_amount, this);
