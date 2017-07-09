@@ -8,11 +8,12 @@
 
 #include "account.hpp"
 
-Worker::Worker(int wage, Firm *emp)
+Worker::Worker(int wage, Firm *emp, int period)
 {
     gov = Government::Instance();
     this->wage = wage;
     employer = emp;
+    period_hired = period;
     init();
 }
 
@@ -39,6 +40,16 @@ bool Worker::isEmployedBy(Account *emp)
     return (emp != nullptr && emp == employer);
 }
 
+void Worker::setPeriodHired(int period)
+{
+    period_hired = period;
+}
+
+bool Worker::isNewHire(int period)
+{
+    return period_hired == period;
+}
+
 Firm *Worker::getEmployer()
 {
     return employer;
@@ -50,7 +61,7 @@ void Worker::trigger(int period)
     {
         last_triggered = period;
         int purch = (balance * settings->getPropCon()) / 100;
-        if (transferTo(gov->getRandomFirm(), purch, this))
+        if (purch > 0 && transferTo((gov->getRandomFirm()), purch, this))
         {
             purchases += purch;
         }
@@ -61,12 +72,13 @@ void Worker::credit(int amount, Account *creditor)
 {
     Account::credit(amount);
 
-    if (isEmployedBy(creditor))
+    if (isEmployedBy(creditor) || !isEmployed())
     {
-        // Here we assume that if the creditor is our employer then
-        // we should pay income tax. If the creditor isn't our employer
-        // but we're receiving the payment in out capacity as Worker
-        // then it's probably 'benefits'.
+        // Here we assume that if the creditor is our employer then we should
+        // pay income tax. If the creditor isn't our employer but we're
+        // receiving the payment in our capacity as Worker then it's probably
+        // benefits or bonus. If not employed at all it must be bonus and we are
+        // flagged for deletion. Surprising but perfectly possible.
         int tax = (amount * settings->getIncTaxRate()) / 100;
         transferTo(gov, tax, this);
         wages += amount;
@@ -79,6 +91,7 @@ void Worker::credit(int amount, Account *creditor)
     else
     {
         std::cout << "*** Unknown reason for credit ***\n";
+        exit(100);
     }
 }
 

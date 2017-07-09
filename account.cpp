@@ -40,3 +40,7 @@ void Account::credit(int amount, Account *creditor)
     balance += amount;
 }
 
+int Account::getId() const
+{
+    return id;
+}

@@ -45,6 +45,7 @@ void Firm::init()
     dedns_paid = 0;
     num_hired = 0;
     num_fired = 0;
+    bonuses_paid = 0;
 
     balance += amount_granted;
     
@@ -56,6 +57,8 @@ void Firm::init()
 
 void Firm::trigger(int period)
 {
+    bool firing = false;
+    
     if (period > last_triggered)
     {
         last_triggered = period;
@@ -79,37 +82,78 @@ void Firm::trigger(int period)
                 }
                 else
                 {
+                    // Flag for firing
+                    it->setEmployer(nullptr);
+                    firing = true;
+                }
+            }
+        }
+        
+        // Trigger employees
+        for (auto it : employees)
+        {
+            it->trigger(period);
+        }
+        
+        if (firing)
+        {
+            for (auto it : employees)
+            {
+                if (it->getEmployer() == nullptr) {
                     num_fired += 1;
                     Government::Instance()->fire(it);
                     employees.erase(it);
                 }
             }
         }
-        
-        
-        // Trigger all the employees -- even if we no longer employ them,
-        // relying on checks by the employee to prevent double counting.
-        for (auto it : employees)
+        else
         {
-            it->trigger(period);
-        }
-        
-        // If we have funds left over, hire some more employees. Note that these
-        // don't get triggered until the next period.
-        int n = (((balance * settings->getPropInv()) / 100) - committed) / std_wage;
-        if (n > 0)
-        {
-            for (int i = 0; i < n; i++)
+            // If we have funds left over, hire some more employees. These need to be
+            // triggered as they are no longer unemployed and so won't get triggered
+            // otherwise. However, we don't pay them this period.
+            int avail_funds = ((balance * settings->getPropInv()) / 100) - committed;
+            int n = avail_funds / std_wage;
+            if (n > 0)
             {
-                Worker *w = Government::Instance()->hire(std_wage, this);
-                if (w != nullptr)
+                for (int i = 0; i < n; i++)
                 {
-                    employees.insert(w);
-                    num_hired++;
+                    Worker *w = Government::Instance()->hire(std_wage, this, period);
+                    if (w != nullptr)
+                    {
+                        employees.insert(w);
+                        num_hired++;
+                        w->trigger(period);
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
+            }
+            
+            // Any funds left over should now be distributed (as bonuses) in
+            // order to conform to the SimX assumption that all funds held by
+            // the producers sector should be transferred to the Household
+            // sector in each period. Note, however, that workers have already
+            // been triggered, so these funds will not be spent until the next
+            // period.
+            int surplus = avail_funds - (num_hired * std_wage);
+            if (surplus > 0 && employees.size() != num_hired)
+            {
+                int dist = surplus / (employees.size() - num_hired);
+                for (auto it : employees)
                 {
-                    break;
+                    if (balance < dist && !it->isNewHire(period))
+                    {
+                        // This may leave a small balance (< dist)
+                        break;
+                    }
+                    else
+                    {
+                        // Will be recorded by worker as wages
+                        transferTo(it, dist, this);
+                        bonuses_paid += dist;
+                    }
                 }
             }
         }
@@ -148,6 +192,11 @@ int Firm::getAmountGranted()
 int Firm::getWagesPaid()
 {
     return wages_paid;
+}
+
+int Firm::getBonusesPaid()
+{
+    return bonuses_paid;
 }
 
 int Firm::getSalesTaxPaid()
@@ -195,9 +244,7 @@ int Firm::getTotEmpBal()
     int bal = 0;
     for (auto it : employees)
     {
-        if (it->getEmployer() == this) {
-            bal += it->getBalance();
-        }
+        bal += it->getBalance();
     }
     return bal;
 }
@@ -207,10 +254,7 @@ int Firm::getEmpPurch()
     int bal = 0;
     for (auto it : employees)
     {
-        if (it->getEmployer() == this) {
-            bal += it->getPurchasesMade();
-        }
-        assert(bal<1000000);
+        bal += it->getPurchasesMade();
     }
     return bal;
 }
@@ -227,23 +271,58 @@ int Firm::getUnempPurch()
     return bal;
 }
 
+int Firm::getWagesRecd()
+{
+    int bal = 0;
+    for (auto it : employees)
+    {
+        bal += it->getWagesReceived();
+    }
+    return bal;
+}
+
 int Firm::getBenefitsRecd()
 {
     int bal = 0;
     for (auto it : employees)
     {
+        bal += it->getBenefitsReceived();
+    }
+    return bal;
+}
+
+int Firm::getWagesUnemp()
+{
+    int bal = 0;
+    for (auto it : employees)
+    {
         if (it->getEmployer() == nullptr) {
-            bal += it->getBenefitsReceived();
+            bal += it->getWagesReceived();
         }
+    }
+    return bal;
+}
+
+int Firm::getBenefitsEmp()
+{
+    int bal = 0;
+    for (auto it : employees)
+    {
+        bal += it->getBenefitsReceived();
     }
     return bal;
 }
 
 Firm::~Firm()
 {
-    for (auto it : employees)
-    {
+    // This generates a run-time error (malloc: *** error for
+    // object ...: pointer being freed was not allocated) which
+    // I think is spurious. However, the memory should be freed
+    // when the program terminates, so I will disable the code.
+    /*
+    for (auto it : employees) {
         delete it;
     }
+    */
 }
 

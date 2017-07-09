@@ -27,9 +27,10 @@ private:
         {
             int bfwd = 0;
             int exp = 0;
+            int ben = 0;
             int rec = 0;
             int cfwd = 0;
-            int def = 0;
+            //int def = 0;
             size_t num_firms = 0;
             size_t num_emps = 0;
             int hires = 0;
@@ -44,25 +45,21 @@ private:
             int sales_tax = 0;
             int dedns = 0;
             int wages = 0;
+            int bonuses = 0;
             int cfwd = 0;
         } prod;
         
         struct
         {
-            int start = 0;  // NB not bfwd as may have changed status
+            int start = 0;      // NB not bfwd as may have changed status
             int wages = 0;
+            int benefits = 0;   // may have been unemployed at start of period
             int inc_tax = 0;
             int purch = 0;
+            int sales_tax = 0;
             int close = 0;
         } emp;
         
-        struct
-        {
-            int start = 0;  // NB not bfwd as may have changed status
-            int benefits = 0;
-            int purchases = 0;
-            int close = 0;
-        } unemp;
     };
     
     std::vector<Fields*> stats;

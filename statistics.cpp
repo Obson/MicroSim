@@ -24,7 +24,6 @@ Statistics *Statistics::Instance()
 Statistics::Statistics()
 {
     current = new Fields;
-    //*current = {};
 }
 
 // This is called BEFORE the next period is triggered. It dumps current stats
@@ -35,12 +34,13 @@ void Statistics::next(int period)
     Government *gov = Government::Instance();
 
     stats.push_back(current);
-    Fields *previous = current;
+    Fields *previous = stats.back();
     current = new Fields;
 
     // Gov
     previous->gov.cfwd = gov->getBalance();
     previous->gov.exp = gov->getExpenditure();
+    previous->gov.ben = gov->getBenefitsPaid();
     previous->gov.rec = gov->getReceipts();
     previous->gov.num_firms = gov->getNumFirms();
     previous->gov.hires = gov->getNumHired();
@@ -54,25 +54,21 @@ void Statistics::next(int period)
     previous->prod.grant = gov->getGrantsRecd();
     previous->prod.dedns = gov->getDednsPaid();
     previous->prod.wages = gov->getWagesPaid();
+    previous->prod.bonuses = gov->getBonusesPaid();
     previous->prod.sales = gov->getPurchases();
     previous->prod.sales_tax = gov->getSalesTaxPaid();
     //
     current->prod.bfwd = previous->prod.cfwd;
     
-    // Emp
+    // Dom
     previous->emp.close = gov->getEmpBal();
-    previous->emp.wages = gov->getWagesPaid();
+    previous->emp.wages = gov->getWagesRecd();
+    previous->emp.benefits = gov->getBenefitsRecd();
     previous->emp.inc_tax = gov->getIncTaxPaid();
     previous->emp.purch = gov->getEmpPurch();
     // *
     current->emp.start = previous->emp.close;
     
-    // Unemp
-    previous->unemp.close = gov->getUnempBal();
-    previous->unemp.benefits = gov->getBenefitsRecd();
-    previous->unemp.purchases = gov->getUnempPurch();
-    // *
-    current->unemp.start = previous->unemp.close;
 }
 
 #include <stdio.h>
@@ -91,7 +87,7 @@ void Statistics::report()
     
     if (myfile.is_open()) {
         std::cout << "\nOutput file is " << the_path << "/" << fname << "\n";
-        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Num Firms\",\"Num Empls\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Deficit\",\"Wages\",\"Benefits\",\"Consumption\"\n";
+        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Benefits Paid\",\"Bonuses Paid\",\"Gov Recpts\",\"Num Firms\",\"Num Empls\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Wages Emp\",\"Benefits Recd\",\"Consumption\"\n";
     } else {
         std::cout << "Cannot open output file\n";
     }
@@ -105,8 +101,11 @@ void Statistics::report()
             myfile  << period
                     << "," << it->gov.cfwd
                     << "," << it->prod.cfwd
-                    << "," << it->emp.close + it->unemp.close
+                    << "," << it->emp.close
                     << "," << it->gov.exp
+                    << "," << it->gov.ben
+                    << "," << it->prod.bonuses
+                    << "," << it->gov.rec
             
                     << "," << it->gov.num_firms
                     << "," << it->gov.num_emps
@@ -114,20 +113,24 @@ void Statistics::report()
                     << "," << it->emp.inc_tax
                     << "," << it->prod.sales_tax
                     << "," << it->prod.dedns
-                    << "," << it->gov.exp - it->gov.rec
+            
                     << "," << it->emp.wages
-                    << "," << it->unemp.benefits
-                    << "," << it->emp.purch + it->unemp.purchases
+                    << "," << it->emp.benefits
+                    << "," << it->emp.purch
                     << "\n";
+
+        // TO DO: Add new hires, rehires and fires...
+        
         }
 
         std::cout   << "\nPeriod " << ++period << "\n---------\n";
         
         std::cout   << "\nGovernment\n"
                     << "\n\t" << std::setw(21) << "Expenditure: " << std::setw(9) << it->gov.exp
+                    << "\n\t" << std::setw(21) << "Benefits Paid: " << std::setw(9) << it->gov.ben << " +"
                     << "\n\t" << std::setw(21) << "Receipts: " << std::setw(9) << it->gov.rec << " -"
                     << "\n\t" << std::setw(21) << " " << std::setw(9)  << "---------"
-                    << "\n\t" << std::setw(21) << "Deficit: " << std::setw(9) << (it->gov.exp - it->gov.rec) << "\n"
+                    << "\n\t" << std::setw(21) << "Deficit: " << std::setw(9) << (it->gov.exp + it->gov.ben - it->gov.rec) << "\n"
                     << "\n\t" << std::setw(21) << "Sector balance: " << std::setw(9) << it->gov.cfwd
                     << "\n";
         std::cout   << "\nFirms\n"
@@ -139,36 +142,32 @@ void Statistics::report()
                     << "\n\t" << std::setw(21) << "Starting balance: " << std::setw(9) << it->prod.bfwd
                     << "\n\t" << std::setw(21) << "Government grant: " << std::setw(9) << it->prod.grant << " +"
                     << "\n\t" << std::setw(21) << "Wages paid: " << std::setw(9) << it->prod.wages << " -"
+                    << "\n\t" << std::setw(21) << "Bonuses paid: " << std::setw(9) << it->prod.bonuses << " -"
+        
                     << "\n\t" << std::setw(21) << "Dedns paid: " << std::setw(9) << it->prod.dedns << " -"
                     << "\n\t" << std::setw(21) << "Sales: " << std::setw(9) << it->prod.sales << " +"
                     << "\n\t" << std::setw(21) << "Sales tax paid: " << std::setw(9) << it->prod.sales_tax << " -"
                     << "\n\t" << std::setw(21) << "Closing balance: " << std::setw(9) << it->prod.cfwd << " -"
                     << "\n\t" << std::setw(21) << " " << std::setw(9) << "---------"
-                    << "\n\t" << std::setw(21) << " " << std::setw(9) << (it->prod.bfwd + it->prod.grant - it->prod.wages - it->prod.dedns + it->prod.sales - it->prod.sales_tax - it->prod.cfwd) << "\n";
+                    << "\n\t" << std::setw(21) << " " << std::setw(9) << (it->prod.bfwd + it->prod.grant - it->prod.wages - it->prod.bonuses - it->prod.dedns + it->prod.sales - it->prod.sales_tax - it->prod.cfwd) << "\n";
         std::cout   << "\nWorkers\n";
-        std::cout   << "\nEmployed\n"
-                    << "\n\t" << std::setw(21) << "Starting balance: " << std::setw(9) << it->emp.start
+        std::cout   << "\n\t" << std::setw(21) << "Starting balance: " << std::setw(9) << it->emp.start
                     << "\n\t" << std::setw(21) << "Wages recd: " << std::setw(9) << it->emp.wages << " +"
                     << "\n\t" << std::setw(21) << "Income tax paid: " << std::setw(9) << it->emp.inc_tax << " -"
+                    << "\n\t" << std::setw(21) << "Benefits Recd: " << std::setw(9)  << it->emp.benefits << " +"
                     << "\n\t" << std::setw(21) << "Purchases: " << std::setw(9)  << it->emp.purch << " -"
-                    << "\n\t" << std::setw(21) << "Closing balance: " << std::setw(9)  << it->emp.close << " -";
-        std::cout   << "\n\nUnemployed\n"
-                    << "\n\t" << std::setw(21) << "Starting balance: " << std::setw(9) << it->unemp.start << " +"
-                    << "\n\t" << std::setw(21) << "Benefits: " << std::setw(9)  << it->unemp.benefits << " +"
-                    << "\n\t" << std::setw(21) << "Purchases: " << std::setw(9)  << it->unemp.purchases << " -"
-                    << "\n\t" << std::setw(21) << "Ending balance: " << std::setw(9) << it->unemp.close << " -"
+                    << "\n\t" << std::setw(21) << "Closing balance: " << std::setw(9)  << it->emp.close << " -"
                     << "\n\t" << std::setw(21) << " " << std::setw(9)  << "========="
-                    << "\n\t" << std::setw(21) << " " << std::setw(9)  << (it->unemp.start + it->unemp.benefits - it->unemp.purchases - it->unemp.close + it->emp.start + it->emp.wages - it->emp.inc_tax - it->emp.purch - it->emp.close)
+                    << "\n\t" << std::setw(21) << " " << std::setw(9)  << (it->emp.start + it->emp.wages + it->emp.benefits - it->emp.inc_tax - it->emp.purch - it->emp.close)
                     << "\n\t" << std::setw(21) << " " << std::setw(9)  << "---------"
                     << "\n";
-        
-        int recon = it->gov.cfwd + it->prod.cfwd + it->emp.close + it->unemp.close;
+
+        int recon = it->gov.cfwd + it->prod.cfwd + it->emp.close;
         
         std::cout   << "\nSectors\n"
                     << "\n\t" << std::setw(21) << "Government: " << std::setw(9) << it->gov.cfwd
-                    << "\n\t" << std::setw(21) << "Producers: " << std::setw(9) << it->prod.cfwd
-                    << "\n\t" << std::setw(21) << "Employed: " << std::setw(9) << it->emp.close
-                    << "\n\t" << std::setw(21) << "Unemployed: " << std::setw(9) << it->unemp.close
+                    << "\n\t" << std::setw(21) << "Firms: " << std::setw(9) << it->prod.cfwd
+                    << "\n\t" << std::setw(21) << "Workers: " << std::setw(9) << it->emp.close
                     << "\n\t" << std::setw(21) << "  " << std::setw(9) << "---------"
                     << "\n\t" << std::setw(21) << "  " << std::setw(9) << recon
                     << "\n\t" << std::setw(21) << "  " << std::setw(9) << "---------"

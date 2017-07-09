@@ -12,7 +12,6 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <iostream>
-#include <vector>
 #include <set>
 
 #include "settings.hpp"
@@ -40,7 +39,7 @@ public:
     // which will be called once per period.
     virtual void trigger(int period) = 0;
     
-    int id;
+    int getId() const;
     
 protected:
     
@@ -51,6 +50,10 @@ protected:
     int last_triggered = -1;
 
     bool transferTo(Account *recipient, int amount, Account *creditor);
+
+private:
+
+    int id;
     
 };
 
@@ -81,6 +84,7 @@ private:
     int benefits;
     int wages;
     int inc_tax;
+    int period_hired;
     
 protected:
     
@@ -88,15 +92,17 @@ protected:
     
     void setEmployer(Firm*);
     void setWage(int);
+    void setPeriodHired(int period);
     
 public:
     
-    Worker(int wage, Firm *emp);
+    Worker(int wage, Firm *emp, int period);
     
     int getWage();
     Firm *getEmployer();
     bool isEmployed();
     bool isEmployedBy(Account *emp);
+    bool isNewHire(int period);
 
     // Overrides
     void credit(int amount, Account *creditor = nullptr);
@@ -114,11 +120,12 @@ class Firm: public Account
     
 private:
     
-    std::set<Worker *> employees;
+    std::set<Worker*> employees;
     
     int std_wage;
     int amount_granted = 0;
     int wages_paid = 0;
+    int bonuses_paid = 0;
     int sales_tax_paid = 0;
     int sales_receipts = 0;
     int dedns_paid = 0;
@@ -174,6 +181,7 @@ public:
     
     int getAmountGranted();
     int getWagesPaid();
+    int getBonusesPaid();
     int getSalesTaxPaid();
     int getSalesReceipts();
     int getDednsPaid();
@@ -192,6 +200,9 @@ public:
     int getEmpPurch();          // total purchases by employees this period
     int getUnempPurch();        // total purchases by unemployed workers this period
     int getBenefitsRecd();
+    int getWagesUnemp();        // total wages received by (currently) unemployed workers
+    int getBenefitsEmp();       // total benefits received by (currently) employed workers
+    int getWagesRecd();
 };
 
 
@@ -211,9 +222,9 @@ private:
     std::set<Firm*> firms;
     std::set<Worker*> available;
     
-    Firm *gov;  // (see constructor for assignment to firms)
+    Firm gov;  // (see constructor for assignment to firms)
     
-    int exp, rec;
+    int exp, rec, ben;
     
 protected:
     
@@ -238,15 +249,17 @@ protected:
 public:
     
     static Government *Instance();
+    ~Government();
     
     void trigger(int period);
     
     Firm *createFirm();
+    //std::map<int, Firm>::const_iterator
     Firm *getRandomFirm();
-    Worker *getAvailableWorker();
+
     
-    Worker *hire(int wage, Firm *emp);
-    void fire(Worker*);
+    Worker *hire(int wage, Firm *emp, int period);
+    void fire(Worker *w);
 
     // Note that this returns the total number of employed workers, not
     // just those employed by the government.
@@ -256,12 +269,14 @@ public:
     int getNumHired();      // total number of workers hired this period
     int getNumFired();      // total number of workers fired this period
     
-    int getExpenditure();   // Gov expenditure in current period
+    int getExpenditure();   // Gov expenditure in current period (excl benefits)
+    int getBenefitsPaid();  // Benefits paid this period
     int getReceipts();      // Gov receipts (taxes and dedns) in current period
     int getProdBalance();   // total funds held by firms
     int getGrantsRecd();    // total grants received by firms this period
     int getDednsPaid();     // total deductions paid by firms this period
     int getWagesPaid();     // total wages paid by firms this period
+    int getBonusesPaid();   // total bonuses paid by firms this period
     int getPurchases();     // receipts for sales by all firms this period
     int getEmpBal();        // total funds held by employed workers
     int getEmpPurch();      // total purchases by employees this period
@@ -269,9 +284,10 @@ public:
     int getUnempPurch();    // total purchases by unemployed workers this period
     int getIncTaxPaid();    // total income tax paid by employees
     int getSalesTaxPaid();  // total sales tax paid by firms this period
-    int getBenefitsRecd();  // total benefits received by umployed workers
-    
-    ~Government();
+    int getBenefitsRecd();  // total benefits received by unemployed workers
+    int getWagesUnemp();    // total wages received by (currently) unemployed workers
+    int getBenefitsEmp();   // total benefits received by (currently) employed workers
+    int getWagesRecd();     // total wages received by all workers
 };
 
 
