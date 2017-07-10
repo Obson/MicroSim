@@ -90,33 +90,35 @@ void Firm::trigger(int period)
 
 void Firm::epilogue(int period)
 {
-    int available = balance - committed;
-    int investible = (available * settings->getPropInv()) / 100;
-    int bonuses = available - investible;
-    
-    // We distribute the funds before hiring new workers to ensure they only
-    // get distributed to existing workers.
-    int emps = reg->getNumEmployedBy(this);
-    int amt_paid = (emps > 0
-                    ? reg->payWorkers(bonuses/emps,
-                                      bonuses,
-                                      this,
-                                      Register::bonus
-                                      )
-                    : 0);
-    
-    balance -= amt_paid;
-    bonuses_paid += amt_paid;
-    
-    // Adjust calculation if not all the bonus funds were used
-    if (amt_paid < bonuses) {
-        investible += (bonuses - amt_paid);
-    }
-    
-    // How many more employees can we afford?
-    int num_to_hire = (investible * 100) / (std_wage * (100 + settings->getPreTaxDedns()));
-    if (num_to_hire > 0) {
-        num_hired = reg->hireSome(this, period, num_to_hire);
+    if (balance > committed) {
+        int available = balance - committed;
+        int investible = (available * settings->getPropInv()) / 100;
+        int bonuses = available - investible;
+        
+        // We distribute the funds before hiring new workers to ensure they only
+        // get distributed to existing workers.
+        int emps = reg->getNumEmployedBy(this);
+        int amt_paid = (emps > 0
+                        ? reg->payWorkers(bonuses/emps,
+                                          bonuses,
+                                          this,
+                                          Register::bonus
+                                          )
+                        : 0);
+        
+        balance -= amt_paid;
+        bonuses_paid += amt_paid;
+        
+        // Adjust calculation if not all the bonus funds were used
+        if (amt_paid < bonuses) {
+            investible += (bonuses_paid - amt_paid);
+        }
+        
+        // How many more employees can we afford?
+        int num_to_hire = (investible * 100) / (std_wage * (100 + settings->getPreTaxDedns()));
+        if (num_to_hire > 0) {
+            num_hired = reg->hireSome(this, period, num_to_hire);
+        }
     }
 }
 

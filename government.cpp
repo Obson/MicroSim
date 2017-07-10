@@ -14,6 +14,7 @@ Government *Government::Instance()
 {
     if (_instance == nullptr) {
         _instance = new Government();
+        _instance->gov_firm = nullptr;
     }
     return _instance;
 }
@@ -29,7 +30,9 @@ void Government::init()
     // t here because if it's in the constructure you get a recursive
     // declaration: Givernment instantiates Firm, which instantiates
     // Government).
-    gov_firm = reg->createFirm();
+    if (gov_firm == nullptr) {
+        gov_firm = reg->createFirm();
+    }
     
 }
 
