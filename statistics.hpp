@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "account.hpp"
+#include "register.hpp"
 
 class Statistics
 {
@@ -67,6 +68,7 @@ private:
 protected:
     
     Statistics();
+    Register *reg;
     
 public:
     

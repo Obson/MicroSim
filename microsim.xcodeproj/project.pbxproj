@@ -14,6 +14,7 @@
 		E2E626541F0933A900948E4B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E6264C1F0933A900948E4B /* main.cpp */; };
 		E2E626561F0933A900948E4B /* settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E6264E1F0933A900948E4B /* settings.cpp */; };
 		E2E626571F0933A900948E4B /* statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E626501F0933A900948E4B /* statistics.cpp */; };
+		E2E6265E1F12BE0000948E4B /* register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2E6265C1F12BE0000948E4B /* register.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +41,8 @@
 		E2E6264F1F0933A900948E4B /* settings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = settings.hpp; sourceTree = SOURCE_ROOT; };
 		E2E626501F0933A900948E4B /* statistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = statistics.cpp; sourceTree = SOURCE_ROOT; };
 		E2E626511F0933A900948E4B /* statistics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = statistics.hpp; sourceTree = SOURCE_ROOT; };
+		E2E6265C1F12BE0000948E4B /* register.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = register.cpp; sourceTree = SOURCE_ROOT; };
+		E2E6265D1F12BE0000948E4B /* register.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = register.hpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +75,8 @@
 		E2D9BF451EE22B1B008AE7B8 /* MicroSim */ = {
 			isa = PBXGroup;
 			children = (
+				E2E6265C1F12BE0000948E4B /* register.cpp */,
+				E2E6265D1F12BE0000948E4B /* register.hpp */,
 				E2E626451F0903F400948E4B /* account.cpp */,
 				E2E6264A1F0933A900948E4B /* firm.cpp */,
 				E2E6264B1F0933A900948E4B /* government.cpp */,
@@ -147,6 +152,7 @@
 			files = (
 				E2E626531F0933A900948E4B /* government.cpp in Sources */,
 				E2E626491F0903F400948E4B /* worker.cpp in Sources */,
+				E2E6265E1F12BE0000948E4B /* register.cpp in Sources */,
 				E2E626571F0933A900948E4B /* statistics.cpp in Sources */,
 				E2E626481F0903F400948E4B /* account.cpp in Sources */,
 				E2E626541F0933A900948E4B /* main.cpp in Sources */,

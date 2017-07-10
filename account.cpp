@@ -15,6 +15,8 @@ Account::Account()
     balance = 0;
     
     id = Settings::getId();
+    
+    reg = Register::Instance();
 }
 
 int Account::getBalance()

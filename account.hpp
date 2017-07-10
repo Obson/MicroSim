@@ -12,16 +12,19 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <iostream>
-#include <set>
+#include <list>
 
 #include "settings.hpp"
 #include "statistics.hpp"
+#include "register.hpp"
 
 // Account is the base class for every active entity in the system
 // and provides the basic overrideable functionality.
 
 class Statistics;
 class Settings;
+class Firm;
+class Government;
 
 class Account
 {
@@ -43,8 +46,10 @@ public:
     
 protected:
     
+    Register *reg;
     Settings *settings;
     Statistics *stats;
+    Government *gov;
 
     int balance;
     int last_triggered = -1;
@@ -61,19 +66,18 @@ private:
 // The Firm class is used in Worker, which it also uses, so we
 // need a forward declaration here.
 
-class Firm;
-class Government;
+//class Register;
 
 class Worker: public Account
 {
     friend class Government;
     friend class Firm;
+    friend class Register;
     
 private:
 
     int wage;
     Firm *employer;
-    Government *gov;
 
     // Receipts and payments for current period only. Must be
     // set to zero on each trigger (unless re-triggered in same
@@ -85,6 +89,7 @@ private:
     int wages;
     int inc_tax;
     int period_hired;
+    int period_fired;
     
 protected:
     
@@ -97,6 +102,7 @@ protected:
 public:
     
     Worker(int wage, Firm *emp, int period);
+    Worker();
     
     int getWage();
     Firm *getEmployer();
@@ -117,10 +123,9 @@ public:
 class Firm: public Account
 {
     friend class Government;
+    friend class Register;
     
 private:
-    
-    std::set<Worker*> employees;
     
     int std_wage;
     int amount_granted = 0;
@@ -131,6 +136,8 @@ private:
     int dedns_paid = 0;
     int num_hired = 0;
     int num_fired = 0;
+    
+    int committed = 0;              // current cost of wages and deductions
     
 protected:
 
@@ -172,9 +179,8 @@ public:
     
     Firm(int standard_wage = 500);
     
-    ~Firm();    // free space taken up by employees list in vector
-    
     void trigger(int period);
+    void epilogue(int period);
     
     // Overrides base mmethod to give additional functionality
     void credit(int amount, Account *creditor = nullptr);
@@ -190,21 +196,7 @@ public:
     
     int getNumHired();
     int getNumFired();
-    
-    // These are a bit out of place here. Firms shouldn't have access
-    // to their employees' bank statements! However, at present the
-    // Firm::employees set is the only place a complete list of employees
-    // is stored
-    int getTotEmpBal();
-    int getIncTaxPaid();
-    int getEmpPurch();          // total purchases by employees this period
-    int getUnempPurch();        // total purchases by unemployed workers this period
-    int getBenefitsRecd();
-    int getWagesUnemp();        // total wages received by (currently) unemployed workers
-    int getBenefitsEmp();       // total benefits received by (currently) employed workers
-    int getWagesRecd();
 };
-
 
 // Government is a singleton class as we are currently assuming
 // a closed economy wth a single currency. Foreign trade would
@@ -217,12 +209,8 @@ private:
     
     static Government *_instance;
     
-    // Firms in a capitalist economy are legal entities and
-    // must be registered with the government.
-    std::set<Firm*> firms;
-    std::set<Worker*> available;
-    
-    Firm gov;  // (see constructor for assignment to firms)
+    Firm *gov;  // (see constructor for assignment to firms)
+    Register *reg;
     
     int exp, rec, ben;
     
@@ -232,11 +220,10 @@ protected:
     
     void init();
     
-    // This method overrides the method in the base (Account)
-    // class, which prohibits transfers that would leave a
-    // negative balance. This restriction doesn't apply to
-    // the government, which creates money precisely by
-    // creating transfers that leave a negative balance.
+    // This method overrides the method in the base (Account) class, which
+    // prohibits transfers that would leave a negative balance. This
+    // restriction doesn't apply to the government, which creates money
+    // precisely by creating transfers that leave a negative balance.
     void transferTo(Account *recipient,
                     int amount,
                     Account *creditor
@@ -249,45 +236,12 @@ protected:
 public:
     
     static Government *Instance();
-    ~Government();
     
     void trigger(int period);
-    
-    Firm *createFirm();
-    //std::map<int, Firm>::const_iterator
-    Firm *getRandomFirm();
-
-    
-    Worker *hire(int wage, Firm *emp, int period);
-    void fire(Worker *w);
-
-    // Note that this returns the total number of employed workers, not
-    // just those employed by the government.
-    size_t getNumEmployees();
-    size_t getNumFirms();
-
-    int getNumHired();      // total number of workers hired this period
-    int getNumFired();      // total number of workers fired this period
     
     int getExpenditure();   // Gov expenditure in current period (excl benefits)
     int getBenefitsPaid();  // Benefits paid this period
     int getReceipts();      // Gov receipts (taxes and dedns) in current period
-    int getProdBalance();   // total funds held by firms
-    int getGrantsRecd();    // total grants received by firms this period
-    int getDednsPaid();     // total deductions paid by firms this period
-    int getWagesPaid();     // total wages paid by firms this period
-    int getBonusesPaid();   // total bonuses paid by firms this period
-    int getPurchases();     // receipts for sales by all firms this period
-    int getEmpBal();        // total funds held by employed workers
-    int getEmpPurch();      // total purchases by employees this period
-    int getUnempBal();      // total funds held by unemployed workers
-    int getUnempPurch();    // total purchases by unemployed workers this period
-    int getIncTaxPaid();    // total income tax paid by employees
-    int getSalesTaxPaid();  // total sales tax paid by firms this period
-    int getBenefitsRecd();  // total benefits received by unemployed workers
-    int getWagesUnemp();    // total wages received by (currently) unemployed workers
-    int getBenefitsEmp();   // total benefits received by (currently) employed workers
-    int getWagesRecd();     // total wages received by all workers
 };
 
 

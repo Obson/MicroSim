@@ -27,7 +27,11 @@ void Government::init()
 
 Government::Government()
 {
-    firms.insert(&gov);
+    reg = Register::Instance();
+    
+    // This must be the first Firm created, as this ensures that government
+    // money is always spent at the start of the period
+    gov = reg->createFirm();
 }
 
 // TO DO NEXT. OR AT LEAST VERY SOON
@@ -44,13 +48,6 @@ Government::Government()
 // it just sucks in business from other less successful firms in the same
 // field, and they die.
 
-Firm *Government::createFirm()
-{
-    Firm *firm = new Firm(settings->getStdWage());
-    firms.insert(firm);
-    return firm;
-}
-
 int Government::getExpenditure()
 {
     return exp;
@@ -66,207 +63,34 @@ int Government::getReceipts()
     return rec;
 }
 
-size_t Government::getNumFirms()
-{
-    return firms.size();
-}
-
-size_t Government::getNumEmployees()
-{
-    size_t res = 0;
-    for (auto it : firms) {
-        res += it->getNumEmployees();
-    }
-    return res;
-}
-
-int Government::getNumHired()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getNumHired();
-    }
-    return bal;
-}
-
-int Government::getNumFired()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getNumFired();
-    }
-    return bal;
-}
-
-int Government::getProdBalance()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getBalance();
-    }
-    return bal;
-}
-
-int Government::getUnempBal()
-{
-    int bal = 0;
-    for (auto it : available) {
-        bal += it->getBalance();
-    }
-    return bal;
-}
-
-int Government::getEmpBal()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getTotEmpBal();
-    }
-    for (auto it : available) {
-        bal += it->getBalance();
-    }
-    return bal;
-}
-
-int Government::getGrantsRecd()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getAmountGranted();
-    }
-    return bal;
-}
-
-int Government::getDednsPaid()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getDednsPaid();
-    }
-    return bal;
-}
-
-int Government::getWagesPaid()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getWagesPaid();
-    }
-    return bal;
-}
-
-int Government::getBonusesPaid()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getBonusesPaid();
-    }
-    return bal;
-}
-
-int Government::getPurchases()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getSalesReceipts();
-    }
-    return bal;
-}
-
-int Government::getIncTaxPaid()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getIncTaxPaid();
-    }
-    for (auto it : available) {
-        bal += it->getIncTaxPaid();
-    }
-    return bal;
-}
-
-int Government::getSalesTaxPaid()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getSalesTaxPaid();
-    }
-    return bal;
-}
-
-int Government::getEmpPurch()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getEmpPurch();
-    }
-    for (auto it : available) {
-        bal += it->getPurchasesMade();
-    }
-    return bal;
-}
-
-int Government::getBenefitsRecd()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getBenefitsRecd();
-    }
-    for (auto it : available) {
-        bal += it->getBenefitsReceived();
-    }
-    return bal;
-}
-
-int Government::getWagesRecd()
-{
-    int bal = 0;
-    for (auto it : firms) {
-        bal += it->getWagesRecd();
-    }
-    for (auto it : available) {
-        bal += it->getWagesReceived();
-    }
-    return bal;
-}
 
 void Government::trigger(int period)
 {
     //std::cout << "\nGovernment::trigger(" << period << ")\n";
     
-    init(); // zero all the per-period accumulators
+    init();
+    reg->init();
     
+    //
+    // Government grants (incl support of gov-owned businesses)
+    //
     int amt = settings->getGovExpRate();
-    gov.grant(amt);
+    gov->grant(amt);
     balance -= amt;
     exp += amt;
     
-    // Ensure all firms are initialised before we trigger any of them. I'm
-    // not exactly sure why this is necessary but it is.
-    for (auto it : firms) {
-        it->init();
-    }
-    for (auto it : available) {
-        it->init();
-    }
+    //
+    // Benefits
+    //
     
-    for (auto it : firms) {
-        it->trigger(period);
-    }
-    for (auto it : available) {
-        it->trigger(period);
-    }
-
-    // Note that we only pay unemployment benefit to unemployed workers,
-    // i.e. workers who have been employed and are no longer. Initially
-    // we assume an economically inactive population that is very much
-    // larger than the number that have been or are employed. As the
-    // economy matures this disparity will diminish.
-    int benefit_amount = (settings->getStdWage() * settings->getUBR()) / 100;
-    for (auto it : available) {
-        transferTo(it, benefit_amount, this);
-        ben += benefit_amount;
-    }
+    reg->trigger(period);
+    
+    ben += reg->payWorkers((settings->getStdWage() * settings->getUBR()) / 100,
+                           0,                   // no max amount
+                           nullptr,             // no source (i.e. Government)
+                           Register::benefits,  // reason
+                           period
+                           );
 }
 
 //
@@ -297,50 +121,5 @@ void Government::credit(int amount, Account *creditor)
     rec += amount;
 }
 
-Worker *Government::hire(int wage, Firm *emp, int period)
-{
-    if (available.empty()) {
-        return getNumEmployees() < settings->getPopSize()
-        ? new Worker(wage, emp, period)
-        : nullptr;
-    } else {
-        auto it = available.begin();
-        advance(it, std::rand() % available.size());
-        Worker *w = *it;
-        w->setPeriodHired(period);
-        available.erase(it);
-        return w;
-    }
-}
-
-// This function records the fired worker in the 'available' map, but it's
-// the caller's responsibility to remove if from the 'firms' map.
-//void Government::fire(std::map<int, Worker>::const_iterator w)
-void Government::fire(Worker *w)
-{
-    w->setEmployer(nullptr);
-    available.insert(w);
-}
-
-Firm *Government::getRandomFirm()
-{
-    std::set<Firm*>::const_iterator it(firms.begin());
-    advance(it, std::rand() % firms.size());
-    return *it;
-}
-
-Government::~Government()
-{
-    for (auto it : firms)
-    {
-        if (it != &gov) {
-            delete it;
-        }
-    }
-    for (auto it : available)
-    {
-        delete it;
-    }
-}
 
 

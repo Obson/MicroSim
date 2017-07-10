@@ -23,6 +23,7 @@ Statistics *Statistics::Instance()
 
 Statistics::Statistics()
 {
+    reg = Register::Instance();
     current = new Fields;
 }
 
@@ -42,30 +43,30 @@ void Statistics::next(int period)
     previous->gov.exp = gov->getExpenditure();
     previous->gov.ben = gov->getBenefitsPaid();
     previous->gov.rec = gov->getReceipts();
-    previous->gov.num_firms = gov->getNumFirms();
-    previous->gov.hires = gov->getNumHired();
-    previous->gov.fires = gov->getNumFired();
+    previous->gov.num_firms = reg->getNumFirms();
+    previous->gov.hires = reg->getNumHired();
+    previous->gov.fires = reg->getNumFired();
     //
-    current->gov.num_emps = gov->getNumEmployees();
+    current->gov.num_emps = reg->getNumEmployed();
     current->gov.bfwd = previous->gov.cfwd;
     
     // Prod
-    previous->prod.cfwd = gov->getProdBalance();
-    previous->prod.grant = gov->getGrantsRecd();
-    previous->prod.dedns = gov->getDednsPaid();
-    previous->prod.wages = gov->getWagesPaid();
-    previous->prod.bonuses = gov->getBonusesPaid();
-    previous->prod.sales = gov->getPurchases();
-    previous->prod.sales_tax = gov->getSalesTaxPaid();
+    previous->prod.cfwd = reg->getProdBal();
+    previous->prod.grant = reg->getGrantsRecd();
+    previous->prod.dedns = reg->getDednsPaid();
+    previous->prod.wages = reg->getWagesPaid();
+    previous->prod.bonuses = reg->getBonusesPaid();
+    previous->prod.sales = reg->getSalesReceipts();
+    previous->prod.sales_tax = reg->getSalesTaxPaid();
     //
     current->prod.bfwd = previous->prod.cfwd;
     
     // Dom
-    previous->emp.close = gov->getEmpBal();
-    previous->emp.wages = gov->getWagesRecd();
-    previous->emp.benefits = gov->getBenefitsRecd();
-    previous->emp.inc_tax = gov->getIncTaxPaid();
-    previous->emp.purch = gov->getEmpPurch();
+    previous->emp.close = reg->getWorkersBal();
+    previous->emp.wages = reg->getWagesRecd();
+    previous->emp.benefits = reg->getBenefitsRecd();
+    previous->emp.inc_tax = reg->getIncTaxPaid();
+    previous->emp.purch = reg->getPurchasesMade();
     // *
     current->emp.start = previous->emp.close;
     

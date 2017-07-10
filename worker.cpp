@@ -8,12 +8,12 @@
 
 #include "account.hpp"
 
-Worker::Worker(int wage, Firm *emp, int period)
+Worker::Worker()
 {
     gov = Government::Instance();
-    this->wage = wage;
-    employer = emp;
-    period_hired = period;
+    employer = nullptr;
+    period_hired = -1;
+    period_fired = 0;
     init();
 }
 
@@ -61,7 +61,7 @@ void Worker::trigger(int period)
     {
         last_triggered = period;
         int purch = (balance * settings->getPropCon()) / 100;
-        if (purch > 0 && transferTo((gov->getRandomFirm()), purch, this))
+        if (purch > 0 && transferTo(reg->selectRandomFirm(), purch, this))
         {
             purchases += purch;
         }
