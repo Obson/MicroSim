@@ -23,15 +23,19 @@ void Government::init()
     exp = 0;
     rec = 0;
     ben = 0;
+    
+    // This must be the first Firm created, as this ensures that government
+    // money is always spent at the start of the period. However, we defer it
+    // t here because if it's in the constructure you get a recursive
+    // declaration: Givernment instantiates Firm, which instantiates
+    // Government).
+    gov_firm = reg->createFirm();
+    
 }
 
 Government::Government()
 {
     reg = Register::Instance();
-    
-    // This must be the first Firm created, as this ensures that government
-    // money is always spent at the start of the period
-    gov = reg->createFirm();
 }
 
 // TO DO NEXT. OR AT LEAST VERY SOON
@@ -75,7 +79,7 @@ void Government::trigger(int period)
     // Government grants (incl support of gov-owned businesses)
     //
     int amt = settings->getGovExpRate();
-    gov->grant(amt);
+    gov_firm->grant(amt);
     balance -= amt;
     exp += amt;
     

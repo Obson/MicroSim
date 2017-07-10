@@ -49,7 +49,10 @@ protected:
     Register *reg;
     Settings *settings;
     Statistics *stats;
-    Government *gov;
+    
+    // We can't have an instance of Government as a member of Account because
+    // Government is derived from Account
+    // Government *gov;
 
     int balance;
     int last_triggered = -1;
@@ -92,6 +95,8 @@ private:
     int period_fired;
     
 protected:
+    
+    Government *gov;
     
     void init();
     
@@ -141,6 +146,8 @@ private:
     
 protected:
 
+    Government *gov;
+    
     // Only government can make a grant, so this should be protected
     // and the Government class made a friend class
     void grant(int amount);
@@ -209,7 +216,7 @@ private:
     
     static Government *_instance;
     
-    Firm *gov;  // (see constructor for assignment to firms)
+    Firm *gov_firm;  // (see constructor for assignment to firms)
     Register *reg;
     
     int exp, rec, ben;
