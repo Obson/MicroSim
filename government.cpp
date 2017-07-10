@@ -71,7 +71,6 @@ int Government::getReceipts()
 void Government::trigger(int period)
 {
     //std::cout << "\nGovernment::trigger(" << period << ")\n";
-    
     init();
     reg->init();
     
@@ -84,17 +83,17 @@ void Government::trigger(int period)
     exp += amt;
     
     //
-    // Benefits
+    // Pay benefits to all unemployed workers
     //
-    
-    reg->trigger(period);
-    
     ben += reg->payWorkers((settings->getStdWage() * settings->getUBR()) / 100,
                            0,                   // no max amount
                            nullptr,             // no source (i.e. Government)
                            Register::benefits,  // reason
                            period
                            );
+
+    reg->trigger(period);
+    
 }
 
 //

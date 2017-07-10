@@ -45,6 +45,7 @@ void Firm::init()
     num_hired = 0;
     num_fired = 0;
     bonuses_paid = 0;
+    amount_granted = 0;
     
     committed = 0;                  // Amount needed to pay existing employees,
                                     // not including any new employees taken on
@@ -80,7 +81,7 @@ void Firm::trigger(int period)
     }
 }
 
-//  Distribute any excess funds as bonuses/dividends. Excess is defined as
+// Distribute any excess funds as bonuses/dividends. Excess is defined as
 // the current balance (after sales have been taken into account), less
 // committed funds (i.e. funds needed to pay current complement of
 // employees and the associated deductions) less the proportion designated
@@ -95,11 +96,14 @@ void Firm::epilogue(int period)
     
     // We distribute the funds before hiring new workers to ensure they only
     // get distributed to existing workers.
-    int amt_paid = reg->payWorkers(bonuses/reg->getNumEmployedBy(this),
-                                   bonuses,
-                                   this,
-                                   Register::bonus
-                                   );
+    int emps = reg->getNumEmployedBy(this);
+    int amt_paid = (emps > 0
+                    ? reg->payWorkers(bonuses/emps,
+                                      bonuses,
+                                      this,
+                                      Register::bonus
+                                      )
+                    : 0);
     
     balance -= amt_paid;
     bonuses_paid += amt_paid;

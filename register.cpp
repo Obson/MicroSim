@@ -138,34 +138,36 @@ int Register::payWorkers(int amount, int max_tot, Firm *source, Reason reason, i
         num_just_fired = 0;  // reset - will be incremented by fired()
     }
     
-    for (auto it : workers) {
-        switch (reason) {
-            case wages:
-                if (it->getEmployer() == source) {
-                    if (max_tot - amt_paid < amount) {
-                        fire(it, period);
-                    } else {
+    if (!workers.empty()) {
+        for (auto it : workers) {
+            switch (reason) {
+                case wages:
+                    if (it->getEmployer() == source) {
+                        if (max_tot - amt_paid < amount) {
+                            fire(it, period);
+                        } else {
+                            it->credit(amount, source);
+                            amt_paid += amount;
+                        }
+                    }
+                    break;
+                case benefits:
+                    if (!it->isEmployed()) {
+                        it->credit(amount);
+                        amt_paid += amount;
+                    }
+                    break;
+                case bonus:
+                    // Note that when paying bonuses we do not check that
+                    // sufficient funds are available -- it's up to the caller to
+                    // ensure that the amount is correct. Any overpayment will
+                    // simply create a negative balance in the caller's account.
+                    if (it->getEmployer() == source) {
                         it->credit(amount, source);
                         amt_paid += amount;
                     }
-                }
-                break;
-            case benefits:
-                if (!it->isEmployed()) {
-                    it->credit(amount);
-                    amt_paid += amount;
-                }
-                break;
-            case bonus:
-                // Note that when paying bonuses we do not check that
-                // sufficient funds are available -- it's up to the caller to
-                // ensure that the amount is correct. Any overpayment will
-                // simply create a negative balance in the caller's account.
-                if (it->getEmployer() == source) {
-                    it->credit(amount);
-                    amt_paid += amount;
-                }
-                break;
+                    break;
+            }
         }
     }
     
@@ -356,5 +358,9 @@ void Register::trigger(int period)
     }
     for (auto it : workers) {
         it->trigger(period);
+    }
+    
+    for (auto it : firms) {
+        it->epilogue(period);
     }
 }
