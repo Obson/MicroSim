@@ -72,7 +72,7 @@ void Worker::credit(int amount, Account *creditor)
 {
     Account::credit(amount);
 
-    if (isEmployedBy(creditor) || !isEmployed())
+    if (isEmployedBy(creditor))
     {
         // Here we assume that if the creditor is our employer then we should
         // pay income tax. If the creditor isn't our employer but we're
@@ -84,7 +84,7 @@ void Worker::credit(int amount, Account *creditor)
         wages += amount;
         inc_tax += tax;
     }
-    else if (creditor == Government::Instance())
+    else if (creditor == gov)
     {
         benefits += amount;
     }

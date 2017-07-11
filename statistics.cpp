@@ -44,6 +44,7 @@ void Statistics::next(int period)
     previous->gov.ben = gov->getBenefitsPaid();
     previous->gov.rec = gov->getReceipts();
     previous->gov.num_firms = reg->getNumFirms();
+    previous->gov.num_emps = reg->getNumWorkers();
     previous->gov.hires = reg->getNumHired();
     previous->gov.fires = reg->getNumFired();
     //

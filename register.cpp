@@ -131,7 +131,7 @@ size_t Register::getNumWorkers()
     return workers.size();
 }
 
-int Register::payWorkers(int amount, int max_tot, Firm *source, Reason reason, int period)
+int Register::payWorkers(int amount, int max_tot, Account *source, Reason reason, int period)
 {
     int amt_paid = 0;
     if (reason == wages) {
@@ -153,7 +153,7 @@ int Register::payWorkers(int amount, int max_tot, Firm *source, Reason reason, i
                     break;
                 case benefits:
                     if (!it->isEmployed()) {
-                        it->credit(amount);
+                        it->credit(amount, source);
                         amt_paid += amount;
                     }
                     break;

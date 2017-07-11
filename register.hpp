@@ -14,6 +14,7 @@
 
 class Firm;
 class Worker;
+class Account;
 
 class Register
 {
@@ -87,7 +88,7 @@ public:
     
     int payWorkers(int amount,
                    int max_tot,
-                   Firm *source,
+                   Account *source,
                    Reason reason = wages,
                    int period = 0  // immaterial unless reason == wages
                    );

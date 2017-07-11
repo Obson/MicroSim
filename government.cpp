@@ -90,10 +90,12 @@ void Government::trigger(int period)
     //
     ben += reg->payWorkers((settings->getStdWage() * settings->getUBR()) / 100,
                            0,                   // no max amount
-                           nullptr,             // no source (i.e. Government)
+                           this,                // source
                            Register::benefits,  // reason
                            period
                            );
+    
+    balance -= ben;
 
     reg->trigger(period);
     
