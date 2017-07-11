@@ -93,7 +93,7 @@ void Firm::epilogue(int period)
     if (balance > committed) {
         int available = balance - committed;
         int investible = (available * settings->getPropInv()) / 100;
-        int bonuses = available - investible;
+        int bonuses = ((available - investible) * settings->getReserve()) / 100;
         
         // We distribute the funds before hiring new workers to ensure they only
         // get distributed to existing workers.

@@ -31,9 +31,9 @@ private:
             int ben = 0;
             int rec = 0;
             int cfwd = 0;
-            //int def = 0;
             size_t num_firms = 0;
             size_t num_emps = 0;
+            size_t num_unemps = 0;
             int hires = 0;
             int fires = 0;
         } gov;

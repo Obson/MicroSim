@@ -44,7 +44,8 @@ void Statistics::next(int period)
     previous->gov.ben = gov->getBenefitsPaid();
     previous->gov.rec = gov->getReceipts();
     previous->gov.num_firms = reg->getNumFirms();
-    previous->gov.num_emps = reg->getNumWorkers();
+    previous->gov.num_emps = reg->getNumEmployed();
+    previous->gov.num_unemps = reg->getNumUnemployed();
     previous->gov.hires = reg->getNumHired();
     previous->gov.fires = reg->getNumFired();
     //
@@ -89,7 +90,7 @@ void Statistics::report()
     
     if (myfile.is_open()) {
         std::cout << "\nOutput file is " << the_path << "/" << fname << "\n";
-        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Benefits Paid\",\"Bonuses Paid\",\"Gov Recpts\",\"Num Firms\",\"Num Empls\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Wages Emp\",\"Benefits Recd\",\"Consumption\"\n";
+        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Benefits Paid\",\"Bonuses Paid\",\"Gov Recpts\",\"Num Firms\",\"Employed\",\"Unemployed\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Wages+Bonus\",\"Benefits Recd\",\"Consumption\"\n";
     } else {
         std::cout << "Cannot open output file\n";
     }
@@ -111,6 +112,7 @@ void Statistics::report()
             
                     << "," << it->gov.num_firms
                     << "," << it->gov.num_emps
+                    << "," << it->gov.num_unemps
             
                     << "," << it->emp.inc_tax
                     << "," << it->prod.sales_tax

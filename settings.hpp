@@ -32,6 +32,7 @@ protected:
     int unemp_ben_rate;
     int population;
     int gov_pop;
+    int reserve;
     int prop_inv;
     
 public:
@@ -49,6 +50,7 @@ public:
     int getFCP();           // firm creaton probability (%)
     int getUBR();           // unemployment benefit rate (% of std wage)
     int getPropInv();       // propensity to invest
+    int getReserve();       // funds kept in reserve for next period (%)
     
     static int getId();
 };

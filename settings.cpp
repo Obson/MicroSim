@@ -25,7 +25,7 @@ Settings *Settings::Instance()
         // would be a good idea eventually...
         
         int count, gov_pop, std_wage, prop_con, dedns, inc_tax_rate, sales_tax_rate,
-            firm_creation_prob, unemp_ben_rate, prop_inv;
+            firm_creation_prob, unemp_ben_rate, reserve, prop_inv;
         
         std::cout << "Size of population: ";
         std::cin >> count;
@@ -58,6 +58,11 @@ Settings *Settings::Instance()
             std::cout << "Firm creation probability (percent): ";
             std::cin >> firm_creation_prob;
         }
+        reserve = -1;
+        while (reserve < 0 || reserve > 100) {
+            std::cout << "Reserve (percent): ";
+            std::cin >> reserve;
+        }
         prop_inv = -1;
         while (prop_inv < 0 || prop_inv > 100) {
             std::cout << "Propensity to invest (percent): ";
@@ -78,6 +83,7 @@ Settings *Settings::Instance()
         _instance->dedns = dedns;
         _instance->firm_creation_prob = firm_creation_prob;
         _instance->unemp_ben_rate = unemp_ben_rate;
+        _instance->reserve = reserve;
         _instance->prop_inv = prop_inv;
     }
     return _instance;
@@ -133,6 +139,11 @@ int Settings::getFCP()
 int Settings:: getUBR()
 {
     return unemp_ben_rate;
+}
+
+int Settings::getReserve()
+{
+    return reserve;
 }
 
 int Settings::getPropInv()
