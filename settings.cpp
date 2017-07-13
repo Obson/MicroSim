@@ -6,6 +6,12 @@
 //  Copyright © 2017 David Brown. All rights reserved.
 //
 
+// ++++
+#include <iomanip>
+#include <iostream>
+#include <fstream>
+// ++++
+
 #include "settings.hpp"
 
 Settings *Settings::_instance = nullptr;
@@ -14,79 +20,130 @@ int Settings::getId() {
     return ++id;
 }
 
-Settings *Settings::Instance()
+Settings *Settings::Instance(std::string fname)
 {
     if (_instance == nullptr)
     {
         _instance = new Settings();
         
-        // Get parameters from console input. This can be read from a file
-        // by redirecting it to stdin, but a more user-friendly system
-        // would be a good idea eventually...
-        
-        int count, gov_pop, std_wage, prop_con, dedns, inc_tax_rate, sales_tax_rate,
-            firm_creation_prob, unemp_ben_rate, reserve, prop_inv;
-        
-        std::cout << "Size of population: ";
-        std::cin >> count;
-        std::cout << "Target number of govt employees: ";
-        std::cin >> gov_pop;
-        std::cout << "Standard weekly wage (before tax): ";
-        std::cin >> std_wage;
-        prop_con = 0;
-        while (prop_con < 1 || prop_con > 100) {
-            std::cout << "Propensity to consume (percent): ";
-            std::cin >> prop_con;
-        }
-        dedns = -1;
-        while (dedns < 0 || dedns > 100) {
-            std::cout << "Deductions (percent): ";
-            std::cin >> dedns;
-        }
-        inc_tax_rate = -1;
-        while (inc_tax_rate < 0 || inc_tax_rate > 100) {
-            std::cout << "Income tax rate (percent): ";
-            std::cin >> inc_tax_rate;
-        }
-        sales_tax_rate = -1;
-        while (sales_tax_rate < 0 || sales_tax_rate > 100) {
-            std::cout << "Sales tax rate (percent): ";
-            std::cin >> sales_tax_rate;
-        }
-        firm_creation_prob = -1;
-        while (firm_creation_prob < 0 || firm_creation_prob > 100) {
-            std::cout << "Firm creation probability (percent): ";
-            std::cin >> firm_creation_prob;
-        }
-        reserve = -1;
-        while (reserve < 0 || reserve > 100) {
-            std::cout << "Reserve (percent): ";
-            std::cin >> reserve;
-        }
-        prop_inv = -1;
-        while (prop_inv < 0 || prop_inv > 100) {
-            std::cout << "Propensity to invest (percent): ";
-            std::cin >> prop_inv;
-        }
-        unemp_ben_rate = -1;
-        while (unemp_ben_rate < 0 || unemp_ben_rate > 100) {
-            std::cout << "Unemp benefit rate (percent of std wage): ";
-            std::cin >> unemp_ben_rate;
+        std::ifstream configfile(fname, std::ios::in);
+        std::string line;
+        if (!configfile.is_open()) {
+            std::cout << "Input file (" << fname << ") not found";
         }
         
-        _instance->population = count;
-        _instance->gov_pop = gov_pop;
-        _instance->std_wage = std_wage;
-        _instance->prop_con = prop_con;
-        _instance->inc_tax = inc_tax_rate;
-        _instance->sales_tax = sales_tax_rate;
-        _instance->dedns = dedns;
-        _instance->firm_creation_prob = firm_creation_prob;
-        _instance->unemp_ben_rate = unemp_ben_rate;
-        _instance->reserve = reserve;
-        _instance->prop_inv = prop_inv;
+        // Defaults:
+        _instance->count = 100000;
+        _instance->emp_rate = 95;
+        _instance->std_wage = 500;
+        _instance->prop_con = 75;
+        _instance->dedns = 10;
+        _instance->inc_tax_rate = 10;
+        _instance->sales_tax_rate = 25;
+        _instance->firm_creation_prob = 0;
+        _instance->unemp_ben_rate = 50;
+        _instance->reserve = 0;
+        _instance->prop_inv = 100;
+        
+        bool ok = true;
+        
+        // TODO: Unhandled exceptions if std::stoi fails
+        while (getline(configfile, line)) {
+            std::vector<std::string> tuple;
+            size_t len = parseLine(line, tuple);
+            if (len > 0) {
+                //std::string stuple(tuple[0]);
+                if (len == 3 && tuple[0] == std::string("Population")) {
+                    if (tuple[1] == "size") {
+                        _instance->count = std::stoi(tuple[2]);
+                    }
+                } else if (len == 3 && tuple[0] == "Employment") {
+                    if (tuple[1] == "rate") {
+                        _instance->emp_rate = std::stoi(tuple[2]);
+                        ok = ok && validatePercent(_instance->emp_rate, "employment rate");
+                    }
+                } else if (len == 3 && tuple[0] == "Consumption") {
+                    if (tuple[1] == "rate") {
+                        _instance->prop_con = std::stoi(tuple[2]);
+                        ok = ok && validatePercent(_instance->prop_con, "consumption rate");
+                    }
+                } else if (len == 3 && tuple[0] == "Deductions") {
+                    if (tuple[1] == "rate") {
+                        _instance->dedns = std::stoi(tuple[2]);
+                        ok = ok && validatePercent(_instance->dedns, "deductions rate");
+                    }
+                } else if (len == 3 && tuple[0] == "Income") {
+                    if (tuple[1] == "tax") {
+                        if (tuple[2] == "rate") {
+                            _instance->inc_tax_rate = std::stoi(tuple[3]);
+                            ok = ok && validatePercent(_instance->inc_tax_rate, "income tax rate");
+                        }
+                    }
+                } else if (len == 4 && tuple[0] == "Sales") {
+                    if (tuple[1] == "tax") {
+                        if (tuple[2] == "rate") {
+                            _instance->sales_tax_rate = std::stoi(tuple[3]);
+                            ok = ok && validatePercent(_instance->sales_tax_rate, "sales tax rate");
+                        }
+                    }
+                } else if (len == 4 && tuple[0] == "Business") {
+                    if (tuple[1] == "creation") {
+                        if (tuple[2] == "rate") {
+                            _instance->firm_creation_prob = std::stoi(tuple[3]);
+                            ok = ok && validatePercent(_instance->firm_creation_prob, "business creation rate");
+                        }
+                    }
+                } else if (len == 3 && tuple[0] == "Reserve") {
+                    if (tuple[1] == "rate") {
+                        _instance->reserve = std::stoi(tuple[2]);
+                        ok = ok && validatePercent(_instance->reserve, "reserve rate");
+                    }
+                } else if (len == 3 && tuple[0] == "Investment") {
+                    if (tuple[1] == "rate") {
+                        _instance->prop_inv = std::stoi(tuple[2]);
+                        ok = ok && validatePercent(_instance->prop_inv, "investment rate");
+                    }
+                }
+            }
+        }
+        
+        if (!ok) {
+            exit(2);
+        }
+        
+        _instance->active_pop = _instance->count * _instance->emp_rate;
+
     }
     return _instance;
+}
+
+
+#include <vector>
+#include <string>
+#include <sstream>
+
+using namespace std;
+
+size_t Settings::parseLine(std::string &input, std::vector<std::string> &output)
+{
+    std::string buf; // Have a buffer string
+    std::stringstream ss(input); // Insert the string into a stream
+    
+    while (ss >> buf) {
+        output.push_back(buf);
+    }
+    
+    return output.size();
+}
+
+bool Settings::validatePercent(int n, const std::string &descr, int min, int max)
+{
+    if (n < min || n > max) {
+        std::cout << n << " is not a valid " << descr << std::endl;
+        return false;
+    } else {
+        return true;
+    }
 }
 
 int Settings::getPopSize()
@@ -94,16 +151,16 @@ int Settings::getPopSize()
     return population;
 }
 
-int Settings::getGovPop()
+int Settings::getActivePop()
 {
-    return gov_pop;
+    return active_pop;
 }
 
 int Settings::getGovExpRate()
 {
     // We calculate this rather than holding it as a constant as
     // we may want to apply different rules in the future.
-    return (gov_pop * std_wage * inc_tax) / 100;
+    return (active_pop * std_wage * inc_tax_rate) / 100;
 }
 
 int Settings::getStdWage()
@@ -118,12 +175,12 @@ int Settings::getPropCon()
 
 int Settings::getIncTaxRate()
 {
-    return inc_tax;
+    return inc_tax_rate;
 }
 
 int Settings::getSalesTaxRate()
 {
-    return sales_tax;
+    return sales_tax_rate;
 }
 
 int Settings::getPreTaxDedns()

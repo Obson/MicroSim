@@ -7,6 +7,14 @@
 //
 
 #include <iostream>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+
 #include "register.hpp"
 #include "settings.hpp"
 
@@ -14,19 +22,32 @@
 
 int main(int argc, const char * argv[]) {
 
+    if (argc != 3) {
+        std::cout   << "MicroSim version 0.1"
+                    << "\nUsage:"
+                    << "\n\tmicrosim <iterations> <input-file>\n";
+        exit(1);
+    }
     // Seed the random number generator
     std::srand(42);
     
-    int iters;
+    int iters = atoi(argv[1]);
     
-    std::cout << "MicroSim Version 0.1\n\n";
-    std::cout << "Number of weeks: ";
-
-    std::cin >> iters;
-
+    if (iters < 2) {
+        std::cout << "microsim: minimum 3 iterations (" << iters << " requested)\n";
+    }
+    
+    // TODO: Add a -v option eventually
+    // std::cout << "MicroSim Version 0.1\n\n";
+    
+    // TODO: Add a -d option for this
+    // char the_path[256];
+    // getcwd(the_path, 255);
+    // std::cout << "\nWorking directory is " << the_path << "\n";
+    
     // Settings must be created before any accounts are created so that
     // it can input the settings before they are needed.
-    Settings *settings = Settings::Instance();
+    Settings *settings = Settings::Instance(argv[2]);
     
     Statistics *stats = Statistics::Instance();
     

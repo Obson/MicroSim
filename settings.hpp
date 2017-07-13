@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <iostream>
+//#include <string>
 #include "account.hpp"
 
 class Settings
@@ -23,24 +24,30 @@ private:
 protected:
 
     //int exp;
+    int count;
+    int emp_rate;
     int std_wage;
     int prop_con;
-    int inc_tax;
-    int sales_tax;
+    int inc_tax_rate;
+    int sales_tax_rate;
     int dedns;
     int firm_creation_prob;
     int unemp_ben_rate;
     int population;
-    int gov_pop;
+    int active_pop;
     int reserve;
     int prop_inv;
     
+    static size_t parseLine(std::string &input, std::vector<std::string> &output);
+    static bool validatePercent(int n, const std::string &descr, int min = 0, int max = 100);
+    
 public:
 
-    static Settings *Instance();
+    // The filename is ignored on all calls after the first
+    static Settings *Instance(std::string fname = "basic.mod");
     
     int getPopSize();       // population size
-    int getGovPop();        // target size of gov-owned businesses
+    int getActivePop();        // target size of gov-owned businesses
     int getGovExpRate();    // government expenditure (currency units per period)
     int getStdWage();       // standard wage (currency units per employee per period)
     int getPropCon();       // propensity to consume (%)
