@@ -133,11 +133,12 @@ void Firm::credit(int amount, Account *creditor)
     // to a Firm are always for purchases and therefore subject to
     // sales tax.
     int r = settings->getSalesTaxRate();    // e.g. 25%
-    int r_eff = (100 * r) / (100 + r);      // e.g. 20%
-    int t = (amount * r_eff) / 100;
-    if (transferTo(Government::Instance(), t, this))
-    {
-        sales_tax_paid += t;
+    if (r > 0) {
+        int r_eff = (100 * r) / (100 + r);      // e.g. 20%
+        int t = (amount * r_eff) / 100;
+        if (transferTo(Government::Instance(), t, this)) {
+            sales_tax_paid += t;
+        }
     }
 }
 

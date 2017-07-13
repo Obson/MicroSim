@@ -47,7 +47,8 @@ int main(int argc, const char * argv[]) {
     
     // Settings must be created before any accounts are created so that
     // it can input the settings before they are needed.
-    Settings *settings = Settings::Instance(argv[2]);
+    Settings::fname = std::string(argv[2]);
+    Settings *settings = Settings::Instance();
     
     Statistics *stats = Statistics::Instance();
     
@@ -61,6 +62,7 @@ int main(int argc, const char * argv[]) {
 
     for (int period = 1; period <= iters; period++)
     {
+        std::cout << ".";
         gov->trigger(period);
         reg->trigger(period);
         stats->next(period);

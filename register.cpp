@@ -326,7 +326,7 @@ int Register::hireSome(Firm *employer, int period, int n)
         }
     }
     
-    num_hired += count;
+    // num_hired += count; Oops -- double counting!
     return count;
 }
 

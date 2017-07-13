@@ -33,7 +33,7 @@ protected:
     int dedns;
     int firm_creation_prob;
     int unemp_ben_rate;
-    int population;
+    //int population;
     int active_pop;
     int reserve;
     int prop_inv;
@@ -41,13 +41,16 @@ protected:
     static size_t parseLine(std::string &input, std::vector<std::string> &output);
     static bool validatePercent(int n, const std::string &descr, int min = 0, int max = 100);
     
+    Settings();
+    
 public:
 
     // The filename is ignored on all calls after the first
-    static Settings *Instance(std::string fname = "basic.mod");
+    static Settings *Instance();
+    static std::string fname;
     
     int getPopSize();       // population size
-    int getActivePop();        // target size of gov-owned businesses
+    int getActivePop();     // target size of gov-owned businesses
     int getGovExpRate();    // government expenditure (currency units per period)
     int getStdWage();       // standard wage (currency units per employee per period)
     int getPropCon();       // propensity to consume (%)

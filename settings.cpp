@@ -15,104 +15,107 @@
 #include "settings.hpp"
 
 Settings *Settings::_instance = nullptr;
+std::string Settings::fname = "basic.mod";
 int Settings::id = 0;
 int Settings::getId() {
     return ++id;
 }
 
-Settings *Settings::Instance(std::string fname)
+Settings::Settings()
 {
-    if (_instance == nullptr)
-    {
-        _instance = new Settings();
-        
-        std::ifstream configfile(fname, std::ios::in);
-        std::string line;
-        if (!configfile.is_open()) {
-            std::cout << "Input file (" << fname << ") not found";
-        }
-        
-        // Defaults:
-        _instance->count = 100000;
-        _instance->emp_rate = 95;
-        _instance->std_wage = 500;
-        _instance->prop_con = 75;
-        _instance->dedns = 10;
-        _instance->inc_tax_rate = 10;
-        _instance->sales_tax_rate = 25;
-        _instance->firm_creation_prob = 0;
-        _instance->unemp_ben_rate = 50;
-        _instance->reserve = 0;
-        _instance->prop_inv = 100;
-        
-        bool ok = true;
-        
-        // TODO: Unhandled exceptions if std::stoi fails
-        while (getline(configfile, line)) {
-            std::vector<std::string> tuple;
-            size_t len = parseLine(line, tuple);
-            if (len > 0) {
-                //std::string stuple(tuple[0]);
-                if (len == 3 && tuple[0] == std::string("Population")) {
-                    if (tuple[1] == "size") {
-                        _instance->count = std::stoi(tuple[2]);
+    std::ifstream configfile(fname, std::ios::in);
+    std::string line;
+    if (!configfile.is_open()) {
+        std::cout << "Input file (" << fname << ") not found";
+    }
+    
+    // Defaults:
+    count = 100000;
+    emp_rate = 95;
+    std_wage = 500;
+    prop_con = 75;
+    dedns = 10;
+    inc_tax_rate = 10;
+    sales_tax_rate = 25;
+    firm_creation_prob = 0;
+    unemp_ben_rate = 50;
+    reserve = 0;
+    prop_inv = 100;
+    
+    bool ok = true;
+    
+    // TODO: Unhandled exceptions if std::stoi fails
+    while (getline(configfile, line)) {
+        std::vector<std::string> tuple;
+        size_t len = parseLine(line, tuple);
+        if (len > 0) {
+            //std::string stuple(tuple[0]);
+            if (len == 3 && tuple[0] == std::string("Population")) {
+                if (tuple[1] == "size") {
+                    count = std::stoi(tuple[2]);
+                }
+            } else if (len == 3 && tuple[0] == "Employment") {
+                if (tuple[1] == "rate") {
+                    emp_rate = std::stoi(tuple[2]);
+                    ok = ok && validatePercent(emp_rate, "employment rate");
+                }
+            } else if (len == 3 && tuple[0] == "Consumption") {
+                if (tuple[1] == "rate") {
+                    prop_con = std::stoi(tuple[2]);
+                    ok = ok && validatePercent(prop_con, "consumption rate");
+                }
+            } else if (len == 3 && tuple[0] == "Deductions") {
+                if (tuple[1] == "rate") {
+                    dedns = std::stoi(tuple[2]);
+                    ok = ok && validatePercent(dedns, "deductions rate");
+                }
+            } else if (len == 3 && tuple[0] == "Income") {
+                if (tuple[1] == "tax") {
+                    if (tuple[2] == "rate") {
+                        inc_tax_rate = std::stoi(tuple[3]);
+                        ok = ok && validatePercent(inc_tax_rate, "income tax rate");
                     }
-                } else if (len == 3 && tuple[0] == "Employment") {
-                    if (tuple[1] == "rate") {
-                        _instance->emp_rate = std::stoi(tuple[2]);
-                        ok = ok && validatePercent(_instance->emp_rate, "employment rate");
+                }
+            } else if (len == 4 && tuple[0] == "Sales") {
+                if (tuple[1] == "tax") {
+                    if (tuple[2] == "rate") {
+                        sales_tax_rate = std::stoi(tuple[3]);
+                        ok = ok && validatePercent(sales_tax_rate, "sales tax rate");
                     }
-                } else if (len == 3 && tuple[0] == "Consumption") {
-                    if (tuple[1] == "rate") {
-                        _instance->prop_con = std::stoi(tuple[2]);
-                        ok = ok && validatePercent(_instance->prop_con, "consumption rate");
+                }
+            } else if (len == 4 && tuple[0] == "Business") {
+                if (tuple[1] == "creation") {
+                    if (tuple[2] == "rate") {
+                        firm_creation_prob = std::stoi(tuple[3]);
+                        ok = ok && validatePercent(firm_creation_prob, "business creation rate");
                     }
-                } else if (len == 3 && tuple[0] == "Deductions") {
-                    if (tuple[1] == "rate") {
-                        _instance->dedns = std::stoi(tuple[2]);
-                        ok = ok && validatePercent(_instance->dedns, "deductions rate");
-                    }
-                } else if (len == 3 && tuple[0] == "Income") {
-                    if (tuple[1] == "tax") {
-                        if (tuple[2] == "rate") {
-                            _instance->inc_tax_rate = std::stoi(tuple[3]);
-                            ok = ok && validatePercent(_instance->inc_tax_rate, "income tax rate");
-                        }
-                    }
-                } else if (len == 4 && tuple[0] == "Sales") {
-                    if (tuple[1] == "tax") {
-                        if (tuple[2] == "rate") {
-                            _instance->sales_tax_rate = std::stoi(tuple[3]);
-                            ok = ok && validatePercent(_instance->sales_tax_rate, "sales tax rate");
-                        }
-                    }
-                } else if (len == 4 && tuple[0] == "Business") {
-                    if (tuple[1] == "creation") {
-                        if (tuple[2] == "rate") {
-                            _instance->firm_creation_prob = std::stoi(tuple[3]);
-                            ok = ok && validatePercent(_instance->firm_creation_prob, "business creation rate");
-                        }
-                    }
-                } else if (len == 3 && tuple[0] == "Reserve") {
-                    if (tuple[1] == "rate") {
-                        _instance->reserve = std::stoi(tuple[2]);
-                        ok = ok && validatePercent(_instance->reserve, "reserve rate");
-                    }
-                } else if (len == 3 && tuple[0] == "Investment") {
-                    if (tuple[1] == "rate") {
-                        _instance->prop_inv = std::stoi(tuple[2]);
-                        ok = ok && validatePercent(_instance->prop_inv, "investment rate");
-                    }
+                }
+            } else if (len == 3 && tuple[0] == "Reserve") {
+                if (tuple[1] == "rate") {
+                    reserve = std::stoi(tuple[2]);
+                    ok = ok && validatePercent(reserve, "reserve rate");
+                }
+            } else if (len == 3 && tuple[0] == "Investment") {
+                if (tuple[1] == "rate") {
+                    prop_inv = std::stoi(tuple[2]);
+                    ok = ok && validatePercent(prop_inv, "investment rate");
                 }
             }
         }
-        
-        if (!ok) {
-            exit(2);
-        }
-        
-        _instance->active_pop = _instance->count * _instance->emp_rate;
+    }
+    
+    if (ok) {
+        active_pop = (count * emp_rate) / 100 ;
+    } else {
+        exit(2);
+    }
+    
+}
 
+Settings *Settings::Instance()
+{
+    if (_instance == nullptr) {
+        _instance = new Settings();
     }
     return _instance;
 }
@@ -148,7 +151,7 @@ bool Settings::validatePercent(int n, const std::string &descr, int min, int max
 
 int Settings::getPopSize()
 {
-    return population;
+    return count;
 }
 
 int Settings::getActivePop()
