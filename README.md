@@ -13,7 +13,7 @@ microsim basic.mod 1000
 ```
 or included in the model definition file. If omitted altogether, 10 will be assumed.
 
-##Structure of a Model Definition File
+## Structure of a Model Definition File
 
 (At present) a typical model definition file looks something like this:
 ```
