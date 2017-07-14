@@ -31,7 +31,7 @@ Reserve rate 0
 Investment rate 20
 Unemployment benefit rate 0
 
-The Basic Model has only one employer (the government, and businesses
+The Basic Model has only one employer (the government), and businesses
 invest all their funds in recruiting new employees rather than in paying
 bonuses or dividends.
 ```
