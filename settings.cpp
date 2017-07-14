@@ -30,6 +30,7 @@ Settings::Settings()
     }
     
     // Defaults:
+    iters = 10;
     count = 100000;
     emp_rate = 95;
     std_wage = 500;
@@ -50,7 +51,9 @@ Settings::Settings()
         size_t len = parseLine(line, tuple);
         if (len > 0) {
             //std::string stuple(tuple[0]);
-            if (len == 3 && tuple[0] == std::string("Population")) {
+            if (len == 2 && tuple[0] == std::string("Iterations")) {
+                iters = std::stoi(tuple[1]);
+            } else if (len == 3 && tuple[0] == std::string("Population")) {
                 if (tuple[1] == "size") {
                     count = std::stoi(tuple[2]);
                 }
@@ -147,6 +150,11 @@ bool Settings::validatePercent(int n, const std::string &descr, int min, int max
     } else {
         return true;
     }
+}
+
+int Settings::getIters()
+{
+    return iters;
 }
 
 int Settings::getPopSize()

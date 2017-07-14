@@ -22,19 +22,16 @@
 
 int main(int argc, const char * argv[]) {
 
-    if (argc != 3) {
-        std::cout   << "MicroSim version 0.1"
-                    << "\nUsage:"
-                    << "\n\tmicrosim <iterations> <input-file>\n";
-        exit(1);
-    }
     // Seed the random number generator
     std::srand(42);
+
+    int iters = -1;
     
-    int iters = atoi(argv[1]);
-    
-    if (iters < 2) {
-        std::cout << "microsim: minimum 3 iterations (" << iters << " requested)\n";
+    if (argc > 1) {
+        Settings::fname = std::string(argv[1]);
+        if (argc > 2) {
+            iters = atoi(argv[2]);
+        }
     }
     
     // TODO: Add a -v option eventually
@@ -47,11 +44,13 @@ int main(int argc, const char * argv[]) {
     
     // Settings must be created before any accounts are created so that
     // it can input the settings before they are needed.
-    Settings::fname = std::string(argv[2]);
     Settings *settings = Settings::Instance();
+
+    if (iters == -1) {
+        iters = settings->getIters();
+    }
     
     Statistics *stats = Statistics::Instance();
-    
     Register *reg = Register::Instance();
 
     // Create the Government. This will automatically set up a single firm

@@ -24,6 +24,7 @@ private:
 protected:
 
     //int exp;
+    int iters;
     int count;
     int emp_rate;
     int std_wage;
@@ -49,8 +50,9 @@ public:
     static Settings *Instance();
     static std::string fname;
     
-    int getPopSize();       // population size
-    int getActivePop();     // target size of gov-owned businesses
+    int getIters();         // number of iterations (periods)
+    int getPopSize();       // max available population size
+    int getActivePop();     // target size of economically active population
     int getGovExpRate();    // government expenditure (currency units per period)
     int getStdWage();       // standard wage (currency units per employee per period)
     int getPropCon();       // propensity to consume (%)

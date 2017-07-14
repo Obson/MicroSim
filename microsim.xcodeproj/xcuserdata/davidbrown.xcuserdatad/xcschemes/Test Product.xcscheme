@@ -63,12 +63,12 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "100"
-            isEnabled = "YES">
+            argument = "1000"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "basic.mod"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
