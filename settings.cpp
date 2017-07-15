@@ -101,6 +101,13 @@ Settings::Settings()
                     prop_inv = std::stoi(tuple[2]);
                     ok = ok && validatePercent(prop_inv, "investment rate");
                 }
+            } else if (len == 4 && tuple[0] == "Unemployment") {
+                if (tuple[1] == "benefit") {
+                    if (tuple[2] == "rate") {
+                        unemp_ben_rate = std::stoi(tuple[3]);
+                        ok = ok && validatePercent(unemp_ben_rate, "unemployment benefit rate");
+                    }
+                }
             }
         }
     }
