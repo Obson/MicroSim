@@ -6,11 +6,9 @@
 //  Copyright © 2017 David Brown. All rights reserved.
 //
 
-// ++++
 #include <iomanip>
 #include <iostream>
 #include <fstream>
-// ++++
 
 #include "settings.hpp"
 
@@ -171,7 +169,7 @@ int Settings::getGovExpRate()
 {
     // We calculate this rather than holding it as a constant as
     // we may want to apply different rules in the future.
-    return (active_pop * std_wage * inc_tax_rate) / 100;
+    return (active_pop * std_wage * inc_tax_rate * prop_inv) / 10000;
 }
 
 int Settings::getStdWage()

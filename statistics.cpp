@@ -85,16 +85,17 @@ void Statistics::report()
     getcwd(the_path, 255);
     
     std::ofstream myfile;
-    std::string fname("microsim.csv");
+    std::string fname(Settings::fname + ".csv");
     myfile.open(fname);
     
     if (myfile.is_open()) {
-        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Benefits Paid\",\"Bonuses Paid\",\"Gov Recpts\",\"Num Firms\",\"Employed\",\"Unemployed\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Wages+Bonus\",\"Benefits Recd\",\"Consumption\"\n";
+        std::cout << "\nOutput file is " << fname << std::endl;
+        myfile << "\"Period\",\"Gov Bal\",\"Prod Bal\",\"Dom Bal\",\"Gov Exp\",\"Benefits Paid\",\"Bonuses Paid\",\"Gov Recpts\",\"Hires\",\"Fires\",\"Num Firms\",\"Employed\",\"Unemployed\",\"Inc Tax\",\"Sales Tax\",\"Dedns\",\"Wages+Bonus\",\"Benefits Recd\",\"Consumption\"\n";
     } else {
         std::cout << "Cannot open output file\n";
     }
 
-    std::cout << "\nSTATISTICS LOG\n";
+    std::cout << "\nLOG\n";
 
     int period = 0;
     for (auto it : stats) {
@@ -108,6 +109,9 @@ void Statistics::report()
                     << "," << it->gov.ben
                     << "," << it->prod.bonuses
                     << "," << it->gov.rec
+            
+                    << "," << it->gov.hires
+                    << "," << it->gov.fires
             
                     << "," << it->gov.num_firms
                     << "," << it->gov.num_emps
