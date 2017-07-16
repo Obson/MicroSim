@@ -33,7 +33,6 @@ void Government::init()
     if (gov_firm == nullptr) {
         gov_firm = reg->createFirm();
     }
-    
 }
 
 Government::Government()
@@ -54,6 +53,11 @@ Government::Government()
 // Eventually the market becomes saturated and the firm dies -- or possibly
 // it just sucks in business from other less successful firms in the same
 // field, and they die.
+
+size_t Government::getNumEmployees()
+{
+    return gov_firm->getNumEmployees();
+}
 
 int Government::getExpenditure()
 {
@@ -77,17 +81,13 @@ void Government::trigger(int period)
     init();
     reg->init();
     
-    //
     // Government grants (incl support of gov-owned businesses)
-    //
     int amt = settings->getGovExpRate();
     gov_firm->grant(amt);
     balance -= amt;
     exp += amt;
     
-    //
     // Pay benefits to all unemployed workers
-    //
     ben += reg->payWorkers((settings->getStdWage() * settings->getUBR()) / 100,
                            0,                   // no max amount
                            this,                // source
@@ -98,7 +98,6 @@ void Government::trigger(int period)
     balance -= ben;
 
     reg->trigger(period);
-    
 }
 
 //

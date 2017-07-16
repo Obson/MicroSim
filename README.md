@@ -35,15 +35,19 @@ The model is entirely 'driven by' money. And as in the real world money emanates
 
 At this stage we will ignore the payment of interest on government bonds as this is really an irrelevance. (*We will also ignore bank loans for the time being as banking isn't yet implemented.*) 
 
-### The clock ticks... ###
+### When the clock ticks... ###
 The first thing that happens each time the clock ticks (i.e. at the beginning of each period) is that the government spends a certain amount of money 'into the economy'. One of the ways it does this in the real world is by supporting nationalised indistries, the armed forces, the NHS, the civil service, parliament and the royal family (and no doubt a number of other things I don't know about or have overlooked). Another is by paying 'benefits' (such as unemployment benefit) to individuals.
 
 The question then is how much the government should pay.
 
-### Government expenditure ###
-The amount the government needs to spend (ignoring benefits) is determined by the size of the economy, the wage rate, the tax rate, and the rate of investment in employment. In the real world these quantities, with the exception of the tax rate, are quite hard to determine. For MicroSim the situation is much simpler&mdash;they are all parameters given in the model definition. We give, for example, an actual population size and a target rate of employment. By multiplying these together MicroSim obtains the size of the economically active population.
+#### Government expenditure ####
+The amount the government needs to spend (ignoring benefits) is determined by the size of the economy, the wage rate, the tax rate, and the rate of investment in employment. In the real world these quantities, with the exception of the tax rate, are quite hard to determine. For MicroSim the situation is much simpler&mdash;they are all parameters given in the model definition. We give, for example, an actual population size and a target rate of employment. By multiplying these together MicroSim obtains the size of the economically active population. It can then work out how much money the government needs to spend in order to bring that number of workers into the economy.
 
-...  
+As we have already noted, there are a number of ways the government  can inject money into the economy. The most straightforward of these is simply by 'buying stuff'. But at the beginning of the economic process the only thing that is automatically available to buy is whatever is provided by the government. So to make this work the government effectively splits itself into two main parts: the Treasury, which creates the money, and the civil service (plus the NHS, the armed services, etc., etc.) which uses that money to pay the salaries of its employees. In effect the Treasury 'buys services' from its commercial arm, the civil service (etc.). The civil service's employees can then use their salaries to buy whatever they want, either from their employer&mdash;the government-owned businesses, or from private businesses, should there happen to be any, with the result that the money created by the Treasury gets dispersed into the system.
+
+Implausibly elegant though this may sound, it works!
+
+
 
 
 ## Parameters of a Model ##

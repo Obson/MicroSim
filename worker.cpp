@@ -25,11 +25,6 @@ void Worker::init()
     inc_tax = 0;
 }
 
-int Worker::getWage()
-{
-    return wage;
-}
-
 bool Worker::isEmployed()
 {
     return (employer != nullptr);
@@ -120,8 +115,3 @@ int Worker::getIncTaxPaid()
     return inc_tax;
 }
 
-// *** I think this is now obsolescent. Check/remove. ***
-void Worker::setWage(int wage)
-{
-    this->wage = wage;
-}

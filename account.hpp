@@ -101,7 +101,6 @@ protected:
     void init();
     
     void setEmployer(Firm*);
-    void setWage(int);
     void setPeriodHired(int period);
     
 public:
@@ -109,7 +108,6 @@ public:
     Worker(int wage, Firm *emp, int period);
     Worker();
     
-    int getWage();
     Firm *getEmployer();
     bool isEmployed();
     bool isEmployedBy(Account *emp);
@@ -216,7 +214,7 @@ private:
     
     static Government *_instance;
     
-    Firm *gov_firm;  // (see constructor for assignment to firms)
+    Firm *gov_firm;     // (see constructor for assignment to firms)
     Register *reg;
     
     int exp, rec, ben;
@@ -249,6 +247,8 @@ public:
     int getExpenditure();   // Gov expenditure in current period (excl benefits)
     int getBenefitsPaid();  // Benefits paid this period
     int getReceipts();      // Gov receipts (taxes and dedns) in current period
+    
+    size_t getNumEmployees();  // Number of government employees
 };
 
 
