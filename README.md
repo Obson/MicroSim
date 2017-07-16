@@ -47,8 +47,12 @@ As we have already noted, there are a number of ways the government  can inject 
 
 Implausibly elegant though this may sound, it works!
 
+#### Benefits ####
+Having transferred the required sum into the government owned businesses the government next pays benefits to all out-of-work individuals. Again, the amount of benefts paid is determined by a parameter in the model definition file. The effect of these payments on the size of the economy is not currently taken into account in calculating the level of government expenditure required. It probably should be...
 
+#### Businesses ####
 
+...
 
 ## Parameters of a Model ##
 The parameters that define a model must be supplied in a text file, which by default is named ```basic.mod```. To use the parameters in the default model just call the program without any arguments:
