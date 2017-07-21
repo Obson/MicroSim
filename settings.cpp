@@ -20,6 +20,11 @@ int Settings::getId() {
 }
 int Settings::period = 0;
 
+Settings::Params::Params()
+{
+    // This constructor is probably unnecessary.
+}
+
 Settings::Settings()
 {
     std::ifstream configfile(fname, std::ios::in);
@@ -34,29 +39,19 @@ Settings::Settings()
     
     Params *params = new Params;
     
-    // Defaults:
-    params->iters.val = 10;
-    params->count.val = 100000;
-    params->emp_rate.val = 95;
-    params->std_wage.val = 500;
-    params->prop_con.val = 75;
-    params->dedns.val = 10;
-    params->inc_tax_rate.val = 10;
-    params->sales_tax_rate.val = 25;
-    params->firm_creation_prob.val = 0;
-    params->unemp_ben_rate.val = 50;
-    params->reserve.val = 0;
-    params->prop_inv.val = 100;
-    
     // TODO: Unhandled exceptions if std::stoi fails
     while (getline(configfile, line)) {
         std::vector<std::string> tuple;
         size_t len = parseLine(line, tuple);
-        if (len > 0) {
-            if (len == 4 && tuple[0] == "when") {
-                // Start new condition set.
+        if (len > 0)
+        {
+            if (len == 4 && tuple[0] == "when")
+            {
+                // Start new parameter set
                 cond.push_back(params);
                 params = new Params;
+                
+                // Set the condition for the parameter set
                 Property p = parsePropertyName(tuple[1]);
                 params->condition.property = p;
                 if (p != dflt) {
@@ -66,6 +61,7 @@ Settings::Settings()
                         params->condition.val = std::stoi(tuple[3]);
                     }
                 }
+                
             } else if (len == 2 && tuple[0] == std::string("Iterations")) {
                 params->iters.val = std::stoi(tuple[1]);
                 params->iters.is_set = true;
@@ -100,7 +96,7 @@ Settings::Settings()
                         ok = false;
                     }
                 }
-            } else if (len == 3 && tuple[0] == "Income") {
+            } else if (len == 4 && tuple[0] == "Income") {
                 if (tuple[1] == "tax") {
                     if (tuple[2] == "rate") {
                         int val = std::stoi(tuple[3]);
@@ -459,6 +455,9 @@ int Settings::getPropCon()
 
 int Settings::getIncTaxRate()
 {
+    if (Settings::period > 5) {
+        int x = 3;
+    }
     return getParameterVal(pt_inc_tax_rate, 10);
 }
 

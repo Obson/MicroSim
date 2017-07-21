@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "firm-creation-no-bens.mod"
+            argument = "test.mod"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

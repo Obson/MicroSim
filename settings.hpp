@@ -72,12 +72,14 @@ protected:
     
     struct Pair
     {
-        bool is_set;
+        bool is_set = false;
         int val;
     };
     
     struct Params
     {
+        Params();
+        
         Condition condition;
         Pair invalid;
         Pair iters;
