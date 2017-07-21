@@ -41,7 +41,10 @@ int main(int argc, const char * argv[]) {
     // char the_path[256];
     // getcwd(the_path, 255);
     // std::cout << "\nWorking directory is " << the_path << "\n";
-    
+
+    // Rgeister must be created before Settings
+    Register *reg = Register::Instance();
+
     // Settings must be created before any accounts are created so that
     // it can input the settings before they are needed.
     Settings *settings = Settings::Instance();
@@ -51,7 +54,6 @@ int main(int argc, const char * argv[]) {
     }
     
     Statistics *stats = Statistics::Instance();
-    Register *reg = Register::Instance();
 
     // Create the Government. This will automatically set up a single firm
     // representing nationalised industries, civil service, and any other

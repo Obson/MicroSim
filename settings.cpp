@@ -18,6 +18,7 @@ int Settings::id = 0;
 int Settings::getId() {
     return ++id;
 }
+int Settings::period = 0;
 
 Settings::Settings()
 {
@@ -27,85 +28,144 @@ Settings::Settings()
         std::cout << "Input file (" << fname << ") not found";
     }
     
-    // Defaults:
-    iters = 10;
-    count = 100000;
-    emp_rate = 95;
-    std_wage = 500;
-    prop_con = 75;
-    dedns = 10;
-    inc_tax_rate = 10;
-    sales_tax_rate = 25;
-    firm_creation_prob = 0;
-    unemp_ben_rate = 50;
-    reserve = 0;
-    prop_inv = 100;
+    reg = Register::Instance();
     
     bool ok = true;
+    
+    Params *params = new Params;
+    
+    // Defaults:
+    params->iters.val = 10;
+    params->count.val = 100000;
+    params->emp_rate.val = 95;
+    params->std_wage.val = 500;
+    params->prop_con.val = 75;
+    params->dedns.val = 10;
+    params->inc_tax_rate.val = 10;
+    params->sales_tax_rate.val = 25;
+    params->firm_creation_prob.val = 0;
+    params->unemp_ben_rate.val = 50;
+    params->reserve.val = 0;
+    params->prop_inv.val = 100;
     
     // TODO: Unhandled exceptions if std::stoi fails
     while (getline(configfile, line)) {
         std::vector<std::string> tuple;
         size_t len = parseLine(line, tuple);
         if (len > 0) {
-            //std::string stuple(tuple[0]);
-            if (len == 2 && tuple[0] == std::string("Iterations")) {
-                iters = std::stoi(tuple[1]);
+            if (len == 4 && tuple[0] == "when") {
+                // Start new condition set.
+                cond.push_back(params);
+                params = new Params;
+                Property p = parsePropertyName(tuple[1]);
+                params->condition.property = p;
+                if (p != dflt) {
+                    Opr op = parseOperator(tuple[2]);
+                    params->condition.opr = op;
+                    if (op != invalid_op) {
+                        params->condition.val = std::stoi(tuple[3]);
+                    }
+                }
+            } else if (len == 2 && tuple[0] == std::string("Iterations")) {
+                params->iters.val = std::stoi(tuple[1]);
+                params->iters.is_set = true;
             } else if (len == 3 && tuple[0] == std::string("Population")) {
                 if (tuple[1] == "size") {
-                    count = std::stoi(tuple[2]);
+                    params->count.val = std::stoi(tuple[2]);
+                    params->count.is_set = true;
                 }
             } else if (len == 3 && tuple[0] == "Employment") {
                 if (tuple[1] == "rate") {
-                    emp_rate = std::stoi(tuple[2]);
-                    ok = ok && validatePercent(emp_rate, "employment rate");
+                    params->emp_rate.val = std::stoi(tuple[2]);
+                    params->emp_rate.is_set = true;
+                    ok = ok && validatePercent(params->emp_rate.val, "employment rate");
                 }
             } else if (len == 3 && tuple[0] == "Consumption") {
                 if (tuple[1] == "rate") {
-                    prop_con = std::stoi(tuple[2]);
-                    ok = ok && validatePercent(prop_con, "consumption rate");
+                    int val = std::stoi(tuple[2]);
+                    if (validatePercent(val, "consumption rate")) {
+                        params->prop_con.val = val;
+                        params->prop_con.is_set = true;
+                    } else {
+                        ok = false;
+                    }
                 }
             } else if (len == 3 && tuple[0] == "Deductions") {
                 if (tuple[1] == "rate") {
-                    dedns = std::stoi(tuple[2]);
-                    ok = ok && validatePercent(dedns, "deductions rate");
+                    int val = std::stoi(tuple[2]);
+                    if (validatePercent(val, "deductions rate")) {
+                        params->dedns.val = val;
+                        params->dedns.is_set = true;
+                    } else {
+                        ok = false;
+                    }
                 }
             } else if (len == 3 && tuple[0] == "Income") {
                 if (tuple[1] == "tax") {
                     if (tuple[2] == "rate") {
-                        inc_tax_rate = std::stoi(tuple[3]);
-                        ok = ok && validatePercent(inc_tax_rate, "income tax rate");
+                        int val = std::stoi(tuple[3]);
+                        if (validatePercent(val, "income tax rate")) {
+                            params->inc_tax_rate.val = val;
+                            params->inc_tax_rate.is_set = true;
+                        } else {
+                            ok = false;
+                        }
                     }
                 }
             } else if (len == 4 && tuple[0] == "Sales") {
                 if (tuple[1] == "tax") {
                     if (tuple[2] == "rate") {
-                        sales_tax_rate = std::stoi(tuple[3]);
-                        ok = ok && validatePercent(sales_tax_rate, "sales tax rate");
+                        int val = std::stoi(tuple[3]);
+                        if (validatePercent(val, "sales tax rate")) {
+                            params->sales_tax_rate.val = val;
+                            params->sales_tax_rate.is_set = true;
+                        } else {
+                            ok = false;
+                        }
                     }
                 }
             } else if (len == 4 && tuple[0] == "Business") {
                 if (tuple[1] == "creation") {
                     if (tuple[2] == "rate") {
-                        firm_creation_prob = std::stoi(tuple[3]);
-                        ok = ok && validatePercent(firm_creation_prob, "business creation rate");
+                        int val = std::stoi(tuple[3]);
+                        if (validatePercent(val, "business creation rate")) {
+                            params->firm_creation_prob.val = val;
+                            params->firm_creation_prob.is_set = true;
+                        } else {
+                            ok = false;
+                        }
                     }
                 }
             } else if (len == 3 && tuple[0] == "Reserve") {
                 if (tuple[1] == "rate") {
-                    reserve = std::stoi(tuple[2]);
-                    ok = ok && validatePercent(reserve, "reserve rate");
+                    int val = std::stoi(tuple[2]);
+                    if (validatePercent(val, "reserve rate")) {
+                        params->reserve.val = val;
+                        params->reserve.is_set = true;
+                    } else {
+                        ok = false;
+                    }
                 }
             } else if (len == 3 && tuple[0] == "Investment") {
                 if (tuple[1] == "rate") {
-                    prop_inv = std::stoi(tuple[2]);
-                    ok = ok && validatePercent(prop_inv, "investment rate");
+                    int val = std::stoi(tuple[2]);
+                    if (validatePercent(val, "investment rate")) {
+                        params->prop_inv.val = val;
+                        params->prop_inv.is_set = true;
+                    } else {
+                        ok = false;
+                    }
                 }
             } else if (len == 4 && tuple[0] == "Unemployment") {
                 if (tuple[1] == "benefit") {
                     if (tuple[2] == "rate") {
-                        unemp_ben_rate = std::stoi(tuple[3]);
-                        ok = ok && validatePercent(unemp_ben_rate, "unemployment benefit rate");
+                        int val = std::stoi(tuple[3]);
+                        if (validatePercent(val, "unemployment benefit rate")) {
+                            params->unemp_ben_rate.val = val;
+                            params->unemp_ben_rate.is_set = true;
+                        } else {
+                            ok = false;
+                        }
                     }
                 }
             }
@@ -113,7 +173,11 @@ Settings::Settings()
     }
     
     if (ok) {
-        active_pop = (count * emp_rate) / 100 ;
+        if (params->active_pop.is_set) {
+            params->active_pop.val = (params->count.val * params->emp_rate.val) / 100;
+            params->active_pop.is_set = true;
+        }
+        cond.push_back(params);
     } else {
         exit(2);
     }
@@ -133,7 +197,73 @@ Settings *Settings::Instance()
 #include <string>
 #include <sstream>
 
-using namespace std;
+//using namespace std;
+
+Settings::Property Settings::parsePropertyName(std::string s)
+{
+    if (s == "iterations" || s == "period" | s == "cycles") {
+        return current_period;
+    } else if (s == "government-expenditure" || s == "gov-exp" || s == "exp") {
+        return gov_exp;
+    } else if (s == "benefits" || s == "benefits-paid") {
+        return bens_paid;
+    } else if (s == "government-receipts" || s == "receipts" || s == "rcpts") {
+        return gov_recpts;
+    } else if (s == "defecit") {
+        return deficit;
+    } else if (s == "G"|| s == "government-balance" || s == "government-sector") {
+        return gov_bal;
+    } else if (s == "firms" || s == "businesses") {
+        return num_firms;
+    } else if (s == "employed") {
+        return num_emps;
+    } else if (s == "unemployed") {
+        return num_unemps;
+    } else if (s == "government-employed") {
+        return num_gov_emps;
+    } else if (s == "hired") {
+        return num_hired;
+    } else if (s == "fired") {
+        return num_fired;
+    } else if (s == "P" || s == "business-sector") {
+        return prod_bal;
+    } else if (s == "wages") {
+        return wages;
+    } else if (s == "consumption") {
+        return consumption;
+    } else if (s == "bonuses") {
+        return bonuses;
+    } else if (s == "deductions" || s == "dedns") {
+        return dedns;
+    } else if (s == "income-tax") {
+        return inc_tax;
+    } else if (s == "sales-tax") {
+        return sales_tax;
+    } else if (s == "H" || s == "domestic-sector") {
+        return dom_bal;
+    } else {
+        return dflt;
+    }
+}
+
+Settings::Opr Settings::parseOperator(std::string s)
+{
+    if (s == "=" || s == "is" || s == "equals") {
+        return eq;
+    } else if (s == "!=" || s == "<>" || s == "not") {
+        return neq;
+    } else if (s == "<" || s == "under" || s == "below") {
+        return lt;
+    } else if (s == ">" || s == "exceeds" || s == "over") {
+        return gt;
+    } else if (s == "<=" || s == "upto" || s == "up-to") {
+        return leq;
+    } else if (s == ">=" || s == "atleast" || s == "at-least") {
+        return geq;
+    } else {
+        return invalid_op;
+    }
+}
 
 size_t Settings::parseLine(std::string &input, std::vector<std::string> &output)
 {
@@ -157,69 +287,207 @@ bool Settings::validatePercent(int n, const std::string &descr, int min, int max
     }
 }
 
+bool Settings::compare(int lhs, int rhs, Opr opr)
+{
+    switch (opr) {
+        case eq:
+            return lhs == rhs;
+        case neq:
+            return lhs != rhs;
+        case lt:
+            return lhs < rhs;
+        case gt:
+            return lhs > rhs;
+        case leq:
+            return lhs <= rhs;
+        case geq:
+            return lhs >= rhs;
+        case invalid_op:
+            return false;
+    }
+}
+
+bool Settings::applies(Settings::Condition &condition)
+{
+    if (condition.property == dflt) {
+        return true;
+    } else {
+        int lhs = getPropertyVal(condition.property);
+        Opr opr = condition.opr;
+        int rhs = condition.val;
+        return compare(lhs, rhs, opr);
+    }
+}
+
 int Settings::getIters()
 {
+    int iters = 10;         // default
+    for (auto it : cond) {
+        if (applies(it->condition) && it->iters.is_set) {
+            iters = it->iters.val;
+        }
+    }
     return iters;
 }
 
 int Settings::getPopSize()
 {
+    int count = 1000;
+    for (auto it : cond) {
+        if (applies(it->condition) && it->count.is_set) {
+            count = it->count.val;
+        }
+    }
     return count;
 }
 
 int Settings::getActivePop()
 {
-    return active_pop;
+    return getParameterVal(pt_active_pop, 1000);
 }
 
 int Settings::getGovExpRate()
 {
-    // We calculate this rather than holding it as a constant as
-    // we may want to apply different rules in the future.
-    return (active_pop * std_wage * inc_tax_rate * prop_inv) / 10000;
+    return (getActivePop() * getStdWage() * getIncTaxRate() * getPropInv()) / 10000;
+}
+
+// Not to be confused with parameter values, this function returns the actual
+// values of the properties of the model when the function is called. It is
+// intended to be used in evaluation the conditions that determine the scope of
+// the parameter settings.
+int Settings::getPropertyVal(Property prop)
+{
+    switch(prop) {
+        case dflt:
+            // dflt should be filtered out by caller
+            std::cout << "Error: invalid property\n";
+            exit(202);
+        case current_period:
+            return period;
+        case gov_exp:
+            return Government::Instance()->getExpenditure();
+        case bens_paid:
+            return Government::Instance()->getBenefitsPaid();
+        case gov_recpts:
+            return Government::Instance()->getReceipts();
+        case deficit:
+        {
+            Government *gov = Government::Instance();
+            return gov->getExpenditure() - gov->getReceipts();
+        }
+        case gov_bal:
+            return Government::Instance()->getBalance();
+        case num_firms:
+            return int(reg->getNumFirms());
+        case num_emps:
+            return reg->getNumEmployed();
+        case num_unemps:
+            return reg->getNumUnemployed();
+        case num_gov_emps:
+            return int(Government::Instance()->getNumEmployees());
+        case num_hired:
+            return reg->getNumHired();
+        case num_fired:
+            return reg->getNumFired();
+        case prod_bal:
+            return reg->getProdBal();
+        case wages:
+            return reg->getWagesPaid();         // i.e. total for period, not rate
+        case consumption:
+            return reg->getPurchasesMade();
+        case bonuses:
+            return reg->getBonusesPaid();
+        case dedns:
+            return reg->getDednsPaid();
+        case inc_tax:
+            return reg->getIncTaxPaid();
+        case sales_tax:
+            return reg->getSalesTaxPaid();
+        case dom_bal:
+            return reg->getWorkersBal();
+    }
+}
+
+int Settings::getParameterVal(ParamType type, int dflt)
+{
+    int res = dflt;
+    for (auto it : cond) {
+        if (applies(it->condition)) {
+            Pair &p = (type == pt_iters) ? it->iters
+            : ((type == pt_count) ? it->count
+               : ((type == pt_emp_rate) ? it->emp_rate
+                  : ((type == pt_std_wage) ? it->std_wage
+                     : ((type == pt_prop_con) ? it->prop_con
+                        : ((type == pt_inc_tax_rate) ? it->inc_tax_rate
+                           : ((type == pt_sales_tax_rate) ? it->sales_tax_rate
+                              : ((type == pt_firm_creation_prob) ? it->firm_creation_prob
+                                 : ((type == pt_dedns) ? it->dedns
+                                    : ((type == pt_unemp_ben_rate) ? it->unemp_ben_rate
+                                       : ((type == pt_active_pop) ? it->active_pop
+                                          : ((type == pt_reserve) ? it->reserve
+                                             : ((type == pt_prop_inv) ? it->prop_inv
+                                                : it->invalid
+                                                )
+                                             )
+                                          )
+                                       )
+                                    )
+                                 )
+                              )
+                           )
+                        )
+                     )
+                  )
+               );
+            if (p.is_set) {
+                res = p.val;
+            }
+        }
+    }
+    return res;
 }
 
 int Settings::getStdWage()
 {
-    return std_wage;
+    return getParameterVal(pt_std_wage, 500);
 }
 
 int Settings::getPropCon()
 {
-    return prop_con;
+    return getParameterVal(pt_prop_con, 80);
 }
 
 int Settings::getIncTaxRate()
 {
-    return inc_tax_rate;
+    return getParameterVal(pt_inc_tax_rate, 10);
 }
 
 int Settings::getSalesTaxRate()
 {
-    return sales_tax_rate;
+    return getParameterVal(pt_sales_tax_rate, 15);
 }
 
 int Settings::getPreTaxDedns()
 {
-    return dedns;
+    return getParameterVal(pt_dedns, 10);
 }
 
 int Settings::getFCP()
 {
-    return firm_creation_prob;
+    return getParameterVal(pt_firm_creation_prob, 10);
 }
 
 int Settings:: getUBR()
 {
-    return unemp_ben_rate;
+    return getParameterVal(pt_unemp_ben_rate, 60);
 }
 
 int Settings::getReserve()
 {
-    return reserve;
+    return getParameterVal(pt_reserve, 80);
 }
 
 int Settings::getPropInv()
 {
-    return prop_inv;
+    return getParameterVal(pt_prop_inv, 80);
 }
