@@ -1,6 +1,6 @@
 # MicroSim
 
-**NOTE: I have stopped working on the command-line version of MicroSim, which was writen using code, and am now working instead on a GUI version for which I'm using Qt. I haven't yet had time to work out how to transfer stuff between Qt and GitHub, so although there's a MicroSim-GUI repository it will have to remain empty for a while. For the time being its a matter of 'watch this space'.**
+**NOTE: I have stopped working on the command-line version of MicroSim, which was writen using Xcode, and am now working instead on a GUI version for which I'm using Qt. I haven't yet had time to work out how to transfer stuff between Qt and GitHub, so although there's a MicroSim-GUI repository it will have to remain empty for a while. For the time being its a matter of 'watch this space'.**
 
 **MicroSim** is a terminal-based micro-economic modelling program designed to complement SimX (which is a *macro*-economic modelling system). Unlike SimX, which provides its own graphics, microsim outputs its results in the form of a CSV file which can be read into a spreadsheet for further analysis.
 
