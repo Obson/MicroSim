@@ -47,7 +47,7 @@ The amount the government needs to spend (ignoring benefits) is determined by th
 
 As we have already noted, there are a number of ways the government  can inject money into the economy. The most straightforward of these is simply by 'buying stuff'. But at the beginning of the economic process the only thing that is automatically available to buy is whatever is provided by the government. So to make this work the government effectively splits itself into two main parts: the Treasury, which creates the money, and the civil service (plus the NHS, the armed services, etc., etc.) which uses that money to pay the salaries of its employees. In effect the Treasury 'buys services' from its commercial arm, the civil service (etc.). The civil service's employees can then use their salaries to buy whatever they want, either from their employer&mdash;the government-owned businesses, or from private businesses, should there happen to be any, with the result that the money created by the Treasury gets dispersed into the system.
 
-Implausibly elegant though this may sound, it works!
+Implausibly elegant though this may sound, it works &mdash; up to a point!
 
 #### Benefits ####
 Having transferred the required sum into the government owned businesses the government next pays benefits to all out-of-work individuals. Again, the amount of benefts paid is determined by a parameter in the model definition file. The effect of these payments on the size of the economy is not currently taken into account in calculating the level of government expenditure required. It probably should be...
